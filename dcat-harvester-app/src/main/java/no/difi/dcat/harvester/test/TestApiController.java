@@ -1,14 +1,13 @@
-package no.difi.dcat.harvester;
+package no.difi.dcat.harvester.test;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class TestController {
+public class TestApiController {
 
-	@RequestMapping("/test")
+	@RequestMapping("/api/test")
 	public String test() {
 		return "Test OK!";
 	}
-	
 }
