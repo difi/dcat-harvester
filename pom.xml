@@ -5,8 +5,16 @@
     <groupId>no.difi</groupId>
     <artifactId>dcat-harvester</artifactId>
     <version>1.0-SNAPSHOT</version>
+    
+     <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.3.0.RELEASE</version>
+    </parent>
+    
     <modules>
         <module>dcat-harvester-app</module>
+        <module>dcat-api-app</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -14,7 +22,21 @@
     <url>http://maven.apache.org</url>
 
     <properties>
+    	<java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    
+    <repositories>
+        <repository>
+            <id>spring-releases</id>
+            <url>https://repo.spring.io/libs-release</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-releases</id>
+            <url>https://repo.spring.io/libs-release</url>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>
