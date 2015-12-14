@@ -1,0 +1,7 @@
+# War file
+
+Download zip file from: http://apache.uib.no/jena/binaries/apache-jena-fuseki-2.3.1.zip
+
+Unzip and copy ´´´fuseki.war´´´ into ´´´/usr/local/tomcat/webapps/´´´
+
+
