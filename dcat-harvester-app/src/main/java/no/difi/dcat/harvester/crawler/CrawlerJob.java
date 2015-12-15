@@ -19,12 +19,18 @@ public class CrawlerJob implements Runnable {
 
 	@Override
 	public void run() {
-		logger.trace("Running CrawlerJob for {}", dataSource);
+		logger.trace("Running crawler job for {}", dataSource);
 		
 		Model model = ModelFactory.createDefaultModel();
-		model.read(dataSource.getUrl());
 		
-		handler.process(dataSource, model);
+		try {
+			model.read(dataSource.getUrl());
+			handler.process(dataSource, model);
+		} catch (Exception e) {
+			logger.error("Error running crawler job", e);
+		}
+		
+		
 	}
 	
 	public static void main(String[] args) {

@@ -20,7 +20,7 @@ public class CrawlerResultHandler {
 		logger.trace("Processing result from crawling");
 		logger.trace("Dropping old graph {}", dataSource.getName());
 		fuseki.drop(dataSource.getName());
-		logger.trace("Updated new graph with data", dataSource.getName());
+		logger.trace("Updating new graph with data", dataSource.getName());
 		fuseki.update(dataSource.getName(), model);
 		logger.trace("Processing result from crawling - Done");
 	}
