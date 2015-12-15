@@ -1,4 +1,4 @@
-package no.difi.dcat.harvester;
+package no.difi.dcat.harvester.settings;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix="test")
-public class ApplicationSettings {
+public class TestSettings {
 	
 	private int someInt;
 	
