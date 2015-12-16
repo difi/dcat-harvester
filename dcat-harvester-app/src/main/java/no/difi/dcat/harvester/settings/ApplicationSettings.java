@@ -6,16 +6,17 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties
-@ConfigurationProperties(prefix="test")
-public class TestSettings {
+@ConfigurationProperties(prefix="application")
+public class ApplicationSettings {
 	
-	private int someInt;
+	private String dcatHarvesterCron;
 	
-	public int getSomeInt() {
-		return someInt;
+	public String getDcatHarvesterCron() {
+		return dcatHarvesterCron;
 	}
 	
-	public void setSomeInt(int someInt) {
-		this.someInt = someInt;
+	public void setDcatHarvesterCron(String dcatHarvesterCron) {
+		this.dcatHarvesterCron = dcatHarvesterCron;
 	}
+	
 }

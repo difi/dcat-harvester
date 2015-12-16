@@ -26,10 +26,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.jena</groupId>
-			<artifactId>apache-jena-libs</artifactId>
-			<version>3.0.1</version>
-			<type>pom</type>
+			<groupId>no.difi</groupId>
+			<artifactId>dcat-datastore</artifactId>
+			<version>1.0-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>log4j</artifactId>
@@ -41,7 +40,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-				
 	</dependencies>
 
 	<properties>
@@ -82,7 +80,7 @@
 					        <goal>npm</goal>
 					    </goals>
 					    <configuration>
-					        <arguments>install</arguments>  
+					        <arguments>install</arguments>
 					    </configuration>
 					</execution>
 				</executions>

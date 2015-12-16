@@ -1,4 +1,4 @@
-package no.difi.dcat.harvester.service;
+package no.difi.dcat.datastore;
 
 import org.apache.jena.query.DatasetAccessor;
 import org.apache.jena.query.DatasetAccessorFactory;
@@ -10,12 +10,13 @@ import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.update.UpdateProcessor;
 import org.apache.jena.update.UpdateRequest;
+import org.apache.jena.util.FileManager;
 
-public class FusekiController {
+public class Fuseki {
 
 	private String serviceUri;
 	
-	public FusekiController(String serviceUri) {
+	public Fuseki(String serviceUri) {
 		this.serviceUri = serviceUri;
 	}
 	
@@ -51,17 +52,17 @@ public class FusekiController {
 		return results;
 	}
 	
-//	public static void main(String[] args) {
-//		String serviceURI = "http://localhost:8080/fuseki/dcat";
-//		FusekiController fusekiController = new FusekiController(serviceURI);
-//		
-//		Model model = FileManager.get().loadModel("data.jsonld");
-//		
-//		fusekiController.update("http://dcat.difi.no/test", model);
-//		
-//		Model model2 = fusekiController.construct("construct {?s ?p ?o} where {?s ?p ?o}");
-//		
-//		model2.getWriter("TURTLE").write(model2, System.out, null);
-//	}
+	public static void main(String[] args) {
+		String serviceURI = "http://localhost:8080/fuseki/dcat";
+		Fuseki fusekiController = new Fuseki(serviceURI);
+		
+		Model model = FileManager.get().loadModel("data.jsonld");
+		
+		fusekiController.update("http://dcat.difi.no/test", model);
+		
+		Model model2 = fusekiController.construct("construct {?s ?p ?o} where {?s ?p ?o}");
+		
+		model2.getWriter("TURTLE").write(model2, System.out, null);
+	}
 
 }
