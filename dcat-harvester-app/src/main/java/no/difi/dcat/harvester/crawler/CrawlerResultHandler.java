@@ -19,8 +19,9 @@ public class CrawlerResultHandler {
 	}
 
 	public void process(DcatSource dcatSource, Model model) {
-		logger.trace("Processing results from crawling");
+		logger.trace("Starting processing of results");
 		dcatDataStore.saveDataCatalogue(dcatSource.getName(), model);
+		logger.trace("Finished processing of results");
 	}
 
 }

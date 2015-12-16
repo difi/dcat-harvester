@@ -2,12 +2,13 @@
   "name": "dcat-harvester",
   "version": "0.0.1",
   "dependencies": {
-    "knockout": "~3.4.0"
+    "knockout": "~3.4.0",
+    "bootstrap": "~3.3.6",
+    "jquery": "~2.1.4"
   },
   "scripts": {
-    "lint": "jshint src/main/js/**.js",
-    "build": "browserify src/main/js/main.js > src/main/webapp/resources/js/bundle.js",
-    
+    "lint": "jshint src/main/resources/js/**.js",
+    "build": "browserify src/main/resources/js/main.js > src/main/webapp/resources/js/bundle.js",
     "prebuild": "npm run lint"
   },
   "devDependencies": {

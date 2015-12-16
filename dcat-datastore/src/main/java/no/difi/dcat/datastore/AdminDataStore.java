@@ -24,6 +24,7 @@ public class AdminDataStore {
 	 * @return
 	 */
 	public List<DcatSource> getDcatSources() {
+		logger.trace("Listing all dcat sources");
 		List<DcatSource> dcatSources = new ArrayList<DcatSource>();
 		
 		StringBuilder qb = new StringBuilder();
@@ -51,6 +52,7 @@ public class AdminDataStore {
 	 * @return
 	 */
 	public List<DcatSource> getDcatSourcesForUser(String user) {
+		logger.trace("Listing dcat sources for user {}", user);
 		return getDcatSources().stream()
 				.filter((DcatSource dcatSource) -> dcatSource.getUser().equalsIgnoreCase(user))
 				.collect(Collectors.toList());
@@ -61,6 +63,7 @@ public class AdminDataStore {
 	 * @param dcatSource
 	 */
 	public void addDcatSource(DcatSource dcatSource) {
+		logger.trace("Adding dcat source {}", dcatSource.getName());
 		Model model = ModelFactory.createDefaultModel();
 		
 		model.add(model.createResource(dcatSource.getName()), model.createProperty("http://dcat.difi.no/url"), model.createResource(dcatSource.getUrl()));
@@ -75,6 +78,7 @@ public class AdminDataStore {
 	 * @param dcatSourceName
 	 */
 	public void deleteDcatSource(String dcatSourceName) {
+		logger.trace("Deleting dcat source {}", dcatSourceName);
 		fuseki.drop(dcatSourceName);
 	}
 }

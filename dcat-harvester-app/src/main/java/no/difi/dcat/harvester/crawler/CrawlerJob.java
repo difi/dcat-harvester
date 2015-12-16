@@ -31,6 +31,8 @@ public class CrawlerJob implements Runnable {
 		} catch (Exception e) {
 			logger.error("Error running crawler job", e);
 		}
+		
+		logger.trace("Finished crawler job for {}", dcatSource.getName());
 	}
 	
 	public static void main(String[] args) {

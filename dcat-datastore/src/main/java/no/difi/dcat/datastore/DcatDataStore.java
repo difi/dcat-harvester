@@ -19,6 +19,7 @@ public class DcatDataStore {
 	 * @param dcatModel
 	 */
 	public void saveDataCatalogue(String dcatName, Model dcatModel) {
+		logger.trace("Adding data catalogue {}", dcatName);
 		fuseki.drop(dcatName);
 		fuseki.update(dcatName, dcatModel);
 	}

@@ -11,16 +11,20 @@ import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.update.UpdateProcessor;
 import org.apache.jena.update.UpdateRequest;
 import org.apache.jena.util.FileManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Fuseki {
 
 	private String serviceUri;
+	private final Logger logger = LoggerFactory.getLogger(Fuseki.class);
 	
 	public Fuseki(String serviceUri) {
 		this.serviceUri = serviceUri;
 	}
 	
 	public void update(String name, Model model) {
+		logger.trace("Updating graph {} with data", name);
 		DatasetAccessor accessor;
 		accessor = DatasetAccessorFactory.createHTTP(serviceUri);
 		
@@ -28,6 +32,7 @@ public class Fuseki {
 	}
 	
 	public void drop(String name) {
+		logger.trace("Dropping graph {}", name);
 		UpdateRequest request = UpdateFactory.create() ;
 		request.add("DROP GRAPH <"+name+">");
 		
@@ -37,6 +42,7 @@ public class Fuseki {
 	}
 	
 	public Model construct(String query) {
+		logger.trace(query);
 		QueryExecution q = QueryExecutionFactory.sparqlService(serviceUri,
 				query);
 		Model model = q.execConstruct();
@@ -45,6 +51,7 @@ public class Fuseki {
 	}
 	
 	public ResultSet select (String query) {
+		logger.trace(query);
 		QueryExecution q = QueryExecutionFactory.sparqlService(serviceUri,
 				query);
 		ResultSet results = q.execSelect();

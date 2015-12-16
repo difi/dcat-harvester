@@ -18,7 +18,7 @@ import no.difi.dcat.datastore.Fuseki;
 import no.difi.dcat.harvester.settings.FusekiSettings;
 
 @RestController
-public class AdminController {
+public class AdminDcatController {
 
 	@Autowired
 	private FusekiSettings fusekiSettings;
@@ -29,17 +29,17 @@ public class AdminController {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
 	}
 
-	@RequestMapping("/api/admin/data-sources")
+	@RequestMapping("/api/admin/dcat-sources")
 	public ResponseEntity<List<DcatSource>> getDataSources() {
 		return new ResponseEntity<List<DcatSource>>(adminDataStore.getDcatSources(), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/api/admin/data-source", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/admin/dcat-source", method = RequestMethod.POST)
 	public void addDataSource(@RequestBody DcatSource dcatSource) {
 		adminDataStore.addDcatSource(dcatSource);
 	}
 
-	@RequestMapping(value = "/api/admin/data-source", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/api/admin/dcat-source", method = RequestMethod.DELETE)
 	public void deleteDataSource(@RequestBody DcatSource dcatSource) {
 		adminDataStore.deleteDcatSource(dcatSource.getName());
 	}
