@@ -8,7 +8,7 @@
   },
   "scripts": {
     "lint": "jshint src/main/resources/js/**.js",
-    "build": "browserify src/main/resources/js/main.js > src/main/webapp/resources/js/bundle.js",
+    "build": "browserify src/main/resources/js/main.js > src/main/webapp/bundle.js",
     "prebuild": "npm run lint"
   },
   "devDependencies": {
