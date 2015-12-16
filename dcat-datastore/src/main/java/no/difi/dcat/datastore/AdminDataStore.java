@@ -7,10 +7,13 @@ import java.util.stream.Collectors;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AdminDataStore {
 	
 	private final Fuseki fuseki;
+	private final Logger logger = LoggerFactory.getLogger(AdminDataStore.class);
 	
 	public AdminDataStore(Fuseki fuseki) {
 		this.fuseki = fuseki;
@@ -24,13 +27,13 @@ public class AdminDataStore {
 		List<DcatSource> dcatSources = new ArrayList<DcatSource>();
 		
 		StringBuilder qb = new StringBuilder();
-		qb.append("PREFIX difi:   <http://dcat.difi.no/>\n");
+		qb.append("PREFIX difi: <http://dcat.difi.no/>\n");
 		qb.append("SELECT ?name ?url ?user\n");
 		qb.append("WHERE {\n");
 		qb.append("?name difi:url ?url .\n");
-		qb.append("?name difi:user ?user .\n");
+		qb.append("OPTIONAL {?name difi:user ?user}\n");
 		qb.append("} limit 100");
-		
+
 		ResultSet results = fuseki.select(qb.toString());
 		
 		while (results.hasNext()) {
@@ -60,8 +63,8 @@ public class AdminDataStore {
 	public void addDcatSource(DcatSource dcatSource) {
 		Model model = ModelFactory.createDefaultModel();
 		
-		model.add(model.createResource(dcatSource.getName()), model.createProperty("difi:url"), model.createResource(dcatSource.getUrl()));
-		model.add(model.createResource(dcatSource.getName()), model .createProperty("difi:user"), model.createResource(dcatSource.getUser()));
+		model.add(model.createResource(dcatSource.getName()), model.createProperty("http://dcat.difi.no/url"), model.createResource(dcatSource.getUrl()));
+		model.add(model.createResource(dcatSource.getName()), model .createProperty("http://dcat.difi.no/user"), model.createLiteral(dcatSource.getUser()));
 		
 		fuseki.drop(dcatSource.getName());
 		fuseki.update(dcatSource.getName(), model);

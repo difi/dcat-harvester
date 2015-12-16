@@ -1,10 +1,13 @@
 package no.difi.dcat.datastore;
 
 import org.apache.jena.rdf.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DcatDataStore {
 	
 	private final Fuseki fuseki;
+	private final Logger logger = LoggerFactory.getLogger(AdminDataStore.class);
 	
 	public DcatDataStore(Fuseki fuseki) {
 		this.fuseki = fuseki;
