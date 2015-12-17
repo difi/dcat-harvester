@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix="application")
 public class ApplicationSettings {
 	
-	private String dcatHarvesterCron;
+	private String test;
 	
-	public String getDcatHarvesterCron() {
-		return dcatHarvesterCron;
+	public String getTest() {
+		return test;
 	}
 	
-	public void setDcatHarvesterCron(String dcatHarvesterCron) {
-		this.dcatHarvesterCron = dcatHarvesterCron;
+	public void test(String test) {
+		this.test = test;
 	}
 	
 }
