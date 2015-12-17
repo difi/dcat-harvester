@@ -22,8 +22,8 @@
 				<artifactId>frontend-maven-plugin</artifactId>
 				<version>0.0.26</version>
 				<configuration>
-			      <nodeVersion>v0.12.1</nodeVersion>
-			      <npmVersion>2.7.1</npmVersion>
+			      <nodeVersion>v0.12.9</nodeVersion>
+			      <npmVersion>3.5.2</npmVersion>
 			      <nodeDownloadRoot>http://nodejs.org/dist/</nodeDownloadRoot>
 			      <npmDownloadRoot>http://registry.npmjs.org/npm/-/</npmDownloadRoot>
 				</configuration>
@@ -45,11 +45,14 @@
 					    <goals>
 					        <goal>bower</goal>
 					    </goals>
+			    		 <configuration>
+					        <arguments>install --allow-root</arguments>
+					    </configuration>
 					</execution>
 					<execution>
 					    <id>gulp build</id>
 					    <goals>
-					        <goal>gulp</goal>
+					        <goal>gulp </goal>
 					    </goals>
 					</execution>
 				</executions>
