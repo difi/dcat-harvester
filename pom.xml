@@ -16,6 +16,7 @@
         <module>dcat-harvester-app</module>
         <module>dcat-api-app</module>
         <module>dcat-datastore</module>
+        <module>dcat-admin-webapp</module>
     </modules>
     <packaging>pom</packaging>
 
