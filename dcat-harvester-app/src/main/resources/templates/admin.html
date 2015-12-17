@@ -1,11 +1,30 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Admin</title>
+	<title>DCAT Harvester Admin</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
 </head>
 <body>
-	<h1>Admin</h1>
+	<h1>DCAT Harvester Admin</h1>
+	
+	<table class="table">
+	    <thead>
+	        <tr>
+		        <th>Name</th>
+		        <th>URL</th>
+		        <th>Run</th>
+	        </tr>
+	    </thead>
+	    <tbody data-bind="foreach: dcatSources">
+	        <tr>
+	            <td data-bind="text: name"></td>
+	            <td data-bind="text: url"></td>
+	            <td><button type="button" class="btn btn-default">Run!</button></td>
+	        </tr>
+	    </tbody>
+	</table>
+	
 </body>
 <script type="text/javascript" src="../../webapp/bundle.js" th:src="@{/bundle.js}"></script>
 

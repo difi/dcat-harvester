@@ -18,7 +18,7 @@ import no.difi.dcat.datastore.Fuseki;
 import no.difi.dcat.harvester.settings.FusekiSettings;
 
 @RestController
-public class AdminDcatController {
+public class AdminRestController {
 
 	@Autowired
 	private FusekiSettings fusekiSettings;
