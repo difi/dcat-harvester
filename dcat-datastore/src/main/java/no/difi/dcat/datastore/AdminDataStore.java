@@ -2,6 +2,7 @@ package no.difi.dcat.datastore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.jena.query.ResultSet;
@@ -56,6 +57,18 @@ public class AdminDataStore {
 		return getDcatSources().stream()
 				.filter((DcatSource dcatSource) -> dcatSource.getUser().equalsIgnoreCase(user))
 				.collect(Collectors.toList());
+	}
+	
+	/**
+	 * 
+	 * @param dcatSourceName
+	 * @return
+	 */
+	public Optional<DcatSource> getDcatSourceByName(String dcatSourceName) {
+		logger.trace("Getting dcat source by name {}", dcatSourceName);
+		return getDcatSources().stream()
+				.filter((DcatSource dcatSource) -> dcatSource.getName().equalsIgnoreCase(dcatSourceName))
+				.findFirst();
 	}
 	
 	/**
