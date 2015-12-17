@@ -28,7 +28,7 @@ public class ScheduledTasks {
 		crawlerResultHandler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri());
 	}
 	
-	@Scheduled(cron = "0 */5 * * * *") //run every 5 minutes
+	@Scheduled(cron = "0 0 */1 * * *") //run hourly
 	public void runCrawlerJobs() {
 		for (DcatSource dcatSource : adminDataStore.getDcatSources()) {
 			CrawlerJob job = new CrawlerJob(crawlerResultHandler, dcatSource);

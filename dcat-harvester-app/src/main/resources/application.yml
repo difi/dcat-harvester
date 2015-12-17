@@ -1,5 +1,5 @@
 fuseki:
-  dcatServiceUri: http://localhost:8080/fuseki/dcat
-  adminServiceUri: http://localhost:8080/fuseki/admin
+  dcatServiceUri: http://localhost:3030/fuseki/dcat
+  adminServiceUri: http://localhost:3030/fuseki/admin
 application:
   dcatHarvesterCron: 0 */5 * * * *

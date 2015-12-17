@@ -1,5 +1,18 @@
-<h2>Admin</h2>
+<h2>DCAT Harvester Admin</h2>
 
-<p data-bind='text: message'></p>
-
-<button data-bind='click: doSomething'>Click me</button>
+<table class="table">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Url</th>
+			<th></th>
+		</tr>
+	</thead>
+    <tbody data-bind="foreach: dcatSources">
+        <tr>
+            <td data-bind="text: name"></td>
+            <td data-bind="text: url"></td>
+            <td><button data-bind='click: harvest'>Harvest</button></td>
+        </tr>
+    </tbody>
+</table>

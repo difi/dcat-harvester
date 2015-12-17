@@ -4,12 +4,16 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import no.difi.dcat.datastore.AdminDataStore;
@@ -18,11 +22,14 @@ import no.difi.dcat.datastore.Fuseki;
 import no.difi.dcat.harvester.settings.FusekiSettings;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8080")
 public class AdminRestController {
 
 	@Autowired
 	private FusekiSettings fusekiSettings;
 	private AdminDataStore adminDataStore;
+	
+	private final Logger logger = LoggerFactory.getLogger(AdminRestController.class);
 
 	@PostConstruct
 	public void initialize() {
@@ -42,6 +49,11 @@ public class AdminRestController {
 	@RequestMapping(value = "/api/admin/dcat-source", method = RequestMethod.DELETE)
 	public void deleteDataSource(@RequestBody DcatSource dcatSource) {
 		adminDataStore.deleteDcatSource(dcatSource.getName());
+	}
+	
+	@RequestMapping("/api/admin/harvest")
+	public void harvestDataSoure(@RequestParam("name") String dcatSourceName) {
+		logger.debug("Received request to harvest {}", dcatSourceName);
 	}
 
 }
