@@ -1,4 +1,5 @@
 import ko from 'knockout';
+import config from '../../app/app.config';
 
 class DcatSource {
 	
@@ -15,7 +16,7 @@ class DcatSource {
 	}
 	
 	harvest() {
-		$.ajax({url: "http://localhost:8090/api/admin/harvest?name=" + this.name()});
+		$.ajax({url: config.backendUrl() + "api/admin/harvest?name=" + this.name()});
 	}
 }
 

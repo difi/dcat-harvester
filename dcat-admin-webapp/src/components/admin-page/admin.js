@@ -1,6 +1,7 @@
 import ko from 'knockout';
 import adminTemplate from 'text!./admin.html';
 import DcatSource from './dcat-source';
+import config from '../../app/app.config';
 
 class AdminViewModel {
 	
@@ -11,7 +12,7 @@ class AdminViewModel {
     
 	loadDcatSources(list) {
 		$.ajax({
-			url: "http://localhost:8090/api/admin/dcat-sources"
+			url: config.backendUrl() + "api/admin/dcat-sources"
 		}).done(function(data) {
 			console.log("data", data);
 			for (var i = 0; i < data.length; i++) {
@@ -21,8 +22,6 @@ class AdminViewModel {
 			}
 		});
 	};
-	
-	
 }
 
 export default { viewModel: AdminViewModel, template: adminTemplate };
