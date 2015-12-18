@@ -4,9 +4,13 @@ import org.apache.jena.query.QuerySolution;
 
 public class DcatSource {
 	
-	private final String name;
-	private final String url;
-	private final String user;
+	private String name;
+	private String url;
+	private String user;
+	
+	public DcatSource() {
+		// TODO Auto-generated constructor stub
+	}
 	
 	public DcatSource(
 			String name, 
@@ -17,6 +21,18 @@ public class DcatSource {
 		this.user = user;
 	}
 	
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
 	public String getName() {
 		return name;
 	}

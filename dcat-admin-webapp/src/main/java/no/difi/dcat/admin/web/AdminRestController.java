@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import no.difi.dcat.admin.settings.ApplicationSettings;
 import no.difi.dcat.admin.settings.FusekiSettings;
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.DcatSource;
@@ -52,8 +54,8 @@ public class AdminRestController {
 	}
 
 	@RequestMapping(value = "/api/admin/dcat-source", method = RequestMethod.DELETE)
-	public void deleteDataSource(@Valid @RequestBody DcatSourceDto dcatSourceDto) {
-		adminDataStore.deleteDcatSource(convertToDomain(dcatSourceDto).getName());
+	public void deleteDataSource(@Valid @RequestParam("delete") String dcatName) {
+		adminDataStore.deleteDcatSource(dcatName);
 	}
 	
 	private DcatSource convertToDomain(DcatSourceDto dto) {
