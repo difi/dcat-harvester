@@ -2,20 +2,16 @@ package no.difi.dcat.datastore;
 
 import org.apache.jena.query.QuerySolution;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class DcatSource {
 	
 	private final String name;
 	private final String url;
 	private final String user;
 	
-	@JsonCreator
 	public DcatSource(
-			@JsonProperty("name") String name, 
-			@JsonProperty("url)") String url, 
-			@JsonProperty("user") String user) {
+			String name, 
+			String url, 
+			String user) {
 		this.name = name;
 		this.url = url;
 		this.user = user;

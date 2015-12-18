@@ -1,0 +1,9 @@
+fuseki:
+  dcatServiceUri: http://localhost:8080/fuseki/dcat
+  adminServiceUri: http://localhost:8080/fuseki/admin
+---
+spring:
+    profiles: development
+fuseki:
+  dcatServiceUri: http://localhost:3030/fuseki/dcat
+  adminServiceUri: http://localhost:3030/fuseki/admin
