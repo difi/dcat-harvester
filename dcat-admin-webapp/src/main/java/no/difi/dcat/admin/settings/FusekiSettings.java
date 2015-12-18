@@ -1,4 +1,4 @@
-package no.difi.dcat.admin;
+package no.difi.dcat.admin.settings;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
