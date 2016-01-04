@@ -23,5 +23,11 @@ public class DcatDataStore {
 		fuseki.drop(dcatName);
 		fuseki.update(dcatName, dcatModel);
 	}
+	
+	public Model getAllDataCatalogues() {
+		logger.trace("Getting all data catalogues");
+		Model model = fuseki.construct("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
+		return model;
+	}
 
 }

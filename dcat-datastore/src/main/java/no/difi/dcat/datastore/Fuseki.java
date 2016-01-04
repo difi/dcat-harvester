@@ -25,8 +25,7 @@ public class Fuseki {
 	
 	public void update(String name, Model model) {
 		logger.trace("Updating graph {} with data", name);
-		DatasetAccessor accessor;
-		accessor = DatasetAccessorFactory.createHTTP(serviceUri);
+		DatasetAccessor accessor = DatasetAccessorFactory.createHTTP(serviceUri);
 		
 		accessor.putModel(name, model);
 	}
