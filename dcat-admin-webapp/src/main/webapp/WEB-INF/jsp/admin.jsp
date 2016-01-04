@@ -33,12 +33,12 @@
 						<td>${dcatSource.name}</td>
 						<td>${dcatSource.url}</td>
 						<td><a class="btn btn-default"
-							href="/admin/harvestDcatSource?name=${dcatSource.name}"
+							href="${pageContext.request.contextPath}/admin/harvestDcatSource?name=${dcatSource.name}"
 							role="button"> <span
 								class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
 						</a></td>
 						<td><a class="btn btn-default"
-							href="/admin/deleteDcatSource?name=${dcatSource.name}"
+							href="${pageContext.request.contextPath}/admin/deleteDcatSource?name=${dcatSource.name}"
 							role="button"> <span
 								class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 						</a></td>
@@ -49,7 +49,7 @@
 	</c:if>
 
 	<h2>Add new DCAT source</h2>
-	<form:form method="POST" action="/admin/addDcatSource" modelAttribute="dcatSource">
+	<form:form method="POST" action="${pageContext.request.contextPath}/admin/addDcatSource" modelAttribute="dcatSource">
 	   <table class="table">
 	    <tr>
 	        <td><form:label path="name">Name</form:label></td>
@@ -70,6 +70,8 @@
 	    </tr>
 	</table>  
 	</form:form>
+	
+	
+	
 </body>
-
 </html>
