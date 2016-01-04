@@ -14,6 +14,11 @@ public class DcatSourceDto {
 	
 	@URL
 	@NotEmpty
+	private final String description;
+	
+	
+	@URL
+	@NotEmpty
 	private final String url;
 	
 	@NotEmpty
@@ -22,9 +27,11 @@ public class DcatSourceDto {
 	@JsonCreator
 	public DcatSourceDto(
 			@JsonProperty("name") String name, 
+			@JsonProperty("description") String description,
 			@JsonProperty("url)") String url, 
 			@JsonProperty("user") String user) {
 		this.name = name;
+		this.description = description;
 		this.url = url;
 		this.user = user;
 	}
@@ -32,6 +39,11 @@ public class DcatSourceDto {
 	public String getName() {
 		return name;
 	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
 	public String getUrl() {
 		return url;
 	}

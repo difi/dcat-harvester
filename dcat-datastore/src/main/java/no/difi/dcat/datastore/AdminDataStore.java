@@ -1,7 +1,9 @@
 package no.difi.dcat.datastore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,9 +32,10 @@ public class AdminDataStore {
 		
 		StringBuilder qb = new StringBuilder();
 		qb.append("PREFIX difi: <http://dcat.difi.no/>\n");
-		qb.append("SELECT ?name ?url ?user\n");
+		qb.append("SELECT ?name ?url ?user ?description\n");
 		qb.append("WHERE {\n");
 		qb.append("?name difi:url ?url .\n");
+		qb.append("OPTIONAL {?name difi:description ?description}\n");
 		qb.append("OPTIONAL {?name difi:user ?user}\n");
 		qb.append("} limit 100");
 
@@ -79,6 +82,7 @@ public class AdminDataStore {
 		logger.trace("Adding dcat source {}", dcatSource.getName());
 		Model model = ModelFactory.createDefaultModel();
 		
+		model.add(model.createResource(dcatSource.getName()), model.createProperty("http://dcat.difi.no/description"), model.createLiteral(dcatSource.getDescription()));
 		model.add(model.createResource(dcatSource.getName()), model.createProperty("http://dcat.difi.no/url"), model.createResource(dcatSource.getUrl()));
 		model.add(model.createResource(dcatSource.getName()), model .createProperty("http://dcat.difi.no/user"), model.createLiteral(dcatSource.getUser()));
 		
@@ -93,5 +97,15 @@ public class AdminDataStore {
 	public void deleteDcatSource(String dcatSourceName) {
 		logger.trace("Deleting dcat source {}", dcatSourceName);
 		fuseki.drop(dcatSourceName);
+	}
+	
+	public Map<String,String> getUser(String username) {
+		Map<String, String> userMap = new HashMap<>();
+		userMap.put("username", "user");
+		userMap.put("password", "password");
+		userMap.put("role", "USER");
+		
+		return userMap;
+		
 	}
 }

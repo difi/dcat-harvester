@@ -58,11 +58,11 @@ public class AdminRestController {
 	}
 	
 	private DcatSource convertToDomain(DcatSourceDto dto) {
-		return new DcatSource(dto.getName(), dto.getUrl(), dto.getUser());
+		return new DcatSource(dto.getName(), dto.getDescription(), dto.getUrl(), dto.getUser());
 	}
 	
 	private DcatSourceDto convertToDto(DcatSource domain) {
-		return new DcatSourceDto(domain.getName(), domain.getUrl(), domain.getUser());
+		return new DcatSourceDto(domain.getName(), domain.getDescription(), domain.getUrl(), domain.getUser());
 	}
 
 }

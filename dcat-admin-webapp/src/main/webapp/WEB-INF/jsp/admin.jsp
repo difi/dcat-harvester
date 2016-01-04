@@ -17,11 +17,20 @@
 <body>
 	<h1>DCAT Harvester Admin</h1>
 
+	<p>
+	You are logged in as <b>${username}</b>. <a class="btn btn-default"
+							href="${pageContext.request.contextPath}/login?logout"
+							role="button">
+							Log out
+	</a>
+	</p>
+
 	<c:if test="${not empty dcatSources}">
 		<table class="table table-striped">
 			<thead>
 				<tr>
 					<th>Name</th>
+					<th>Description</th>
 					<th>URL</th>
 					<th>Harvest</th>
 					<th>Remove</th>
@@ -31,6 +40,7 @@
 				<c:forEach var="dcatSource" items="${dcatSources}">
 					<tr>
 						<td>${dcatSource.name}</td>
+						<td>${dcatSource.description}</td>
 						<td>${dcatSource.url}</td>
 						<td><a class="btn btn-default"
 							href="${pageContext.request.contextPath}/admin/harvestDcatSource?name=${dcatSource.name}"
@@ -52,16 +62,12 @@
 	<form:form method="POST" action="${pageContext.request.contextPath}/admin/addDcatSource" modelAttribute="dcatSource">
 	   <table class="table">
 	    <tr>
-	        <td><form:label path="name">Name</form:label></td>
-	        <td><form:input path="name" /></td>
+	        <td><form:label path="description">Description</form:label></td>
+	        <td><form:input path="description" /></td>
 	    </tr>
 	    <tr>
 	        <td><form:label path="url">Url</form:label></td>
 	        <td><form:input path="url" /></td>
-	    </tr>
-	    <tr>
-	        <td><form:label path="user">User</form:label></td>
-	        <td><form:input path="user" /></td>
 	    </tr>
 	    <tr>
 	        <td colspan="2">
