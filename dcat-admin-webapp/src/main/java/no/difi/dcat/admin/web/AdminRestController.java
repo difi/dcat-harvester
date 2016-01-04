@@ -36,6 +36,10 @@ public class AdminRestController {
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
+		
+		logger.debug("Adding test users");
+		adminDataStore.addUser("user", "password", "USER");
+		adminDataStore.addUser("admin", "password", "ADMIN");
 	}
 
 	@RequestMapping("/api/admin/dcat-sources")
@@ -63,6 +67,16 @@ public class AdminRestController {
 	
 	private DcatSourceDto convertToDto(DcatSource domain) {
 		return new DcatSourceDto(domain.getName(), domain.getDescription(), domain.getUrl(), domain.getUser());
+	}
+	
+	@RequestMapping(value = "/api/admin/user", method = RequestMethod.POST)
+	public void addUser(@Valid @RequestBody UserDto userDto) {
+		adminDataStore.addUser(userDto.getUsername(), userDto.getPassword(), userDto.getRole());
+	}
+	
+	@RequestMapping(value = "/api/admin/user", method = RequestMethod.DELETE)
+	public void deleteUser(@Valid @RequestParam("delete") String username) {
+		adminDataStore.deleteUser(username);
 	}
 
 }
