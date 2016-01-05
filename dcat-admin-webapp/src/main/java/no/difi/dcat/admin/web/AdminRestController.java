@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,9 @@ public class AdminRestController {
 	private FusekiSettings fusekiSettings;
 	private AdminDataStore adminDataStore;
 	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	private final Logger logger = LoggerFactory.getLogger(AdminRestController.class);
 
 	@PostConstruct
@@ -38,8 +42,8 @@ public class AdminRestController {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
 		
 		logger.debug("Adding test users");
-		adminDataStore.addUser("user", "password", "USER");
-		adminDataStore.addUser("admin", "password", "ADMIN");
+		adminDataStore.addUser("user", passwordEncoder.encode("password"), "USER");
+		adminDataStore.addUser("admin", passwordEncoder.encode("password"), "ADMIN");
 	}
 
 	@RequestMapping("/api/admin/dcat-sources")
