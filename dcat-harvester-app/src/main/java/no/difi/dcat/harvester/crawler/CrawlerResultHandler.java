@@ -1,5 +1,6 @@
 package no.difi.dcat.harvester.crawler;
 
+import no.difi.dcat.harvester.validation.DcatValidation;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +19,30 @@ public class CrawlerResultHandler {
 		this.dcatDataStore = new DcatDataStore(new Fuseki(serviceUri));
 	}
 
+
+
 	public void process(DcatSource dcatSource, Model model) {
 		logger.trace("Starting processing of results");
-		dcatDataStore.saveDataCatalogue(dcatSource.getName(), model);
+
+		if(DcatValidation.validate(model, (error)->{
+			if(error.isError()){
+				logger.error(error.toString());
+			}if(error.isWarning()){
+				logger.warn(error.toString());
+			}else {
+				logger.info(error.toString());
+			}
+		})){
+			dcatDataStore.saveDataCatalogue(dcatSource.getName(), model);
+		}
 		logger.trace("Finished processing of results");
 	}
 
+
+
 }
+
+
+
+
+
