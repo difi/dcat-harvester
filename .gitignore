@@ -1,0 +1,17 @@
+.project
+.classpath
+
+.settings/
+target/
+
+node
+node_modules
+
+dcat-datastore/src/test/resources/fuseki-home/db/
+
+bundle.js
+dcat-harvester.iml
+dcat-admin-webapp/dcat-admin-webapp.iml
+dcat-api-app/dcat-api-app.iml
+dcat-datastore/dcat-datastore.iml
+dcat-harvester-app/dcat-harvester-app.iml
