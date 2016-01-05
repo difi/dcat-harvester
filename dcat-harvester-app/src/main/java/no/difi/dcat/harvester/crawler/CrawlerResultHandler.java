@@ -15,6 +15,10 @@ public class CrawlerResultHandler {
 	
 	private final Logger logger = LoggerFactory.getLogger(CrawlerResultHandler.class);
 	
+	public CrawlerResultHandler(DcatDataStore dcatDataStore) {
+		this.dcatDataStore = dcatDataStore;
+	}
+	
 	public CrawlerResultHandler(String serviceUri) {
 		this.dcatDataStore = new DcatDataStore(new Fuseki(serviceUri));
 	}
