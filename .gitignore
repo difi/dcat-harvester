@@ -7,8 +7,8 @@ target/
 node
 node_modules
 
-fuseki-home/DB/dcat/
-fuseki-home/DB/admin/
+fuseki-home/db/dcat/
+fuseki-home/db/admin/
 
 bundle.js
 dcat-harvester.iml

@@ -1,11 +1,19 @@
 package no.difi.dcat.datastore;
 
+import java.io.File;
+import java.util.Collection;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.atlas.iterator.Iter;
 import org.apache.jena.atlas.lib.FileOps;
 import org.apache.jena.fuseki.jetty.JettyFuseki;
 import org.apache.jena.fuseki.jetty.JettyServerConfig;
-import org.apache.jena.fuseki.server.*;
+import org.apache.jena.fuseki.server.DataAccessPointRegistry;
+import org.apache.jena.fuseki.server.FusekiEnv;
+import org.apache.jena.fuseki.server.FusekiServer;
+import org.apache.jena.fuseki.server.FusekiServerListener;
+import org.apache.jena.fuseki.server.ServerInitialConfig;
+import org.apache.jena.fuseki.server.SystemState;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.Model;
@@ -14,11 +22,6 @@ import org.apache.jena.tdb.StoreConnection;
 import org.apache.jena.tdb.base.file.Location;
 import org.apache.jena.vocabulary.RDFS;
 import org.junit.Test;
-
-import java.io.File;
-import java.util.Collection;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by havardottestad on 05/01/16.
@@ -33,9 +36,12 @@ public class FusekiTest {
             SystemState.location = Location.mem() ;
             SystemState.init$() ;
 
-            File dcatDB = new File("src/test/resources/fuseki-home/DB/dcat");
-            File adminDB = new File("src/test/resources/fuseki-home/DB/admin");
+            File dcatDB = new File("src/test/resources/fuseki-home/db/dcat");
+            File adminDB = new File("src/test/resources/fuseki-home/db/admin");
 
+            dcatDB.mkdirs();
+            adminDB.mkdirs();
+            
             FileUtils.cleanDirectory(dcatDB);
             FileUtils.cleanDirectory(adminDB);
 

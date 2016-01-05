@@ -18,7 +18,7 @@
     .
 
 <#dataset> rdf:type      tdb:DatasetTDB ;
-         tdb:location "src/test/resources/fuseki-home/DB/admin" ;
+         tdb:location "src/test/resources/fuseki-home/db/admin" ;
      tdb:unionDefaultGraph true ;
      .
 
@@ -36,6 +36,6 @@
          .
 
      <#dataset2> rdf:type      tdb:DatasetTDB ;
-         tdb:location "src/test/resources/fuseki-home/DB/dcat" ;
+         tdb:location "src/test/resources/fuseki-home/db/dcat" ;
           tdb:unionDefaultGraph true ;
           .
