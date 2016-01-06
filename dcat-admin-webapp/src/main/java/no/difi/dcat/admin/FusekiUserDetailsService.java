@@ -43,17 +43,12 @@ public class FusekiUserDetailsService implements UserDetailsService {
 
 		Map<String,String> userMap = new HashMap<>();
 		
-		logger.info("Setting up test users: test_user, test_admin"); //TODO: bør legges i fuseki
 		if (username.equalsIgnoreCase("test_user")) {
-			userMap.put("username", "test_user");
-			userMap.put("password", passwordEncoder.encode("passord"));
-			userMap.put("role", "USER");
+			userMap = getTestUser("test_user", "password", "USER");
 		} else if (username.equalsIgnoreCase("test_admin")) {
-			userMap.put("username", "test_admin");
-			userMap.put("password", passwordEncoder.encode("passord"));
-			userMap.put("role", "ADMIN");
+			userMap = getTestUser("test_admin", "password", "ADMIN");
 		} else {
-			adminDataStore.getUser(username);
+			userMap = adminDataStore.getUser(username);
 		}
 		
 		if (!userMap.containsKey("username")) {
@@ -61,6 +56,14 @@ public class FusekiUserDetailsService implements UserDetailsService {
 		} else {
 			return new User(username, userMap.get("password"), Arrays.asList(new SimpleGrantedAuthority(userMap.get("role"))));
 		}
+	}
+	
+	private Map<String,String> getTestUser(String username, String password, String role) {
+		Map<String,String> userMap = new HashMap<>();
+		userMap.put("username", username);
+		userMap.put("password", passwordEncoder.encode(password));
+		userMap.put("role", role);
+		return userMap;
 	}
 
 }
