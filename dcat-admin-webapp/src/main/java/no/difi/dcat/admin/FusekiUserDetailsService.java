@@ -1,6 +1,7 @@
 package no.difi.dcat.admin;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -40,7 +41,7 @@ public class FusekiUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-		Map<String,String> userMap = adminDataStore.getUser(username);
+		Map<String,String> userMap = new HashMap<>();
 		
 		logger.info("Setting up test users: test_user, test_admin"); //TODO: bør legges i fuseki
 		if (username.equalsIgnoreCase("test_user")) {
@@ -51,6 +52,8 @@ public class FusekiUserDetailsService implements UserDetailsService {
 			userMap.put("username", "test_admin");
 			userMap.put("password", passwordEncoder.encode("passord"));
 			userMap.put("role", "ADMIN");
+		} else {
+			adminDataStore.getUser(username);
 		}
 		
 		if (!userMap.containsKey("username")) {
