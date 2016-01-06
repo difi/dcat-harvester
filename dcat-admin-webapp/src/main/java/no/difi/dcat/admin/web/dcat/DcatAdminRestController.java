@@ -1,4 +1,4 @@
-package no.difi.dcat.admin.web;
+package no.difi.dcat.admin.web.dcat;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,13 +25,13 @@ import no.difi.dcat.datastore.Fuseki;
 
 @RestController
 @CrossOrigin(origins = "*")
-public class AdminRestController {
+public class DcatAdminRestController {
 
 	@Autowired
 	private FusekiSettings fusekiSettings;
 	private AdminDataStore adminDataStore;
 	
-	private final Logger logger = LoggerFactory.getLogger(AdminRestController.class);
+	private final Logger logger = LoggerFactory.getLogger(DcatAdminController.class);
 
 	@PostConstruct
 	public void initialize() {
@@ -65,14 +65,6 @@ public class AdminRestController {
 		return new DcatSourceDto(domain.getName(), domain.getDescription(), domain.getUrl(), domain.getUser());
 	}
 	
-	@RequestMapping(value = "/api/admin/user", method = RequestMethod.POST)
-	public void addUser(@Valid @RequestBody UserDto userDto) {
-		adminDataStore.addUser(userDto.getUsername(), userDto.getPassword(), userDto.getRole());
-	}
-	
-	@RequestMapping(value = "/api/admin/user", method = RequestMethod.DELETE)
-	public void deleteUser(@Valid @RequestParam("delete") String username) {
-		adminDataStore.deleteUser(username);
-	}
+
 
 }

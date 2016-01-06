@@ -1,4 +1,4 @@
-package no.difi.dcat.admin.web;
+package no.difi.dcat.admin.web.dcat;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;

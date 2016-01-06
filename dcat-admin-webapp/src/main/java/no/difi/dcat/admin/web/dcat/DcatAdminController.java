@@ -1,4 +1,4 @@
-package no.difi.dcat.admin.web;
+package no.difi.dcat.admin.web.dcat;
 
 import java.net.URL;
 import java.security.Principal;
@@ -28,7 +28,7 @@ import no.difi.dcat.datastore.Fuseki;
 
 @Controller
 @CrossOrigin(origins = "*")
-public class AdminController {
+public class DcatAdminController {
 
 	@Autowired
 	private FusekiSettings fusekiSettings;
@@ -36,7 +36,7 @@ public class AdminController {
 	private ApplicationSettings applicationSettings;
 	private AdminDataStore adminDataStore;
 
-	private final Logger logger = LoggerFactory.getLogger(AdminController.class);
+	private final Logger logger = LoggerFactory.getLogger(DcatAdminController.class);
 
 	@PostConstruct
 	public void initialize() {
