@@ -38,6 +38,8 @@ public class UserAdminController {
 		String name = principal.getName();
 		
 		List<UserDto> users = new ArrayList<>();
+		users.add(new UserDto("test_user", "password", "test_user@example.org", "USER"));
+		users.add(new UserDto("test_admin", "password", "test_admin@example.org", "ADMIN"));
 		
 		ModelAndView model = new ModelAndView("users");
 		model.addObject("users", users);

@@ -25,5 +25,26 @@
 	</a>
 	</p>
 	
+	<c:if test="${not empty users}">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Username</th>
+					<th>Email</th>
+					<th>Role</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach var="user" items="${users}">
+					<tr>
+						<td>${user.username}</td>
+						<td>${user.email}</td>
+						<td>${user.role}</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+	</c:if>
+	
 </body>
 </html>

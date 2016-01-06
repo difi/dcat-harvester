@@ -14,15 +14,20 @@ public class UserDto {
 	private final String password;
 	
 	@NotEmpty
+	private final String email;
+	
+	@NotEmpty
 	private final String role;
 	
 	@JsonCreator
 	public UserDto(
 			@JsonProperty("username") String username,
 			@JsonProperty("password") String password,
+			@JsonProperty("email") String email,
 			@JsonProperty("role") String role) {
 		this.username = username;
 		this.password = password;
+		this.email = email;
 		this.role = role;
 	}
 
@@ -32,6 +37,10 @@ public class UserDto {
 
 	public String getPassword() {
 		return password;
+	}
+	
+	public String getEmail() {
+		return email;
 	}
 
 	public String getRole() {
