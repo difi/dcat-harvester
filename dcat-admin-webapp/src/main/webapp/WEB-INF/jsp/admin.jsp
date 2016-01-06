@@ -71,7 +71,7 @@
 	    </tr>
 	    <tr>
 	        <td colspan="2">
-	            <button class="btn btn-default" type="submit"/><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"> Save</span></button>
+	            <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"> Save</span></button>
 	        </td>
 	    </tr>
 	</table>  

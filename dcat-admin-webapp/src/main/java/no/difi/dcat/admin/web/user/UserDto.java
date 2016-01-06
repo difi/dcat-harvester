@@ -46,8 +46,4 @@ public class UserDto {
 	public String getRole() {
 		return role;
 	}
-	
-	
-	
-	
 }
