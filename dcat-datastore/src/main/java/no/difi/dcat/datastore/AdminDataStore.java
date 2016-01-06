@@ -36,8 +36,8 @@ public class AdminDataStore {
 		qb.append("SELECT ?name ?url ?user ?description\n");
 		qb.append("WHERE {\n");
 		qb.append("?name difi:url ?url .\n");
-		qb.append("?name difi:description .\n");
-		qb.append("?name difi:user ?user .\n");
+		qb.append("?name difi:description ?description .\n");
+		qb.append("?name difi:user ?user\n");
 		qb.append("} limit 100");
 
 		ResultSet results = fuseki.select(qb.toString());
@@ -143,7 +143,7 @@ public class AdminDataStore {
 		qb.append("SELECT ?password ?role\n");
 		qb.append("WHERE {\n");
 		qb.append(user+ " difi:password ?password .\n");
-		qb.append("OPTIONAL {"+user+" difi:role ?role}\n");
+		qb.append(user+" difi:role ?role\n");
 		qb.append("} limit 1");
 
 		ResultSet results = fuseki.select(qb.toString());
