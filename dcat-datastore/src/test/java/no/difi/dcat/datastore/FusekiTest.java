@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.io.File;
 import java.net.URI;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -182,6 +183,49 @@ public class FusekiTest {
 		assertEquals("Description should be equal", dcatSource.getDescription(), fromFuseki.getDescription());
 		assertEquals("Graph should be equal", dcatSource.getGraph(), fromFuseki.getGraph());
 		assertEquals("Id should be equal", dcatSource.getId(), fromFuseki.getId());
+
+	}
+
+	@Test
+	public void testGetAllDcatSourcesForUser() throws UserAlreadyExistsException, Exception {
+
+		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
+
+		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
+		adminDataStore.addUser("testUserName", "", "");
+
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName"));
+
+
+		adminDataStore.addUser("testUserName2", "", "");
+
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc22", "http:22", "testUserName2"));
+
+		List<DcatSource> testUserNameDcatSources = adminDataStore.getDcatSourcesForUser("testUserName");
+		List<DcatSource> testUserName2DcatSources = adminDataStore.getDcatSourcesForUser("testUserName2");
+
+		assertEquals("", 3, testUserNameDcatSources.size());
+		assertEquals("", 2, testUserName2DcatSources.size());
+
+	}
+
+
+	@Test
+	public void testWhenNoSourcesForUse() throws UserAlreadyExistsException, Exception {
+
+		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
+
+		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
+		adminDataStore.addUser("testUserName", "", "");
+
+		List<DcatSource> testUserNameDcatSources = adminDataStore.getDcatSourcesForUser("testUserName");
+		List<DcatSource> testUserName2DcatSources = adminDataStore.getDcatSourcesForUser("testUserName2");
+
+		assertEquals("", 0, testUserNameDcatSources.size());
+		assertEquals("", 0, testUserName2DcatSources.size());
 
 	}
 

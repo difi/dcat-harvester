@@ -15,7 +15,7 @@ public class CrawlerJobTest {
 		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/npolar.jsonld", "tester");
 		
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
-		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyString(), Mockito.anyObject());
+		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(), Mockito.anyObject());
 		
 		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore);
 		
@@ -41,7 +41,7 @@ public class CrawlerJobTest {
 		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/npolar.jsonld", "tester");
 		
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
-		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyString(), Mockito.anyObject());
+		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(), Mockito.anyObject());
 		
 		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore);
 		

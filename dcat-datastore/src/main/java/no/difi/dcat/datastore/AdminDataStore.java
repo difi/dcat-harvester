@@ -3,6 +3,9 @@ package no.difi.dcat.datastore;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.sparql.vocabulary.FOAF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class AdminDataStore {
 
-	private final Fuseki fuseki;
+	protected final Fuseki fuseki;
 	private final Logger logger = LoggerFactory.getLogger(AdminDataStore.class);
 
 	public AdminDataStore(Fuseki fuseki) {
@@ -47,16 +50,40 @@ public class AdminDataStore {
 	}
 
 	/**
-	 * @param user
+	 * @param username
 	 * @return
 	 */
-	public List<DcatSource> getDcatSourcesForUser(String user) {
-		//@TODO Use SPARQL update instead
+	public List<DcatSource> getDcatSourcesForUser(String username) {
+		logger.trace("Listing dcat sources for user {}", username);
 
-		logger.trace("Listing dcat sources for user {}", user);
-		return getDcatSources().stream()
-				.filter((DcatSource dcatSource) -> dcatSource.getUser().equalsIgnoreCase(user))
-				.collect(Collectors.toList());
+
+		Map<String, String> map = new HashMap<>();
+		map.put("username", username);
+
+		String query = String.join("\n",
+				"describe ?a ?user where {",
+				"	?user foaf:accountName ?username;",
+					"	difiMeta:dcatSource ?a.",
+				"}"
+		);
+		Model dcatModel = fuseki.describe(query, map);
+
+		if(dcatModel.isEmpty()){
+			return new ArrayList<>();
+		}
+
+		StmtIterator stmtIterator = dcatModel
+				.listResourcesWithProperty(FOAF.accountName).next()
+				.listProperties(DifiMeta.dcatSource);
+
+		List<DcatSource> dcatSources = new ArrayList<>();
+
+		while(stmtIterator.hasNext()){
+			dcatSources.add(new DcatSource(dcatModel, stmtIterator.nextStatement().getResource().toString()));
+		}
+
+		return dcatSources;
+
 	}
 
 	/**
@@ -69,11 +96,11 @@ public class AdminDataStore {
 
 
 		Map<String, String> map = new HashMap<>();
-		map.put("dcatSourceName", dcatSourceId);
+		map.put("dcatSourceId", dcatSourceId);
 
 		String query = String.join("\n",
 				"describe ?a ?user where {",
-				"	BIND(IRI(?dcatSourceName) as ?a)",
+				"	BIND(IRI(?dcatSourceId) as ?a)",
 				"	?user difiMeta:dcatSource ?a.",
 				"}"
 		);
@@ -85,10 +112,7 @@ public class AdminDataStore {
 
 		return Optional.of(new DcatSource(dcatModel, dcatSourceId));
 
-//		logger.trace("Getting dcat source by name {}", dcatSourceId);
-//		return getDcatSources().stream()
-//				.filter((DcatSource dcatSource) -> dcatSource.getId().equalsIgnoreCase(dcatSourceId))
-//				.findFirst();
+
 	}
 
 	/**
@@ -108,6 +132,11 @@ public class AdminDataStore {
 
 		if(dcatSource.getId() == null && dcatSource.getGraph() != null){
 			throw new UnsupportedOperationException("dcatSource id can not  ==null while the graph is != null. This is potentially dangerous behaviour.");
+		}
+
+		if(dcatSource.getUser() == null){
+			throw new UnsupportedOperationException("Not allowed to add a dcatSource without a user");
+
 		}
 
 		if(dcatSource.getId() == null){
@@ -166,13 +195,7 @@ public class AdminDataStore {
 
 	}
 
-	/**
-	 * @param dcatSourceName
-	 */
-	public void deleteDcatSource(String dcatSourceName) {
-		logger.trace("Deleting dcat source {}", dcatSourceName);
-		fuseki.drop(dcatSourceName);
-	}
+
 
 	/**
 	 * @param username
@@ -221,6 +244,13 @@ public class AdminDataStore {
 	 */
 	public void deleteUser(String username) {
 		//@TODO Use SPARQL update instead
+
+
+
+		// throw exception if the user has a dcatSource.
+
+
+
 		logger.trace("Deleting user {}", username);
 		String user = String.format("http://dcat.difi.no/%s", username);
 		fuseki.drop(user);
