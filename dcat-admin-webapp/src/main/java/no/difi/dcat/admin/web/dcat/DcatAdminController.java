@@ -58,7 +58,7 @@ public class DcatAdminController {
 		
 	    if (editDcatSourceName != null) {
 	    	logger.trace("Looking for dcat source name to edit {}", editDcatSourceName);
-	    	Optional<DcatSource> editDcatSource = dcatSources.stream().filter((DcatSource dcatSource) -> dcatSource.getName().equalsIgnoreCase(editDcatSourceName)).findFirst();
+	    	Optional<DcatSource> editDcatSource = dcatSources.stream().filter((DcatSource dcatSource) -> dcatSource.getId().equalsIgnoreCase(editDcatSourceName)).findFirst();
 	    	if (editDcatSource.isPresent()) {
 	    		logger.trace("Dcat source found {}", editDcatSourceName);
 	    		model.addObject("editDcatSource", editDcatSource.get());

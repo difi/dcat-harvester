@@ -26,7 +26,7 @@
 	
 		<c:set var="editDcatSource" value="${editDcatSource}"/>
 		
-		<input type="hidden" id="inputName" value="${editDcatSource.name}"></input> 
+		<input type="hidden" id="inputName" value="${editDcatSource.id}"></input>
 	
 		<div class="form-group">
 			<label for="inputDescription">Description</label> <input type="text"
@@ -61,16 +61,16 @@
 				<tbody>
 					<c:forEach var="dcatSource" items="${dcatSources}">
 						<tr>
-							<td>${dcatSource.name}</td>
+							<td>${dcatSource.id}</td>
 							<td>${dcatSource.description}</td>
 							<td>${dcatSource.url}</td>
-							<td><a class="btn btn-default" role="button" href="${pageContext.request.contextPath}/admin/harvestDcatSource?name=${dcatSource.name}"> <span
+							<td><a class="btn btn-default" role="button" href="${pageContext.request.contextPath}/admin/harvestDcatSource?id=${dcatSource.id}"> <span
 									class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
 							</a></td>
-							<td><a class="btn btn-default" href="${pageContext.request.contextPath}/admin?edit=${dcatSource.name}" role="button"> <span
+							<td><a class="btn btn-default" href="${pageContext.request.contextPath}/admin?edit=${dcatSource.id}" role="button"> <span
 									class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 							</a></td>
-							<td><a class="btn btn-default" onclick="deleteDcatSource('${dcatSource.name}');" role="button"> <span
+							<td><a class="btn btn-default" onclick="deleteDcatSource('${dcatSource.id}');" role="button"> <span
 									class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</a></td>
 						</tr>

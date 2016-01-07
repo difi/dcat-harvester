@@ -37,7 +37,7 @@ public class CrawlerResultHandler {
 				logger.info(error.toString());
 			}
 		})){
-			dcatDataStore.saveDataCatalogue(dcatSource.getName(), model);
+			dcatDataStore.saveDataCatalogue(dcatSource.getId(), model);
 		}
 		logger.trace("Finished processing of results");
 	}
