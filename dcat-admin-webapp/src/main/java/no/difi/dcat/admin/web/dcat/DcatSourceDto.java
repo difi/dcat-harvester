@@ -8,14 +8,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DcatSourceDto {
 	
-	@URL
-	@NotEmpty
 	private final String name;
 	
-	@URL
 	@NotEmpty
 	private final String description;
-	
 	
 	@URL
 	@NotEmpty

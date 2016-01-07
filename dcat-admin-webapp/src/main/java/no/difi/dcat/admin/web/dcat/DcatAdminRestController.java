@@ -1,6 +1,7 @@
 package no.difi.dcat.admin.web.dcat;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -49,7 +50,12 @@ public class DcatAdminRestController {
 
 	@RequestMapping(value = "/api/admin/dcat-source", method = RequestMethod.POST)
 	public void addDataSource(@Valid @RequestBody DcatSourceDto dcatSourceDto) {
-		adminDataStore.addDcatSource(convertToDomain(dcatSourceDto));
+		DcatSource dcatSource = convertToDomain(dcatSourceDto);
+		if (dcatSource.getName() == null || dcatSource.getName().isEmpty()) {
+			dcatSource.setName(String.format("http://dcat.difi.no/%s", UUID.randomUUID().toString()));
+		}
+		
+		adminDataStore.addDcatSource(dcatSource);
 	}
 
 	@RequestMapping(value = "/api/admin/dcat-source", method = RequestMethod.DELETE)

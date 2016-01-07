@@ -2,7 +2,6 @@
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <html lang="en">
 
@@ -25,7 +24,7 @@
 
 	<div class="row">
 
-		<div class="col-md-4">
+		<div class="col-md-3">
 
 			<c:set var="editUser" value="${editUser}"/>
 		
@@ -56,11 +55,11 @@
 					Save</span>
 			</button>
 			
-			<a class="btn btn-default" href="/admin/users" role="button">Clear</a>
+			<a class="btn btn-default" href="${pageContext.request.contextPath}/admin/users" role="button">Clear</a>
 	
 		</div>
 		
-		<div class="col-md-8">
+		<div class="col-md-9">
 	
 			<c:if test="${not empty users}">
 				<table class="table table-striped">
@@ -79,7 +78,7 @@
 								<td>${user.username}</td>
 								<td>${user.email}</td>
 								<td>${user.role}</td>
-								<td><a class="btn btn-default" href="/admin/users?edit=${user.username}" role="button"> <span
+								<td><a class="btn btn-default" href="${pageContext.request.contextPath}/admin/users?edit=${user.username}" role="button"> <span
 										class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 								</a></td>
 								<td><a class="btn btn-default" onclick="deleteUser('${user.username}');" role="button"> <span
@@ -118,7 +117,8 @@
 			}
 			
 			var request = new XMLHttpRequest();
-			request.open('POST', '/api/admin/user', true);
+			request.open('POST', '${pageContext.request.contextPath}/api/admin/user', true);
+			request.onload = function() { location.reload(); };
 			request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 			request.send(JSON.stringify(data));
 		};
@@ -126,10 +126,10 @@
 		var deleteUser = function (username) {
 
 			var request = new XMLHttpRequest();
-			request.open('DELETE', '/api/admin/user?delete='+username, true);
+			request.open('DELETE', '${pageContext.request.contextPath}/api/admin/user?delete='+username, true);
+			request.onload = function() { location.reload(); };
 			request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 			request.send();
-			
 		};
 	</script>
 
