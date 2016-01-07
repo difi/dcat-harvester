@@ -1,4 +1,4 @@
-package no.difi.dcat.admin.web;
+package no.difi.dcat.admin.web.dcat;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
@@ -8,14 +8,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DcatSourceDto {
 	
-	@URL
-	@NotEmpty
 	private final String name;
 	
-	@URL
 	@NotEmpty
 	private final String description;
-	
 	
 	@URL
 	@NotEmpty

@@ -1,4 +1,4 @@
-package no.difi.dcat.admin;
+package no.difi.dcat.admin.security;
 
 import java.util.Arrays;
 import java.util.HashMap;

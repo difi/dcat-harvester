@@ -1,6 +1,7 @@
-package no.difi.dcat.admin.web;
+package no.difi.dcat.admin.web.dcat;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -25,13 +26,13 @@ import no.difi.dcat.datastore.Fuseki;
 
 @RestController
 @CrossOrigin(origins = "*")
-public class AdminRestController {
+public class DcatAdminRestController {
 
 	@Autowired
 	private FusekiSettings fusekiSettings;
 	private AdminDataStore adminDataStore;
 	
-	private final Logger logger = LoggerFactory.getLogger(AdminRestController.class);
+	private final Logger logger = LoggerFactory.getLogger(DcatAdminController.class);
 
 	@PostConstruct
 	public void initialize() {
@@ -49,7 +50,12 @@ public class AdminRestController {
 
 	@RequestMapping(value = "/api/admin/dcat-source", method = RequestMethod.POST)
 	public void addDataSource(@Valid @RequestBody DcatSourceDto dcatSourceDto) {
-		adminDataStore.addDcatSource(convertToDomain(dcatSourceDto));
+		DcatSource dcatSource = convertToDomain(dcatSourceDto);
+		if (dcatSource.getName() == null || dcatSource.getName().isEmpty()) {
+			dcatSource.setName(String.format("http://dcat.difi.no/%s", UUID.randomUUID().toString()));
+		}
+		
+		adminDataStore.addDcatSource(dcatSource);
 	}
 
 	@RequestMapping(value = "/api/admin/dcat-source", method = RequestMethod.DELETE)
@@ -65,14 +71,6 @@ public class AdminRestController {
 		return new DcatSourceDto(domain.getName(), domain.getDescription(), domain.getUrl(), domain.getUser());
 	}
 	
-	@RequestMapping(value = "/api/admin/user", method = RequestMethod.POST)
-	public void addUser(@Valid @RequestBody UserDto userDto) {
-		adminDataStore.addUser(userDto.getUsername(), userDto.getPassword(), userDto.getRole());
-	}
-	
-	@RequestMapping(value = "/api/admin/user", method = RequestMethod.DELETE)
-	public void deleteUser(@Valid @RequestParam("delete") String username) {
-		adminDataStore.deleteUser(username);
-	}
+
 
 }

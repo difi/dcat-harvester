@@ -1,32 +1,34 @@
 package no.difi.dcat.harvester.crawler;
 
-import no.difi.dcat.harvester.validation.DcatValidation;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.util.FileManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.util.FileManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import no.difi.dcat.harvester.validation.DcatValidation;
 
 /**
  * Created by havardottestad on 04/01/16.
  */
 public class CrawlerResultHandlerTest {
 
-      @org.junit.Before
+      @Before
       public void setUp() throws Exception {
 
       }
 
-      @org.junit.After
+      @After
       public void tearDown() throws Exception {
 
       }
 
-      @org.junit.Test
+      @Test
       public void testValidation() throws Exception {
-
-            CrawlerResultHandler crawlerResultHandler = new CrawlerResultHandler("");
 
             ClassLoader classLoader = getClass().getClassLoader();
             File file = new File(classLoader.getResource("validation-test-data/").getFile());
@@ -38,7 +40,7 @@ public class CrawlerResultHandlerTest {
                         e.printStackTrace();
                   }
 
-                  boolean validate = DcatValidation.validate(model, (error)-> System.out.println(error));
+                  DcatValidation.validate(model, (error)-> System.out.println(error));
             });
 
 
