@@ -8,6 +8,12 @@ application:
   harvesterUrl: http://localhost:8080/dcat-harvester-app
 ---
 spring:
+    profiles: docker
+fuseki:
+  dcatServiceUri: http://fuseki:8080/fuseki/dcat
+  adminServiceUri: http://fuseki:8080/fuseki/admin
+---
+spring:
     profiles: development
 fuseki:
   dcatServiceUri: http://localhost:3030/fuseki/dcat
