@@ -33,7 +33,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
-			<scope>provided	</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -70,6 +69,13 @@
 					<mainClass>no.difi.dcat.admin.Application</mainClass>
 				</configuration>
 			</plugin>
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-war-plugin</artifactId>
+	            <configuration>
+	                <outputDirectory>${main.basedir}/fuseki-test-server/dcat-harvester-server/build/</outputDirectory>
+	            </configuration>
+	        </plugin>
 		</plugins>
 	</build>
 

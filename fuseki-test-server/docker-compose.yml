@@ -2,3 +2,12 @@ fuseki:
   build: .
   ports:
    - "3030:8080"
+   
+server:
+  build: dcat-harvester-server
+  ports:
+   - "8080:8080"
+  environment:
+   - JAVA_OPTS="-Dspring.profiles.active=docker"
+  links:
+   - fuseki

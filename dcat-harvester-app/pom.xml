@@ -66,6 +66,13 @@
 					<mainClass>no.difi.dcat.harvester.Application</mainClass>
 				</configuration>
 			</plugin>
+           	<plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-war-plugin</artifactId>
+	            <configuration>
+	                <outputDirectory>${main.basedir}/fuseki-test-server/dcat-harvester-server/build/</outputDirectory>
+	            </configuration>
+	        </plugin>
 		</plugins>
 	</build>
 

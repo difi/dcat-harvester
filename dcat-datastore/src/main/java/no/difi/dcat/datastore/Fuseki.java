@@ -20,6 +20,7 @@ public class Fuseki {
 	private final Logger logger = LoggerFactory.getLogger(Fuseki.class);
 	
 	public Fuseki(String serviceUri) {
+		logger.info("Connecting to Fuseki at {}", serviceUri);
 		this.serviceUri = serviceUri;
 	}
 	
