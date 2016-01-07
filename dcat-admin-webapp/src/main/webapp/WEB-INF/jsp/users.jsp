@@ -23,75 +23,96 @@
 			Log out </a>
 	</p>
 
-	<c:if test="${not empty users}">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>Username</th>
-					<th>Email</th>
-					<th>Role</th>
-					<th>Edit</th>
-					<th>Remove</th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach var="user" items="${users}">
-					<tr>
-						<td>${user.username}</td>
-						<td>${user.email}</td>
-						<td>${user.role}</td>
-						<td><a class="btn btn-default" href="/" role="button"> <span
-								class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-						</a></td>
-						<td><a class="btn btn-default" onclick="deleteUser('${user.username}');" role="button"> <span
-								class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-						</a></td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-	</c:if>
+	<div class="row">
 
-	<h1>New User</h1>
+		<div class="col-md-4">
 
-	<div class="form-group">
-		<label for="inputUsername">Username</label> <input type="text"
-			class="form-control" id="inputUsername" placeholder="Username">
+			<c:set var="editUser" value="${editUser}"/>
+		
+			<input type="hidden" id="inputUserId" value="${editUser.userid}"></input> 
+		
+			<div class="form-group">
+				<label for="inputUsername">Username</label> <input type="text"
+					class="form-control" id="inputUsername" placeholder="Username" value="${editUser.username}"></input> 
+			</div>
+			<div class="form-group">
+				<label for="inputPassword">Password</label> <input type="password"
+					class="form-control" id="inputPassword" placeholder="Password"></input> 
+			</div>
+			<div class="form-group">
+				<label for="inputEmail">Email</label> <input type="email"
+					class="form-control" id="inputEmail" placeholder="Email" value="${editUser.email}"></input> 
+			</div>
+			<div class="form-group">
+				<label for="inputRole">Role</label> <select
+					class="form-control" id="inputRole">
+						<option value="USER" ${editUser.role == 'USER' ? 'selected="selected"' : ''}>USER</option>
+						<option value="ADMIN" ${editUser.role == 'ADMIN' ? 'selected="selected"' : ''}>ADMIN</option>
+					</select> 
+			</div>
+		
+			<button class="btn btn-default" type="button" onclick="saveUser();">
+				<span class="glyphicon glyphicon-floppy-save" aria-hidden="true">
+					Save</span>
+			</button>
+			
+			<a class="btn btn-default" href="/admin/users" role="button">Clear</a>
+	
+		</div>
+		
+		<div class="col-md-8">
+	
+			<c:if test="${not empty users}">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Username</th>
+							<th>Email</th>
+							<th>Role</th>
+							<th>Edit</th>
+							<th>Remove</th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:forEach var="user" items="${users}">
+							<tr>
+								<td>${user.username}</td>
+								<td>${user.email}</td>
+								<td>${user.role}</td>
+								<td><a class="btn btn-default" href="/admin/users?edit=${user.username}" role="button"> <span
+										class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+								</a></td>
+								<td><a class="btn btn-default" onclick="deleteUser('${user.username}');" role="button"> <span
+										class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+								</a></td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+			</c:if>
+	
+		</div>
+	
 	</div>
-	<div class="form-group">
-		<label for="inputPassword">Password</label> <input type="password"
-			class="form-control" id="inputPassword" placeholder="Password">
-	</div>
-	<div class="form-group">
-		<label for="inputEmail">Email</label> <input type="email"
-			class="form-control" id="inputEmail" placeholder="Email">
-	</div>
-	<div class="form-group">
-		<label for="inputRole">Role</label> <input type="email"
-			class="form-control" id="inputRole" placeholder="Role">
-	</div>
-
-	<button class="btn btn-default" type="button" onclick="saveUser();">
-		<span class="glyphicon glyphicon-floppy-save" aria-hidden="true">
-			Save</span>
-	</button>
 
 	<script type="text/javascript">
 		var saveUser = function () {
 
+			var userid = document.getElementById('inputUserId').value;
 			var username = document.getElementById('inputUsername').value;
 			var password = document.getElementById('inputPassword').value;
 			var email = document.getElementById('inputEmail').value;
 			var role = document.getElementById('inputRole').value;
 			
 			var data = {
+				'userid': userid,
 				'username': username,
 				'password': password,
 				'email': email,
 				'role': role
 			};
 
-			if (!username || !password || !email || !role) {
+			if (!username || !email || !role) {
 				console.log("Empty values not allowed", data);
 				return;
 			}

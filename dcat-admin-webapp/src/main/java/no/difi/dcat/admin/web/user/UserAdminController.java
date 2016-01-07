@@ -3,6 +3,7 @@ package no.difi.dcat.admin.web.user;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import no.difi.dcat.admin.settings.FusekiSettings;
@@ -34,17 +36,26 @@ public class UserAdminController {
 	}
 	
 	@RequestMapping("/admin/users")
-	public ModelAndView viewUsers(Principal principal) {
+	public ModelAndView viewUsers(@RequestParam(value="edit", required=false) String editUsername, Principal principal) {
 		String name = principal.getName();
 		
 		List<UserDto> users = new ArrayList<>();
-		users.add(new UserDto("test_user", "password", "test_user@example.org", "USER"));
-		users.add(new UserDto("test_admin", "password", "test_admin@example.org", "ADMIN"));
+		users.add(new UserDto("1", "test_user", "password", "test_user@example.org", "USER"));
+		users.add(new UserDto("2,","test_admin", "password", "test_admin@example.org", "ADMIN"));
 		
 		ModelAndView model = new ModelAndView("users");
 		model.addObject("users", users);
 	    model.addObject("username", name);
 		
+	    if (editUsername != null) {
+	    	logger.trace("Looking for username to edit {}", editUsername);
+	    	Optional<UserDto> editUser = users.stream().filter((UserDto user) -> user.getUsername().equalsIgnoreCase(editUsername)).findFirst();
+	    	if (editUser.isPresent()) {
+	    		logger.trace("User found {}", editUsername);
+	    		model.addObject("editUser", editUser.get());
+	    	}
+	    }
+	    
 		return model;
 	}
 }
