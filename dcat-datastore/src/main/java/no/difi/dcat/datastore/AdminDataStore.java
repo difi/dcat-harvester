@@ -2,6 +2,7 @@ package no.difi.dcat.datastore;
 
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,37 +60,77 @@ public class AdminDataStore {
 	}
 
 	/**
-	 * @param dcatSourceName
+	 * @param dcatSourceId
 	 * @return
 	 */
-	public Optional<DcatSource> getDcatSourceByName(String dcatSourceName) {
-		//@TODO Use SPARQL update instead
+	public Optional<DcatSource> getDcatSourceById(String dcatSourceId) {
 
-		logger.trace("Getting dcat source by name {}", dcatSourceName);
-		return getDcatSources().stream()
-				.filter((DcatSource dcatSource) -> dcatSource.getId().equalsIgnoreCase(dcatSourceName))
-				.findFirst();
+		logger.trace("Getting dcat source by id {}", dcatSourceId);
+
+
+		Map<String, String> map = new HashMap<>();
+		map.put("dcatSourceName", dcatSourceId);
+
+		String query = String.join("\n",
+				"describe ?a ?user where {",
+				"	BIND(IRI(?dcatSourceName) as ?a)",
+				"	?user difiMeta:dcatSource ?a.",
+				"}"
+		);
+		Model dcatModel = fuseki.describe(query, map);
+
+		if(dcatModel.isEmpty()){
+			return Optional.of(null);
+		}
+
+		return Optional.of(new DcatSource(dcatModel, dcatSourceId));
+
+//		logger.trace("Getting dcat source by name {}", dcatSourceId);
+//		return getDcatSources().stream()
+//				.filter((DcatSource dcatSource) -> dcatSource.getId().equalsIgnoreCase(dcatSourceId))
+//				.findFirst();
 	}
 
 	/**
 	 * @param dcatSource
 	 */
-	public URI addDcatSource(DcatSource dcatSource) {
-		//@TODO Use SPARQL update instead
+	public DcatSource addDcatSource(DcatSource dcatSource) {
 
 		logger.trace("Adding dcat source {}", dcatSource.getId());
 
-		String dcatSourceUri = "http://dcat.difi.no/dcatSource_" + UUID.randomUUID().toString();
-		String dcatGraphUri = "http://dcat.difi.no/dcatSource_" + UUID.randomUUID().toString();
+		if(dcatSource.getId() != null && dcatSource.getGraph() == null){
+			//get current graph
+			Optional<DcatSource> dcatSourceById = getDcatSourceById(dcatSource.getId());
+			if(dcatSourceById.isPresent()){
+				dcatSource.setGraph(dcatSourceById.get().getGraph());
+			}
+		}
 
+		if(dcatSource.getId() == null && dcatSource.getGraph() != null){
+			throw new UnsupportedOperationException("dcatSource id can not  ==null while the graph is != null. This is potentially dangerous behaviour.");
+		}
+
+		if(dcatSource.getId() == null){
+			dcatSource.setId("http://dcat.difi.no/dcatSource_" + UUID.randomUUID().toString());
+		}if(dcatSource.getGraph() == null){
+			dcatSource.setGraph("http://dcat.difi.no/dcatSource_" + UUID.randomUUID().toString());
+		}
 
 		String query = String.join("\n",
+				"delete {",
+				"	graph <http://dcat.difi.no/usersGraph/> {",
+				"		?dcatSource difiMeta:graph  ?originalDcatGraphUri. ",
+				"		?dcatSource difiMeta:url  ?originalUrl.",
+				"		?dcatSource rdfs:comment  ?originalDescription. ",
+				"	}",
+				"}",
 				"insert {",
 				"     graph <http://dcat.difi.no/usersGraph/> {",
 				"          ?user difiMeta:dcatSource ?dcatSource .",
 				"          ?dcatSource a difiMeta:DcatSource ; ",
 				"                             difiMeta:graph ?dcatGraphUri; ",
 				"                             difiMeta:url ?url;",
+				"					rdfs:comment ?description",
 				"",
 				"",
 				" . ",
@@ -97,35 +138,32 @@ public class AdminDataStore {
 				"} where {",
 				"           BIND(IRI(?dcatSourceUri) as ?dcatSource)",
 				"           ?user foaf:accountName ?username",
+				"		OPTIONAL{ ?dcatSource difiMeta:graph  ?originalDcatGraphUri} ",
+				"		OPTIONAL{ ?dcatSource difiMeta:url  ?originalUrl} ",
+				"		OPTIONAL{ ?dcatSource rdfs:comment  ?originalDescription} ",
+
 				"}");
 
 
 		Map<String, String> map = new HashMap<>();
 
 		map.put("username", dcatSource.getUser());
-		map.put("dcatSourceUri", dcatSourceUri);
-		map.put("dcatGraphUri", dcatGraphUri);
+		map.put("dcatSourceUri", dcatSource.getId());
+		map.put("dcatGraphUri", dcatSource.getGraph());
+		map.put("description", dcatSource.getDescription());
+
 		map.put("url", dcatSource.getUrl());
 
 
 		fuseki.sparqlUpdate(query, map);
 
-		if (fuseki.ask("ask { ?a ?b <" + dcatSourceUri + ">}")) {
-			return URI.create(dcatSourceUri);
+		if (fuseki.ask("ask { ?a ?b <" + dcatSource.getId() + ">}")) {
+			return dcatSource;
 		} else {
 			//@TODO throw exception?
 			return null;
 		}
 
-//
-//            Model model = ModelFactory.createDefaultModel();
-//
-//            model.add(model.createResource(dcatSource.getId()), model.createProperty("http://dcat.difi.no/description"), model.createLiteral(dcatSource.getDescription()));
-//            model.add(model.createResource(dcatSource.getId()), model.createProperty("http://dcat.difi.no/url"), model.createResource(dcatSource.getUrl()));
-//            model.add(model.createResource(dcatSource.getId()), model.createProperty("http://dcat.difi.no/user"), model.createLiteral(dcatSource.getUser()));
-//
-//            fuseki.drop(dcatSource.getId());
-//            fuseki.update(dcatSource.getId(), model);
 	}
 
 	/**

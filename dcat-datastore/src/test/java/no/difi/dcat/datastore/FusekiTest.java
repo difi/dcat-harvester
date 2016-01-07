@@ -19,9 +19,11 @@ import java.io.File;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by havardottestad on 05/01/16.
@@ -165,12 +167,61 @@ public class FusekiTest {
 
 		DcatSource dcatSource = new DcatSource();
 		dcatSource.setDescription("desc");
-		dcatSource.setId("bla");
 		dcatSource.setUser("testUserName");
 		dcatSource.setUrl("http://url");
 
-		URI uri = adminDataStore.addDcatSource(dcatSource);
-		assertNotNull("", uri);
+		dcatSource = adminDataStore.addDcatSource(dcatSource);
+		assertNotNull("There should exist a dcat source", dcatSource);
+
+		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
+
+		assertTrue("The dcat source should exist in the database", dcatSourceById.isPresent());
+		DcatSource fromFuseki = dcatSourceById.get();
+		assertEquals("Url should be equal", dcatSource.getUrl(), fromFuseki.getUrl());
+		assertEquals("User should be equal", dcatSource.getUser(), fromFuseki.getUser());
+		assertEquals("Description should be equal", dcatSource.getDescription(), fromFuseki.getDescription());
+		assertEquals("Graph should be equal", dcatSource.getGraph(), fromFuseki.getGraph());
+		assertEquals("Id should be equal", dcatSource.getId(), fromFuseki.getId());
+
+	}
+
+	@Test
+	public void testUpdateDataSource() throws UserAlreadyExistsException, Exception {
+		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
+
+		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
+		adminDataStore.addUser("testUserName", "", "");
+
+		DcatSource dcatSource = new DcatSource();
+		dcatSource.setDescription("desc");
+		dcatSource.setUser("testUserName");
+		dcatSource.setUrl("http://url");
+
+		dcatSource = adminDataStore.addDcatSource(dcatSource);
+		assertNotNull("There should exist a dcat source", dcatSource);
+
+		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
+
+		assertTrue("The dcat source should exist in the database", dcatSourceById.isPresent());
+		DcatSource fromFuseki = dcatSourceById.get();
+
+		fromFuseki.setDescription("hello");
+		fromFuseki.setUrl("different url");
+		fromFuseki.setGraph(null);
+
+		adminDataStore.addDcatSource(fromFuseki);
+
+		Optional<DcatSource> dcatSourceById2 = adminDataStore.getDcatSourceById(dcatSource.getId());
+		assertTrue("The dcat source should exist in the database", dcatSourceById2.isPresent());
+		DcatSource fromFuseki2 = dcatSourceById2.get();
+
+
+
+		assertEquals("Url should be equal", fromFuseki.getUrl(), fromFuseki2.getUrl());
+		assertEquals("User should be equal", fromFuseki.getUser(), fromFuseki2.getUser());
+		assertEquals("Description should be equal", fromFuseki.getDescription(), fromFuseki2.getDescription());
+		assertEquals("Graph should be equal", dcatSource.getGraph(), fromFuseki2.getGraph());
+		assertEquals("Id should be equal", fromFuseki.getId(), fromFuseki2.getId());
 
 	}
 

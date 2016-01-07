@@ -28,6 +28,8 @@ public class CrawlerResultHandler {
 	public void process(DcatSource dcatSource, Model model) {
 		logger.trace("Starting processing of results");
 
+
+
 		if(DcatValidation.validate(model, (error)->{
 			if(error.isError()){
 				logger.error(error.toString());
