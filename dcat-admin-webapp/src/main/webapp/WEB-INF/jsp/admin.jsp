@@ -94,7 +94,7 @@
 				'user': '${username}'
 			};
 
-			if (!name || !description || !url) {
+			if (!description || !url) {
 				console.log("Empty values not allowed", data);
 				return;
 			}
