@@ -1,5 +1,6 @@
 package no.difi.dcat.harvester.crawler;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
@@ -33,7 +34,7 @@ public class CrawlerRestController {
 	}
 	
 	@RequestMapping("/api/admin/harvest")
-	public void harvestDataSoure(@RequestParam("name") String dcatSourceName) {
+	public void harvestDataSoure(@RequestParam(value="name") String dcatSourceName) {
 		logger.debug("Received request to harvest {}", dcatSourceName);
 		Optional<DcatSource> dcatSource = adminDataStore.getDcatSourceByName(dcatSourceName);
 		if (dcatSource.isPresent()) {
@@ -50,5 +51,23 @@ public class CrawlerRestController {
 			logger.warn("No stored dcat source with name {}", dcatSourceName);
 		}
 	}
-
+	
+	@RequestMapping("/api/admin/harvest-all")
+	public void harvestDataSoure() {
+		logger.debug("Received request to harvest all dcat sources");
+		
+		CrawlerResultHandler handler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri());
+		List<DcatSource> dcatSources = adminDataStore.getDcatSources();
+		for (DcatSource dcatSource : dcatSources) {
+			CrawlerJob job = new CrawlerJob(handler, dcatSource);
+			try {
+				logger.debug("Manually starting crawler job for {}", dcatSource.getName());
+				job.run();
+			} catch (Exception e) {
+				logger.error("Error running crawler manually", e);
+			}
+			int dcatIndex = dcatSources.indexOf(dcatSource) + 1;
+			logger.debug("Finished manual crawler job for {}. Jobs remaining: {} of {}", dcatSource.getName(), dcatIndex, dcatSources.size());
+		}
+	}
 }
