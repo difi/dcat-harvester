@@ -1,6 +1,7 @@
 package no.difi.dcat.datastore;
 
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 
 /**
@@ -13,6 +14,6 @@ public class DifiMeta {
 	static final Property graph = ResourceFactory.createProperty(DIFI_META + "graph");
 	static final Property url = ResourceFactory.createProperty(DIFI_META + "url");
 	static final Property dcatSource = ResourceFactory.createProperty(DIFI_META + "dcatSource");
-
+	static  Resource DcatSource = ResourceFactory.createResource(DIFI_META + "DcatSource");
 
 }

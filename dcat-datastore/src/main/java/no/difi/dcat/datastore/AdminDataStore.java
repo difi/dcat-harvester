@@ -3,15 +3,14 @@ package no.difi.dcat.datastore;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.sparql.vocabulary.FOAF;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class AdminDataStore {
 
@@ -63,12 +62,12 @@ public class AdminDataStore {
 		String query = String.join("\n",
 				"describe ?a ?user where {",
 				"	?user foaf:accountName ?username;",
-					"	difiMeta:dcatSource ?a.",
+				"	difiMeta:dcatSource ?a.",
 				"}"
 		);
 		Model dcatModel = fuseki.describe(query, map);
 
-		if(dcatModel.isEmpty()){
+		if (dcatModel.isEmpty()) {
 			return new ArrayList<>();
 		}
 
@@ -78,7 +77,7 @@ public class AdminDataStore {
 
 		List<DcatSource> dcatSources = new ArrayList<>();
 
-		while(stmtIterator.hasNext()){
+		while (stmtIterator.hasNext()) {
 			dcatSources.add(new DcatSource(dcatModel, stmtIterator.nextStatement().getResource().toString()));
 		}
 
@@ -94,7 +93,6 @@ public class AdminDataStore {
 
 		logger.trace("Getting dcat source by id {}", dcatSourceId);
 
-
 		Map<String, String> map = new HashMap<>();
 		map.put("dcatSourceId", dcatSourceId);
 
@@ -106,9 +104,14 @@ public class AdminDataStore {
 		);
 		Model dcatModel = fuseki.describe(query, map);
 
-		if(dcatModel.isEmpty()){
-			return Optional.of(null);
+		System.out.println(DifiMeta.DcatSource);
+
+		if (!dcatModel.listResourcesWithProperty(RDF.type, DifiMeta.DcatSource).hasNext()) {
+			System.out.println("EMPTY");
+			return Optional.empty();
 		}
+
+		System.out.println(new DcatSource(dcatModel, dcatSourceId));
 
 		return Optional.of(new DcatSource(dcatModel, dcatSourceId));
 
@@ -122,26 +125,27 @@ public class AdminDataStore {
 
 		logger.trace("Adding dcat source {}", dcatSource.getId());
 
-		if(dcatSource.getId() != null && dcatSource.getGraph() == null){
+		if (dcatSource.getId() != null && dcatSource.getGraph() == null) {
 			//get current graph
 			Optional<DcatSource> dcatSourceById = getDcatSourceById(dcatSource.getId());
-			if(dcatSourceById.isPresent()){
+			if (dcatSourceById.isPresent()) {
 				dcatSource.setGraph(dcatSourceById.get().getGraph());
 			}
 		}
 
-		if(dcatSource.getId() == null && dcatSource.getGraph() != null){
+		if (dcatSource.getId() == null && dcatSource.getGraph() != null) {
 			throw new UnsupportedOperationException("dcatSource id can not  ==null while the graph is != null. This is potentially dangerous behaviour.");
 		}
 
-		if(dcatSource.getUser() == null){
+		if (dcatSource.getUser() == null) {
 			throw new UnsupportedOperationException("Not allowed to add a dcatSource without a user");
 
 		}
 
-		if(dcatSource.getId() == null){
+		if (dcatSource.getId() == null) {
 			dcatSource.setId("http://dcat.difi.no/dcatSource_" + UUID.randomUUID().toString());
-		}if(dcatSource.getGraph() == null){
+		}
+		if (dcatSource.getGraph() == null) {
 			dcatSource.setGraph("http://dcat.difi.no/dcatSource_" + UUID.randomUUID().toString());
 		}
 
@@ -196,7 +200,6 @@ public class AdminDataStore {
 	}
 
 
-
 	/**
 	 * @param username
 	 * @param password
@@ -246,9 +249,7 @@ public class AdminDataStore {
 		//@TODO Use SPARQL update instead
 
 
-
 		// throw exception if the user has a dcatSource.
-
 
 
 		logger.trace("Deleting user {}", username);

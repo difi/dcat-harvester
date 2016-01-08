@@ -14,17 +14,18 @@ import org.apache.jena.tdb.StoreConnection;
 import org.apache.jena.tdb.base.file.Location;
 import org.apache.jena.vocabulary.RDFS;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by havardottestad on 05/01/16.
@@ -183,6 +184,40 @@ public class FusekiTest {
 		assertEquals("Description should be equal", dcatSource.getDescription(), fromFuseki.getDescription());
 		assertEquals("Graph should be equal", dcatSource.getGraph(), fromFuseki.getGraph());
 		assertEquals("Id should be equal", dcatSource.getId(), fromFuseki.getId());
+
+	}
+
+	@Test
+	public void testDeleteDcatSource() throws UserAlreadyExistsException, Exception {
+
+		Authentication authentication = Mockito.mock(Authentication.class);
+		Mockito.when(authentication.getPrincipal()).thenReturn(new User("testUserName", "", new ArrayList<GrantedAuthority>()));
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+
+
+		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
+
+		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
+		adminDataStore.addUser("testUserName", "", "");
+
+		DcatSource dcatSource = new DcatSource();
+		dcatSource.setDescription("desc");
+		dcatSource.setUser("testUserName");
+		dcatSource.setUrl("http://url");
+
+		dcatSource = adminDataStore.addDcatSource(dcatSource);
+		assertNotNull("There should exist a dcat source", dcatSource);
+
+		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")));
+
+		adminDcatDataService.deleteDcatSource(dcatSource.getId());
+
+		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
+
+		assertFalse("", dcatSourceById.isPresent());
+
 
 	}
 

@@ -2,6 +2,8 @@ package no.difi.dcat.datastore;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,15 +32,19 @@ public class AdminDcatDataService {
 	public void deleteDcatSource(String dcatSourceId) {
 		logger.trace("Deleting dcat source {}", dcatSourceId);
 
-		//@TODO Use SPARQL update instead
-
-		// Delete the dcat data graf.
-
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSourceId);
 
 
 		if(!dcatSourceById.isPresent()) return;
 		DcatSource dcatSource = dcatSourceById.get();
+
+		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String realuser = user.getUsername(); //get logged in username
+
+
+		if(!dcatSource.getUser().equals(realuser)){
+			throw new SecurityException(dcatSource.getUser()+" tried to delete a DcatSource belonging to "+realuser);
+		}
 
 		String query = String.join("\n",
 				"delete {",
@@ -46,8 +52,6 @@ public class AdminDcatDataService {
 				"		?dcatSource ?b ?c.",
 				"		?c ?d ?e.",
 				"	}",
-				"}",
-
 				"} where {",
 				"           BIND(IRI(?dcatSourceUri) as ?dcatSource)",
 				"		?dcatSource ?b ?c.",
@@ -55,7 +59,6 @@ public class AdminDcatDataService {
 				"			?c ?d ?e." ,
 				"		}",
 				"}");
-
 
 		Map<String, String> map = new HashMap<>();
 

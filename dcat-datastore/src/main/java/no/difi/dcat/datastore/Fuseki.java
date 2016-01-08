@@ -54,7 +54,13 @@ public class Fuseki {
 //
 //		System.out.println(transform.toString());
 
-		UpdateExecutionFactory.createRemoteForm(UpdateFactory.create(p.toString()), updateServiceUri).execute();
+		try{
+			UpdateExecutionFactory.createRemoteForm(UpdateFactory.create(p.toString()), updateServiceUri).execute();
+
+		}catch (QueryParseException e){
+			System.out.println(p.toString());
+			throw  e;
+		}
 	}
 
 	public ResultSet select(String sparql, Map<String, String> map) {
