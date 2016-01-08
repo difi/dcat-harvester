@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import no.difi.dcat.admin.settings.FusekiSettings;
 import no.difi.dcat.datastore.AdminDataStore;
+import no.difi.dcat.datastore.AdminDcatDataService;
+import no.difi.dcat.datastore.DcatDataStore;
 import no.difi.dcat.datastore.Fuseki;
 import no.difi.dcat.datastore.UserAlreadyExistsException;
 import no.difi.dcat.datastore.domain.User;
@@ -27,6 +29,7 @@ public class UserAdminRestController {
 	@Autowired
 	private FusekiSettings fusekiSettings;
 	private AdminDataStore adminDataStore;
+	private AdminDcatDataService adminDcatDataService;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -36,6 +39,8 @@ public class UserAdminRestController {
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
+		adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki(fusekiSettings.getAdminServiceUri())));
+		
 	}
 	
 	@RequestMapping(value = "/api/admin/user", method = RequestMethod.POST)
@@ -54,7 +59,7 @@ public class UserAdminRestController {
 	
 	@RequestMapping(value = "/api/admin/user", method = RequestMethod.DELETE)
 	public void deleteUser(@Valid @RequestParam("delete") String username) {
-		adminDataStore.deleteUser(username);
+		adminDcatDataService.deleteUser(username);
 	}
 	
 	private static User convertToDomain(UserDto dto) {
