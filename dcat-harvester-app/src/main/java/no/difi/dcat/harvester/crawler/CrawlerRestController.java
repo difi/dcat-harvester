@@ -36,7 +36,7 @@ public class CrawlerRestController {
 	@RequestMapping("/api/admin/harvest")
 	public void harvestDataSoure(@RequestParam(value="name") String dcatSourceName) {
 		logger.debug("Received request to harvest {}", dcatSourceName);
-		Optional<DcatSource> dcatSource = adminDataStore.getDcatSourceByName(dcatSourceName);
+		Optional<DcatSource> dcatSource = adminDataStore.getDcatSourceById(dcatSourceName);
 		if (dcatSource.isPresent()) {
 			CrawlerResultHandler handler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri());
 			CrawlerJob job = new CrawlerJob(handler, dcatSource.get());

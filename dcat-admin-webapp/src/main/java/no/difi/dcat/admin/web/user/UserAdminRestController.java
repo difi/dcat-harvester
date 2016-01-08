@@ -3,6 +3,7 @@ package no.difi.dcat.admin.web.user;
 import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 
+import no.difi.dcat.datastore.UserAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,12 @@ public class UserAdminRestController {
 	
 	@RequestMapping(value = "/api/admin/user", method = RequestMethod.POST)
 	public void addUser(@Valid @RequestBody UserDto userDto) {
-		adminDataStore.addUser(userDto.getUsername(), userDto.getPassword(), userDto.getRole());
+		try {
+			adminDataStore.addUser(userDto.getUsername(), userDto.getPassword(), userDto.getRole());
+		} catch (UserAlreadyExistsException e) {
+			//@TODO Do something with this exception
+			e.printStackTrace();
+		}
 	}
 	
 	@RequestMapping(value = "/api/admin/user", method = RequestMethod.DELETE)

@@ -21,7 +21,7 @@ public class CrawlerJob implements Runnable {
 
 	@Override
 	public void run() {
-		logger.trace("Running crawler job for {}", dcatSource.getName());
+		logger.trace("Running crawler job for {}", dcatSource.getId());
 		
 		Model model = ModelFactory.createDefaultModel();
 		
@@ -32,7 +32,7 @@ public class CrawlerJob implements Runnable {
 			logger.error("Error running crawler job", e);
 		}
 		
-		logger.trace("Finished crawler job for {}", dcatSource.getName());
+		logger.trace("Finished crawler job for {}", dcatSource.getId());
 	}
 	
 	public static void main(String[] args) {
