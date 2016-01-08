@@ -3,12 +3,10 @@ package no.difi.dcat.admin.web.user;
 import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 
-import no.difi.dcat.datastore.UserAlreadyExistsException;
-import no.difi.dcat.datastore.domain.User;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import no.difi.dcat.admin.settings.FusekiSettings;
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.Fuseki;
+import no.difi.dcat.datastore.UserAlreadyExistsException;
+import no.difi.dcat.datastore.domain.User;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -28,8 +28,11 @@ public class UserAdminRestController {
 	private FusekiSettings fusekiSettings;
 	private AdminDataStore adminDataStore;
 	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	private final Logger logger = LoggerFactory.getLogger(UserAdminRestController.class);
-
+	
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
@@ -38,7 +41,11 @@ public class UserAdminRestController {
 	@RequestMapping(value = "/api/admin/user", method = RequestMethod.POST)
 	public void addUser(@Valid @RequestBody UserDto userDto) {
 		try {
-			adminDataStore.addUser(convertToDomain(userDto));
+			User user = convertToDomain(userDto);
+			if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+				user.setPassword(passwordEncoder.encode(user.getPassword()));
+			}
+			adminDataStore.addUser(user);
 		} catch (UserAlreadyExistsException e) {
 			//@TODO Do something with this exception
 			e.printStackTrace();

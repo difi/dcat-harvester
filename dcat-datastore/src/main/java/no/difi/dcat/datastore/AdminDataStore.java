@@ -222,11 +222,11 @@ public class AdminDataStore {
 		String query = String.join("\n",
 				"insert {",
 				"     graph <http://dcat.difi.no/usersGraph/> {",
-				"           <" + user + "> foaf:accountName ?username;",
+				"           <" + user.getId() + "> foaf:accountName ?username;",
 				"                               difiMeta:role ?role;",
 				"                               difiMeta:email ?email;",
 				"                               difiMeta:password ?password;" +
-						"                               a difiMeta:User;",
+				"                               a difiMeta:User;",
 				"            .",
 				"     }",
 				"} where {",
@@ -270,7 +270,7 @@ public class AdminDataStore {
 				"select ?userid ?username ?password ?email ?role where {",
 				"     ?userid foaf:accountName ?username ;",
 				"           difiMeta:password ?password ;",
-				"			difiMeta:email ?email ",
+				"			difiMeta:email ?email ;",
 				"           difiMeta:role ?role ;",
 				".",
 				"}"
