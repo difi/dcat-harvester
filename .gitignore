@@ -7,7 +7,9 @@ target/
 node
 node_modules
 
-*.war
+docker/logs/*.log
+docker/logs/*.txt
+docker/dcat-harvester-server/build/*.war
 
 dcat-datastore/src/test/resources/fuseki-home/db/
 
