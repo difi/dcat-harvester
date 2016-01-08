@@ -36,7 +36,7 @@ public class CrawlerJob implements Runnable {
 	}
 	
 	public static void main(String[] args) {
-		CrawlerJob crawler = new CrawlerJob(new CrawlerResultHandler("http://localhost:8080/fuseki/dcat"), DcatSource.getDefault());
+		CrawlerJob crawler = new CrawlerJob(new CrawlerResultHandler("http://localhost:8080/fuseki/dcat", "http://localhost:8080/fuseki/admin"), DcatSource.getDefault());
 		crawler.run();
 	}
 

@@ -31,7 +31,7 @@ public class ScheduledTasks {
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
-		crawlerResultHandler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri());
+		crawlerResultHandler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
 	}
 	
 	@Scheduled(cron = "0 0 */1 * * *") //run hourly

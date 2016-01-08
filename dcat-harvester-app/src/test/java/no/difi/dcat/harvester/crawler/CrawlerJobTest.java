@@ -1,5 +1,6 @@
 package no.difi.dcat.harvester.crawler;
 
+import no.difi.dcat.datastore.AdminDataStore;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -16,8 +17,8 @@ public class CrawlerJobTest {
 		
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
 		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(), Mockito.anyObject());
-		
-		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore);
+
+		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore, null);
 		
 		CrawlerJob job = new CrawlerJob(handler, dcatSource);
 		
@@ -29,8 +30,9 @@ public class CrawlerJobTest {
 		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/npolar.jsonld", "tester");
 		
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
-		
-		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore);
+		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
+
+		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore, adminDataStore);
 		
 		handler.process(dcatSource, ModelFactory.createDefaultModel());
 	}
@@ -43,7 +45,7 @@ public class CrawlerJobTest {
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
 		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(), Mockito.anyObject());
 		
-		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore);
+		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore, null);
 		
 		handler.process(dcatSource, ModelFactory.createDefaultModel());
 	}

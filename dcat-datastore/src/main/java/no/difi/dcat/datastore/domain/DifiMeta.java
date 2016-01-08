@@ -9,11 +9,17 @@ import org.apache.jena.rdf.model.ResourceFactory;
  */
 public class DifiMeta {
 
-	public static final String DIFI_META = "http://dcat.difi.no/metadata/";
+	static final String DIFI_META = "http://dcat.difi.no/metadata/";
 
 	public static final Property graph = ResourceFactory.createProperty(DIFI_META + "graph");
 	public static final Property url = ResourceFactory.createProperty(DIFI_META + "url");
 	public static final Property dcatSource = ResourceFactory.createProperty(DIFI_META + "dcatSource");
-	public static Resource DcatSource = ResourceFactory.createResource(DIFI_META + "DcatSource");
+	public static final Resource DcatSource = ResourceFactory.createResource(DIFI_META + "DcatSource");
+	public static final Resource error = ResourceFactory.createResource(DIFI_META + "error");
+	public static final Resource ok = ResourceFactory.createResource(DIFI_META + "ok");
+	public static final Resource warning = ResourceFactory.createResource(DIFI_META + "warning");
+	public static final Property harvested = ResourceFactory.createProperty(DIFI_META + "harvested");
+	public static final Property status = ResourceFactory.createProperty(DIFI_META + "status");
+
 
 }

@@ -21,7 +21,8 @@ public class Fuseki {
 	String prefixes = String.join("\n",
 			"PREFIX foaf: <http://xmlns.com/foaf/0.1/>",
 			"PREFIX difiMeta: <http://dcat.difi.no/metadata/>",
-			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
+			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+			"PREFIX dct: <http://purl.org/dc/terms/>"
 	);
 
 	public Fuseki(String serviceUri) {
