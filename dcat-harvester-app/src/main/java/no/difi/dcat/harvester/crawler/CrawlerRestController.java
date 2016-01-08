@@ -61,13 +61,13 @@ public class CrawlerRestController {
 		for (DcatSource dcatSource : dcatSources) {
 			CrawlerJob job = new CrawlerJob(handler, dcatSource);
 			try {
-				logger.debug("Manually starting crawler job for {}", dcatSource.getName());
+				logger.debug("Manually starting crawler job for {}", dcatSource.getId());
 				job.run();
 			} catch (Exception e) {
 				logger.error("Error running crawler manually", e);
 			}
 			int dcatIndex = dcatSources.indexOf(dcatSource) + 1;
-			logger.debug("Finished manual crawler job for {}. Jobs remaining: {} of {}", dcatSource.getName(), dcatIndex, dcatSources.size());
+			logger.debug("Finished manual crawler job for {}. Jobs remaining: {} of {}", dcatSource.getId(), dcatIndex, dcatSources.size());
 		}
 	}
 }

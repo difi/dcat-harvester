@@ -42,7 +42,7 @@ public class ScheduledTasks {
 			CrawlerJob job = new CrawlerJob(crawlerResultHandler, dcatSource);
 			job.run();
 			int dcatIndex = dcatSources.indexOf(dcatSource) + 1;
-			logger.debug("Finished crawler job for {}. Jobs remaining: {} of {}", dcatSource.getName(), dcatIndex, dcatSources.size());
+			logger.debug("Finished crawler job for {}. Jobs remaining: {} of {}", dcatSource.getId(), dcatIndex, dcatSources.size());
 		}
 		logger.debug("Scheduled crawler jobs completed.");
 	}
