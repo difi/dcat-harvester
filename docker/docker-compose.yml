@@ -2,7 +2,7 @@ fuseki:
   build: fuseki-test-server
   ports:
    - "3030:8080"
-   
+
 server:
   build: dcat-harvester-server
   ports:
@@ -13,3 +13,13 @@ server:
    - ./logs:/usr/local/tomcat/logs:rw
   links:
    - fuseki
+
+elk:
+  build: elk-server
+  ports:
+    - "5601:5601"
+    - "9200:9200"
+  volumes:
+    - ./logs:/usr/local/tomcat/logs:rw
+  links:
+    - server

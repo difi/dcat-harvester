@@ -43,12 +43,11 @@ public class CrawlerRestController {
 		if (dcatSource.isPresent()) {
 			CrawlerResultHandler handler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
 			CrawlerJob job = new CrawlerJob(handler, dcatSource.get(), adminDataStore);
-
+			logger.info("Start manual crawler job for {}", dcatSource.toString());
 			crawler.execute(job);
-			
-			logger.debug("Finished crawler job for {}", dcatSourceId);
+			logger.info("Finished manual crawler job for {}", dcatSource.toString());
 		} else {
-			logger.warn("No stored dcat source with id {}", dcatSourceId);
+			logger.warn("No stored dcat source with id {}", dcatSource.toString());
 		}
 	}
 	

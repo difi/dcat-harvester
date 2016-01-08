@@ -101,7 +101,7 @@ public class Fuseki {
 	}
 
 	public void update(String name, Model model) {
-		logger.trace("Updating graph {} with data", name);
+		logger.info("Updating graph {} with data", name);
 		DatasetAccessor accessor = DatasetAccessorFactory.createHTTP(serviceUri);
 
 
@@ -111,7 +111,7 @@ public class Fuseki {
 
 
 	public void drop(String name) {
-		logger.trace("Dropping graph {}", name);
+		logger.info("Dropping graph {}", name);
 		UpdateRequest request = UpdateFactory.create();
 		request.add("DROP GRAPH <" + name + ">");
 

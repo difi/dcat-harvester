@@ -6,6 +6,8 @@ import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDFS;
 
+import com.sun.javafx.binding.StringFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -157,6 +159,10 @@ public class DcatSource {
 		);
 	}
 
+	public String toString() {
+		return String.format("crawler_id: %1$s, crawler_name: %2$s, crawler_url: %3$s", this.getId(), this.getDescription(), this.getUrl());
+	}
+	
 	public String getGraph() {
 		return graph;
 	}

@@ -33,11 +33,10 @@ public class AdminDcatDataService {
 	 * @param dcatSourceId
 	 */
 	public void deleteDcatSource(String dcatSourceId, User loggedInUser) {
-		logger.trace("Deleting dcat source {}", dcatSourceId);
+
 
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSourceId);
-
-
+		
 		if(!dcatSourceById.isPresent()) return;
 		DcatSource dcatSource = dcatSourceById.get();
 
@@ -72,10 +71,10 @@ public class AdminDcatDataService {
 		adminDataStore.fuseki.sparqlUpdate(query, map);
 
 		dcatDataStore.deleteDataCatalogue(dcatSource);
+		logger.info("Deleted dcat source {}", dcatSource.toString());
 	}
 	
 	public void deleteUser(String username, User user) {
-		logger.trace("Deleting user {}", username);
 		
 		if (user.getRole().equalsIgnoreCase("ADMIN")) {
 				
@@ -97,7 +96,7 @@ public class AdminDcatDataService {
 				adminDataStore.fuseki.sparqlUpdate(query, map);	
 			
 				if (adminDataStore.fuseki.ask("ask { ?user foaf:accountName ?username}", map)) {
-					
+					logger.info("Deleted user {}", username);
 				} else {
 					logger.error("User {} was not deleted", username);
 				}

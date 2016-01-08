@@ -141,8 +141,6 @@ public class AdminDataStore {
 	 */
 	public DcatSource addDcatSource(DcatSource dcatSource) {
 
-		logger.trace("Adding dcat source {}", dcatSource.getId());
-
 		if (dcatSource.getId() != null && dcatSource.getGraph() == null) {
 			//get current graph
 			Optional<DcatSource> dcatSourceById = getDcatSourceById(dcatSource.getId());
@@ -205,7 +203,7 @@ public class AdminDataStore {
 
 		map.put("url", dcatSource.getUrl());
 
-
+		logger.info("Added dcat source {}", dcatSource.toString());
 		fuseki.sparqlUpdate(query, map);
 
 		if (fuseki.ask("ask { ?a ?b <" + dcatSource.getId() + ">}")) {
@@ -222,7 +220,6 @@ public class AdminDataStore {
 	 * @param user
 	 */
 	public URI addUser(User user) throws UserAlreadyExistsException {
-		logger.trace("Adding user {}", user.getUsername());
 
 		if (user.getId() == null || user.getId().isEmpty()) {
 			user.setId("http://dcat.difi.no/user_" + UUID.randomUUID().toString());
@@ -250,9 +247,11 @@ public class AdminDataStore {
 		map.put("email", user.getEmail());
 
 		fuseki.sparqlUpdate(query, map);
-
+		logger.info("Added dcat source {}", user.getUsername());
+		
 		if (fuseki.ask("ask { <" + user.getId() + "> ?b ?c}")) {
 			return URI.create(user.getId());
+
 		} else {
 			throw new UserAlreadyExistsException(user.getUsername());
 		}
@@ -268,7 +267,7 @@ public class AdminDataStore {
 		// throw exception if the user has a dcatSource.
 
 
-		logger.trace("Deleting user {}", username);
+		logger.info("Deleting user {}", username);
 		String user = String.format("http://dcat.difi.no/%s", username);
 		fuseki.drop(user);
 	}
@@ -299,7 +298,7 @@ public class AdminDataStore {
 	 * @return
 	 */
 	public Map<String, String> getUser(String username) {
-		logger.trace("Getting user {}", username);
+		logger.info("Getting user {}", username);
 
 		Map<String, String> map = new HashMap<>();
 		map.put("username", username);

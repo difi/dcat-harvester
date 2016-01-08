@@ -3,6 +3,25 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <logger name="org.springframework.web" level="DEBUG"/>
     <logger name="org.apache.http.wire" level="WARN"/>
-    <logger name="no.difi.dcat" level="TRACE"/>
     <logger name="org.apache.jena" level="ERROR"/>
+    
+    <timestamp key="datetime" datePattern="yyyy-MM-dd HH:mm:ss"/>
+
+	<appender name="dcat-harvester-logger" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/usr/local/tomcat/logs/dcat-harvester.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!--  Daily rollover -->
+			<fileNamePattern>difi.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!--  Keep last 30 days -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${datetime} %-5level %logger{35} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="no.difi.dcat" level="INFO">
+		<appender-ref ref="dcat-harvester-logger" />
+	</logger>
+    
 </configuration>

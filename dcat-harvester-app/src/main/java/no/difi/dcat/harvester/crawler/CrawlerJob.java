@@ -2,6 +2,9 @@ package no.difi.dcat.harvester.crawler;
 
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.domain.DifiMeta;
+
+import java.time.LocalDateTime;
+
 import org.apache.jena.atlas.web.HttpException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -31,9 +34,8 @@ public class CrawlerJob implements Runnable {
 
 	@Override
 	public void run() {
-		logger.trace("Running crawler job for {}", dcatSource.getId());
-		System.err.println(dcatSource.getId());
-		
+		logger.info("Started crawler job for {}", dcatSource.toString());
+		LocalDateTime start = LocalDateTime.now();
 		Model model = ModelFactory.createDefaultModel();
 		
 		try {
@@ -51,12 +53,17 @@ public class CrawlerJob implements Runnable {
 			logger.error("Error running crawler job", e);
 		}
 		
-		logger.trace("Finished crawler job for {}", dcatSource.getId());
+		LocalDateTime stop = LocalDateTime.now();
+		logger.info("Finished crawler job for {}", dcatSource.toString() + ", Duration: " + returnCrawlDuration(start, stop));
 	}
 	
 	public static void main(String[] args) {
 		CrawlerJob crawler = new CrawlerJob(new CrawlerResultHandler("http://localhost:8080/fuseki/dcat", "http://localhost:8080/fuseki/admin"), DcatSource.getDefault(), null);
 		crawler.run();
+	}
+	
+	private String returnCrawlDuration(LocalDateTime start, LocalDateTime stop) {
+		return String.valueOf(stop.compareTo(start));
 	}
 
 }

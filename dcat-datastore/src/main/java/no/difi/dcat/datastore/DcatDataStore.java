@@ -21,19 +21,20 @@ public class DcatDataStore {
 	 * @param dcatModel
 	 */
 	public void saveDataCatalogue(DcatSource dcatSource, Model dcatModel) {
-		logger.trace("Adding data catalogue {}", dcatSource.getGraph());
+		logger.info("Adding data catalogue {}", dcatSource.getGraph());
 		fuseki.drop(dcatSource.getGraph());
 		fuseki.update(dcatSource.getGraph(), dcatModel);
 	}
 
 	public Model getAllDataCatalogues() {
-		logger.trace("Getting all data catalogues");
+		logger.info("Getting all data catalogues");
 		Model model = fuseki.construct("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
 		return model;
 	}
 
 	public void deleteDataCatalogue(DcatSource dcatSource) {
 		if(dcatSource == null || dcatSource.getGraph() == null || dcatSource.getGraph().trim().equals("")) return;
+		logger.info("Deleted DCAT source {}", dcatSource.toString());
 		fuseki.drop(dcatSource.getGraph());
 	}
 }
