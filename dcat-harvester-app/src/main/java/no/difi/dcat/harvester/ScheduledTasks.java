@@ -11,8 +11,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import no.difi.dcat.datastore.AdminDataStore;
-import no.difi.dcat.datastore.DcatSource;
 import no.difi.dcat.datastore.Fuseki;
+import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.harvester.crawler.CrawlerJob;
 import no.difi.dcat.harvester.crawler.CrawlerResultHandler;
 import no.difi.dcat.harvester.settings.FusekiSettings;

@@ -4,6 +4,8 @@ import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.difi.dcat.datastore.domain.DcatSource;
+
 public class DcatDataStore {
 
 	private final Fuseki fuseki;

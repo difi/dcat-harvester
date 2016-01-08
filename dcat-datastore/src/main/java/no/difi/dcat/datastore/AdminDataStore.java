@@ -1,5 +1,13 @@
 package no.difi.dcat.datastore;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
@@ -9,8 +17,9 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
-import java.util.*;
+import no.difi.dcat.datastore.domain.DcatSource;
+import no.difi.dcat.datastore.domain.DifiMeta;
+import no.difi.dcat.datastore.domain.User;
 
 public class AdminDataStore {
 
@@ -201,21 +210,21 @@ public class AdminDataStore {
 
 
 	/**
-	 * @param username
-	 * @param password
-	 * @param role
+	 * @param user
 	 */
-	public URI addUser(String username, String password, String role) throws UserAlreadyExistsException {
-		logger.trace("Adding user {}", username);
+	public URI addUser(User user) throws UserAlreadyExistsException {
+		logger.trace("Adding user {}", user.getUsername());
 
-
-		String user = "http://dcat.difi.no/user_" + UUID.randomUUID().toString();
+		if (user.getId() == null || user.getId().isEmpty()) {
+			user.setId("http://dcat.difi.no/user_" + UUID.randomUUID().toString());
+		}	
 
 		String query = String.join("\n",
 				"insert {",
 				"     graph <http://dcat.difi.no/usersGraph/> {",
 				"           <" + user + "> foaf:accountName ?username;",
 				"                               difiMeta:role ?role;",
+				"                               difiMeta:email ?email;",
 				"                               difiMeta:password ?password;" +
 						"                               a difiMeta:User;",
 				"            .",
@@ -225,21 +234,19 @@ public class AdminDataStore {
 				"}"
 		);
 
-
 		Map<String, String> map = new HashMap<>();
-		map.put("username", username);
-		map.put("role", role);
-		map.put("password", password);
-
+		map.put("username", user.getUsername());
+		map.put("role", user.getRole());
+		map.put("password", user.getPassword());
+		map.put("email", user.getEmail());
 
 		fuseki.sparqlUpdate(query, map);
 
-		if (fuseki.ask("ask { <" + user + "> ?b ?c}")) {
-			return URI.create(user);
+		if (fuseki.ask("ask { <" + user.getId() + "> ?b ?c}")) {
+			return URI.create(user.getId());
 		} else {
-			throw new UserAlreadyExistsException(username);
+			throw new UserAlreadyExistsException(user.getUsername());
 		}
-
 	}
 
 	/**
@@ -256,6 +263,27 @@ public class AdminDataStore {
 		String user = String.format("http://dcat.difi.no/%s", username);
 		fuseki.drop(user);
 	}
+	
+	public List<User> getUsers() {
+		Map<String, String> map = new HashMap<>();
+		String query = String.join("\n",
+				"select ?userid ?username ?password ?email ?role where {",
+				"     ?userid foaf:accountName ?username ;",
+				"           difiMeta:password ?password ;",
+				"			difiMeta:email ?email ",
+				"           difiMeta:role ?role ;",
+				".",
+				"}"
+		);
+		ResultSet results = fuseki.select(query, map);
+
+		List<User> users = new ArrayList<>();
+		while (results.hasNext()) {
+			users.add(User.fromQuerySolution(results.next()));
+		}
+
+		return users;
+	}
 
 	/**
 	 * @param username
@@ -263,7 +291,6 @@ public class AdminDataStore {
 	 */
 	public Map<String, String> getUser(String username) {
 		logger.trace("Getting user {}", username);
-
 
 		Map<String, String> map = new HashMap<>();
 		map.put("username", username);
@@ -286,6 +313,5 @@ public class AdminDataStore {
 		}
 
 		return userMap;
-
 	}
 }

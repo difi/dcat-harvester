@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 
+import no.difi.dcat.datastore.domain.DcatSource;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
