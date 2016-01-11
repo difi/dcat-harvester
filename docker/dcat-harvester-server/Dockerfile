@@ -4,4 +4,7 @@ ADD build/dcat-admin-webapp-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/dcat-admi
 ADD build/dcat-api-app-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/dcat-api-app.war
 ADD build/dcat-harvester-app-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/dcat-harvester-app.war
 
+ADD tomcat-users.xml /usr/local/tomcat/conf/
+
+
 WORKDIR /usr/local/tomcat/
