@@ -42,12 +42,13 @@ public class CrawlerResultHandler {
 		if (DcatValidation.validate(model, (error) -> {
 			if (error.isError()) {
 				status[0] = error.getRuleSeverity();
+				message[0] = error.toString();
+
 				logger.error(error.toString());
 			}
 			if (error.isWarning()) {
 				if (status[0] != ValidationError.RuleSeverity.error) {
 					status[0] = error.getRuleSeverity();
-					message[0] = error.toString();
 				}
 				logger.warn(error.toString());
 			} else {
