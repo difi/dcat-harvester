@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix="application")
 public class ApplicationSettings {
 	
-	private String test;
+	private int crawlerThreadPoolSize;
 	
-	public String getTest() {
-		return test;
+	public int getCrawlerThreadPoolSize() {
+		return crawlerThreadPoolSize;
 	}
-	
-	public void test(String test) {
-		this.test = test;
+
+	public void setCrawlerThreadPoolSize(int crawlerThreadPoolSize) {
+		this.crawlerThreadPoolSize = crawlerThreadPoolSize;
 	}
 	
 }

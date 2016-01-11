@@ -1,19 +1,14 @@
 package no.difi.dcat.harvester;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.Fuseki;
-import no.difi.dcat.datastore.domain.DcatSource;
-import no.difi.dcat.harvester.crawler.CrawlerJob;
 import no.difi.dcat.harvester.crawler.CrawlerResultHandler;
 import no.difi.dcat.harvester.settings.FusekiSettings;
 

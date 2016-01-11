@@ -28,6 +28,9 @@ public class CrawlerRestController {
 	
 	private final Logger logger = LoggerFactory.getLogger(CrawlerRestController.class);
 
+	@Autowired
+	private Crawler crawler;
+	
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
@@ -40,13 +43,10 @@ public class CrawlerRestController {
 		if (dcatSource.isPresent()) {
 			CrawlerResultHandler handler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
 			CrawlerJob job = new CrawlerJob(handler, dcatSource.get(), adminDataStore);
-			try {
-				logger.debug("Manually starting crawler job for {}", dcatSourceId);
-				job.run();
-			} catch (Exception e) {
-				logger.error("Error running crawler manually", e);
-			}
-			logger.debug("Finished manuel crawler job for {}", dcatSourceId);
+
+			crawler.execute(job);
+			
+			logger.debug("Finished crawler job for {}", dcatSourceId);
 		} else {
 			logger.warn("No stored dcat source with id {}", dcatSourceId);
 		}
@@ -60,14 +60,8 @@ public class CrawlerRestController {
 		List<DcatSource> dcatSources = adminDataStore.getDcatSources();
 		for (DcatSource dcatSource : dcatSources) {
 			CrawlerJob job = new CrawlerJob(handler, dcatSource, adminDataStore);
-			try {
-				logger.debug("Manually starting crawler job for {}", dcatSource.getId());
-				job.run();
-			} catch (Exception e) {
-				logger.error("Error running crawler manually", e);
-			}
-			int dcatIndex = dcatSources.indexOf(dcatSource) + 1;
-			logger.debug("Finished manual crawler job for {}. Jobs remaining: {} of {}", dcatSource.getId(), dcatIndex, dcatSources.size());
+			crawler.execute(job);
 		}
+		logger.debug("Finished all crawler jobs");
 	}
 }
