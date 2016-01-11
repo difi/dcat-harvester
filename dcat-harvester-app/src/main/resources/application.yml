@@ -2,6 +2,7 @@ fuseki:
   dcatServiceUri: http://localhost:8080/fuseki/dcat
   adminServiceUri: http://localhost:8080/fuseki/admin
 application:
+  crawlerThreadPoolSize: 2
   test: test
 ---
 spring:

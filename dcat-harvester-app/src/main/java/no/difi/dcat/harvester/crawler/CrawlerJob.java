@@ -24,10 +24,15 @@ public class CrawlerJob implements Runnable {
 		this.dcatSource = dcatSource;
 		this.adminDataStore = adminDataStore;
 	}
+	
+	public String getDcatSourceId() {
+		return dcatSource.getId();
+	}
 
 	@Override
 	public void run() {
 		logger.trace("Running crawler job for {}", dcatSource.getId());
+		System.err.println(dcatSource.getId());
 		
 		Model model = ModelFactory.createDefaultModel();
 		
