@@ -1,5 +1,6 @@
 package no.difi.dcat.admin.web.dcat;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -62,8 +63,11 @@ public class DcatAdminRestController {
 	}
 
 	@RequestMapping(value = "/api/admin/dcat-source", method = RequestMethod.DELETE)
-	public void deleteDataSource(@Valid @RequestParam("delete") String dcatName) {
-		adminDcatDataService.deleteDcatSource(dcatName);
+	public void deleteDataSource(@Valid @RequestParam("delete") String dcatName, Principal principal) {
+		if (principal == null) {
+			return;
+		}
+		adminDcatDataService.deleteDcatSource(dcatName, adminDataStore.getUserObject(principal.getName()));
 	}
 	
 	private DcatSource convertToDomain(DcatSourceDto dto) {

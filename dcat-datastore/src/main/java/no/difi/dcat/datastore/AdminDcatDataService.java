@@ -6,11 +6,9 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 
 import no.difi.dcat.datastore.domain.DcatSource;
+import no.difi.dcat.datastore.domain.User;
 
 /**
  * Created by havardottestad on 07/01/16.
@@ -32,7 +30,7 @@ public class AdminDcatDataService {
 	/**
 	 * @param dcatSourceId
 	 */
-	public void deleteDcatSource(String dcatSourceId) {
+	public void deleteDcatSource(String dcatSourceId, User loggedInUser) {
 		logger.trace("Deleting dcat source {}", dcatSourceId);
 
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSourceId);
@@ -41,12 +39,8 @@ public class AdminDcatDataService {
 		if(!dcatSourceById.isPresent()) return;
 		DcatSource dcatSource = dcatSourceById.get();
 
-		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String realuser = user.getUsername(); //get logged in username
-
-
-		if(!dcatSource.getUser().equals(realuser)){
-			throw new SecurityException(dcatSource.getUser()+" tried to delete a DcatSource belonging to "+realuser);
+		if(!dcatSource.getUser().equalsIgnoreCase(loggedInUser.getUsername()) && !loggedInUser.isAdmin()){
+			throw new SecurityException(loggedInUser.getUsername()+" tried to delete a DcatSource belonging to "+dcatSource.getUser());
 		}
 
 		String query = String.join("\n",
@@ -72,12 +66,10 @@ public class AdminDcatDataService {
 		dcatDataStore.deleteDataCatalogue(dcatSource);
 	}
 	
-	public void deleteUser(String username) {
+	public void deleteUser(String username, User user) {
 		logger.trace("Deleting user {}", username);
 		
-		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		Optional<GrantedAuthority> authority = user.getAuthorities().stream().filter((GrantedAuthority ga) -> ga.getAuthority().equalsIgnoreCase("ADMIN")).findAny();
-		if (authority.isPresent()) {
+		if (user.getRole().equalsIgnoreCase("ADMIN")) {
 				
 				String query = String.join("\n",
 						"delete {",
