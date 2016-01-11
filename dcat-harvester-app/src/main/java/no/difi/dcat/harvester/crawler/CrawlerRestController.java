@@ -39,7 +39,7 @@ public class CrawlerRestController {
 		Optional<DcatSource> dcatSource = adminDataStore.getDcatSourceById(dcatSourceName);
 		if (dcatSource.isPresent()) {
 			CrawlerResultHandler handler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
-			CrawlerJob job = new CrawlerJob(handler, dcatSource.get());
+			CrawlerJob job = new CrawlerJob(handler, dcatSource.get(), adminDataStore);
 			try {
 				logger.debug("Manually starting crawler job for {}", dcatSourceName);
 				job.run();
@@ -59,7 +59,7 @@ public class CrawlerRestController {
 		CrawlerResultHandler handler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
 		List<DcatSource> dcatSources = adminDataStore.getDcatSources();
 		for (DcatSource dcatSource : dcatSources) {
-			CrawlerJob job = new CrawlerJob(handler, dcatSource);
+			CrawlerJob job = new CrawlerJob(handler, dcatSource, adminDataStore);
 			try {
 				logger.debug("Manually starting crawler job for {}", dcatSource.getId());
 				job.run();

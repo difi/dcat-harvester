@@ -39,7 +39,7 @@ public class ScheduledTasks {
 		logger.debug("Starting scheduled crawler jobs");
 		List<DcatSource> dcatSources = adminDataStore.getDcatSources();
 		for (DcatSource dcatSource : dcatSources) {
-			CrawlerJob job = new CrawlerJob(crawlerResultHandler, dcatSource);
+			CrawlerJob job = new CrawlerJob(crawlerResultHandler, dcatSource, adminDataStore);
 			job.run();
 			int dcatIndex = dcatSources.indexOf(dcatSource) + 1;
 			logger.debug("Finished crawler job for {}. Jobs remaining: {} of {}", dcatSource.getId(), dcatIndex, dcatSources.size());

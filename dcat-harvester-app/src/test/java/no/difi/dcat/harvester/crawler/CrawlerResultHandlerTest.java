@@ -16,9 +16,11 @@ import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.springframework.test.util.AssertionErrors.assertEquals;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
  * Created by havardottestad on 04/01/16.
@@ -68,7 +70,7 @@ public class CrawlerResultHandlerTest {
 			assertEquals("Since the provided dcat model is empty there should be validation errors.", DifiMeta.error, status);
 
 			return null;
-		}).when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any());
+		}).when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any(), Mockito.any());
 
 		CrawlerResultHandler crawlerResultHandler = new CrawlerResultHandler(dcatDataStore, adminDataStore);
 
@@ -92,7 +94,7 @@ public class CrawlerResultHandlerTest {
 			assertEquals("The test-perfect.rdf file should give some warnings", DifiMeta.warning, status);
 
 			return null;
-		}).when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any());
+		}).when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any(), Mockito.any());
 
 		CrawlerResultHandler crawlerResultHandler = new CrawlerResultHandler(dcatDataStore, adminDataStore);
 		ClassLoader classLoader = getClass().getClassLoader();
@@ -101,4 +103,69 @@ public class CrawlerResultHandlerTest {
 		crawlerResultHandler.process(new DcatSource("", "", "", ""), model);
 
 	}
+
+
+	@Test
+	public void testValidationLoggingSyntaxError() throws IOException {
+		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
+		Mockito.doNothing().when(dcatDataStore).saveDataCatalogue(Mockito.any(), Mockito.any());
+
+
+		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
+//            Mockito.doNothing().when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any());
+		Mockito.doAnswer((invocationOnMock) -> {
+
+			Resource status = (Resource) invocationOnMock.getArguments()[1];
+			String message = (String) invocationOnMock.getArguments()[2];
+
+			assertEquals("Thesyntax-error.jsonld file should give a syntax error", DifiMeta.syntaxError, status);
+			assertEquals("Should be the following syntax error", "[line: 1, col: 23] Unrecognized token 'fewjkfjewkl': was expecting 'null', 'true', 'false' or NaN", message);
+
+			return null;
+		}).when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any(), Mockito.any());
+
+		CrawlerResultHandler crawlerResultHandler = new CrawlerResultHandler(dcatDataStore, adminDataStore);
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource("syntax-error.jsonld").getFile());
+
+		CrawlerJob crawlerJob = new CrawlerJob(null, new DcatSource("", "", file.getCanonicalPath(), ""), adminDataStore);
+
+		crawlerJob.run();
+
+
+
+	}
+
+
+	@Test
+	public void testValidationLoggingNetworkError() throws IOException {
+		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
+		Mockito.doNothing().when(dcatDataStore).saveDataCatalogue(Mockito.any(), Mockito.any());
+
+		final boolean[] addCrawlResultsDidRun = {false};
+
+
+		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
+
+		Mockito.doAnswer((invocationOnMock) -> {
+			addCrawlResultsDidRun[0] = true;
+			Resource status = (Resource) invocationOnMock.getArguments()[1];
+
+			assertEquals("The host example.com doesn't exist and should produce a network error", DifiMeta.networkError, status);
+
+			return null;
+		}).when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any(), Mockito.any());
+
+		CrawlerResultHandler crawlerResultHandler = new CrawlerResultHandler(dcatDataStore, adminDataStore);
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource("syntax-error.jsonld").getFile());
+
+		new CrawlerJob(null, new DcatSource("", "", "http://example.com/nothing.jsonld", ""), adminDataStore).run();
+		new CrawlerJob(null, new DcatSource("", "", "http://fje389403wlkfklewfl.local/nothing.jsonld", ""), adminDataStore).run();
+		new CrawlerJob(null, new DcatSource("", "", "http://localhost:9452/nothing.jsonld", ""), adminDataStore).run();
+
+		assertTrue("The addCrawlResults was not called", addCrawlResultsDidRun[0]);
+	}
+
+
 }

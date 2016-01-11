@@ -316,9 +316,16 @@ public class AdminDataStore {
 		return userMap;
 	}
 
-	public void addCrawlResults(DcatSource dcatSource, Resource status) {
+	public void addCrawlResults(DcatSource dcatSource, Resource status, String message) {
 
 		logger.trace("Adding crawl result to dcat source {}", dcatSource.getId());
+		Map<String, String> map = new HashMap<>();
+
+		String sparqlMessage = "";
+		if(message != null){
+			sparqlMessage = "rdfs:comment ?message;";
+			map.put("message", message);
+		}
 
 		String query = String.join("\n",
 				"insert {",
@@ -327,6 +334,7 @@ public class AdminDataStore {
 				"			a difiMeta:Harvest;",
 				"			dct:created ?dateCreated;",
 				"			difiMeta:status <"+status.getURI()+">;",
+				sparqlMessage,
 				"			",
 				"            ].",
 				"     }",
@@ -335,11 +343,12 @@ public class AdminDataStore {
 				"}"
 		);
 
-		Map<String, String> map = new HashMap<>();
 
 		fuseki.sparqlUpdate(query, map);
 
 
 
 	}
+
+
 }

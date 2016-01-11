@@ -348,7 +348,7 @@ public class FusekiTest {
 		dcatSource = adminDataStore.addDcatSource(dcatSource);
 		assertNotNull("There should exist a dcat source", dcatSource);
 
-		adminDataStore.addCrawlResults(dcatSource, DifiMeta.warning);
+		adminDataStore.addCrawlResults(dcatSource, DifiMeta.warning, "some warning");
 
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
 		assertTrue("There should exist a dcat source", dcatSourceById.isPresent());
@@ -359,9 +359,10 @@ public class FusekiTest {
 
 		assertEquals("", 1, harvested.size());
 		assertEquals("", DifiMeta.warning, harvested.get(0).getStatus());
+		assertEquals("", "some warning", harvested.get(0).getMessage());
 
 
-		adminDataStore.addCrawlResults(dcatSource, DifiMeta.warning);
+		adminDataStore.addCrawlResults(dcatSource, DifiMeta.warning, "another warning");
 
 		Optional<DcatSource> dcatSourceById2 = adminDataStore.getDcatSourceById(dcatSource.getId());
 		assertTrue("There should exist a dcat source", dcatSourceById2.isPresent());
@@ -370,7 +371,6 @@ public class FusekiTest {
 		List<DcatSource.Harvest> harvested2 = dcatSource2.getHarvested();
 
 		assertEquals("", 2, harvested2.size());
-
 
 
 	}

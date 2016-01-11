@@ -20,7 +20,7 @@ public class CrawlerJobTest {
 
 		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore, null);
 		
-		CrawlerJob job = new CrawlerJob(handler, dcatSource);
+		CrawlerJob job = new CrawlerJob(handler, dcatSource, null);
 		
 		job.run();
 	}

@@ -37,6 +37,7 @@ public class CrawlerResultHandler {
 		logger.trace("Starting processing of results");
 
 		final ValidationError.RuleSeverity[] status = {ValidationError.RuleSeverity.ok};
+		final String[] message = {null};
 
 		if (DcatValidation.validate(model, (error) -> {
 			if (error.isError()) {
@@ -46,6 +47,7 @@ public class CrawlerResultHandler {
 			if (error.isWarning()) {
 				if (status[0] != ValidationError.RuleSeverity.error) {
 					status[0] = error.getRuleSeverity();
+					message[0] = error.toString();
 				}
 				logger.warn(error.toString());
 			} else {
@@ -71,7 +73,7 @@ public class CrawlerResultHandler {
 		}
 
 
-		adminDataStore.addCrawlResults(dcatSource, rdfStatus);
+		adminDataStore.addCrawlResults(dcatSource, rdfStatus, message[0]);
 
 
 		logger.trace("Finished processing of results");

@@ -41,7 +41,7 @@ public class DcatSource {
 			Statement next = harvestedIterator.next();
 			Resource resource1 = next.getObject().asResource();
 			String s = extractExactlyOneString(resource1, DCTerms.created);
-			harvested.add(new Harvest(extractExactlyOneResource(resource1, DifiMeta.status), s));
+			harvested.add(new Harvest(extractExactlyOneResource(resource1, DifiMeta.status), s, extractExactlyOneStringOrNull(resource1, RDFS.comment)));
 
 		}
 
@@ -61,6 +61,21 @@ public class DcatSource {
 		}
 		return ret;
 	}
+
+	String extractExactlyOneStringOrNull(Resource resource, Property p) {
+		StmtIterator stmtIterator = resource.listProperties(p);
+		String ret;
+		try {
+			ret = stmtIterator.next().getString();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
+		if (stmtIterator.hasNext()) {
+			throw new RuntimeException("Model contains more than one string for property " + p.toString());
+		}
+		return ret;
+	}
+
 
 
 	Resource extractExactlyOneResource(Resource resource, Property p) {
@@ -157,10 +172,12 @@ public class DcatSource {
 	public class Harvest {
 		private Resource status;
 		private String createdDate;
+		private String message;
 
-		public Harvest(Resource status, String createdDate) {
+		public Harvest(Resource status, String createdDate, String message) {
 			this.status = status;
 			this.createdDate = createdDate;
+			this.message = message;
 		}
 
 		public Resource getStatus() {
@@ -169,6 +186,10 @@ public class DcatSource {
 
 		public String getCreatedDate() {
 			return createdDate;
+		}
+
+		public String getMessage() {
+			return message;
 		}
 	}
 }
