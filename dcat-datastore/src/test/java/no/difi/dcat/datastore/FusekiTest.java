@@ -6,12 +6,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import no.difi.dcat.datastore.domain.DifiMeta;
+import no.difi.dcat.datastore.domain.User;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.atlas.iterator.Iter;
 import org.apache.jena.atlas.lib.FileOps;
@@ -172,9 +174,29 @@ public class FusekiTest {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
-		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
+		User testUser = adminDataStore.addUser(new User("", "testUserName", "", "", ""));
 
-		Map<String, String> testUserName = adminDataStore.getUser("testUserName");
+		testUser.setEmail("real@example.com");
+		adminDataStore.addUser(testUser);
+		assertEquals("", testUser.getEmail(), adminDataStore.getUsers().get(0).getEmail());
+		assertEquals("", testUser.getPassword(), adminDataStore.getUsers().get(0).getPassword());
+
+		testUser.setPassword("hello");
+		adminDataStore.addUser(testUser);
+		assertEquals("", testUser.getPassword(), adminDataStore.getUsers().get(0).getPassword());
+
+		testUser.setPassword(null);
+		adminDataStore.addUser(testUser);
+		assertEquals("Password shouldn't change if it is not present", "hello", adminDataStore.getUsers().get(0).getPassword());
+
+
+		testUser.setUsername("hurra");
+		adminDataStore.addUser(testUser);
+		assertEquals("", testUser.getUsername(), adminDataStore.getUsers().get(0).getUsername());
+
+		testUser.setRole("role2");
+		adminDataStore.addUser(testUser);
+		assertEquals("", testUser.getRole(), adminDataStore.getUsers().get(0).getRole());
 
 
 

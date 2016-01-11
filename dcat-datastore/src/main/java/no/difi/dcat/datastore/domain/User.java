@@ -79,7 +79,7 @@ public class User {
 		return new User(
 				qs.get("userid").asResource().getURI(),
 				qs.get("username").asLiteral().getString(),
-				qs.get("username").asLiteral().getString(),
+				qs.get("password").asLiteral().getString(),
 				qs.get("email").asLiteral().getString(),
 				qs.get("role").asLiteral().getString()
 		);
