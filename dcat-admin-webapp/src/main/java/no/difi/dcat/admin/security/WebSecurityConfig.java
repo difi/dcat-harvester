@@ -24,6 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         	.csrf().disable() //TODO: enable CSRF protection: https://docs.spring.io/spring-security/site/docs/current/reference/html/csrf.html#csrf-include-csrf-token
             .authorizeRequests()
             	.antMatchers("/").permitAll()
+            	.antMatchers("/admin/users").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
             .formLogin()

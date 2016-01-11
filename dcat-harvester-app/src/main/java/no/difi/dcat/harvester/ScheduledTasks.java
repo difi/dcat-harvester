@@ -34,16 +34,16 @@ public class ScheduledTasks {
 		crawlerResultHandler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
 	}
 	
-	@Scheduled(cron = "0 0 */1 * * *") //run hourly
-	public void runCrawlerJobs() {
-		logger.debug("Starting scheduled crawler jobs");
-		List<DcatSource> dcatSources = adminDataStore.getDcatSources();
-		for (DcatSource dcatSource : dcatSources) {
-			CrawlerJob job = new CrawlerJob(crawlerResultHandler, dcatSource, adminDataStore);
-			job.run();
-			int dcatIndex = dcatSources.indexOf(dcatSource) + 1;
-			logger.debug("Finished crawler job for {}. Jobs remaining: {} of {}", dcatSource.getId(), dcatIndex, dcatSources.size());
-		}
-		logger.debug("Scheduled crawler jobs completed.");
-	}
+//	@Scheduled(cron = "0 0 */1 * * *") //run hourly
+//	public void runCrawlerJobs() {
+//		logger.debug("Starting scheduled crawler jobs");
+//		List<DcatSource> dcatSources = adminDataStore.getDcatSources();
+//		for (DcatSource dcatSource : dcatSources) {
+//			CrawlerJob job = new CrawlerJob(crawlerResultHandler, dcatSource, adminDataStore);
+//			job.run();
+//			int dcatIndex = dcatSources.indexOf(dcatSource) + 1;
+//			logger.debug("Finished crawler job for {}. Jobs remaining: {} of {}", dcatSource.getId(), dcatIndex, dcatSources.size());
+//		}
+//		logger.debug("Scheduled crawler jobs completed.");
+//	}
 }

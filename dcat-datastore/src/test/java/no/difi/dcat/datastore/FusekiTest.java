@@ -237,6 +237,48 @@ public class FusekiTest {
 
 
 	}
+	
+	@Test
+	public void testDeleteOneofTwoDcatSources() throws UserAlreadyExistsException, Exception {
+
+		no.difi.dcat.datastore.domain.User testAdmin = new no.difi.dcat.datastore.domain.User("", "testAdmin", "", "", "ADMIN");
+		no.difi.dcat.datastore.domain.User testUser = new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", "");
+
+		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
+
+		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
+		adminDataStore.addUser(testUser);
+
+		DcatSource dcatSource = new DcatSource();
+		dcatSource.setDescription("desc");
+		dcatSource.setUser("testUserName");
+		dcatSource.setUrl("http://url");
+
+		dcatSource = adminDataStore.addDcatSource(dcatSource);
+		assertNotNull("There should exist a dcat source", dcatSource);
+		
+		DcatSource dcatSource2 = new DcatSource();
+		dcatSource2.setDescription("desc2");
+		dcatSource2.setUser("testUserName");
+		dcatSource2.setUrl("http://url2");
+
+		dcatSource2 = adminDataStore.addDcatSource(dcatSource2);
+		assertNotNull("There should exist a second dcat source", dcatSource2);
+
+		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")));
+
+		adminDcatDataService.deleteDcatSource(dcatSource.getId(), testAdmin);
+
+		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
+
+		assertFalse("", dcatSourceById.isPresent());
+		
+		Optional<DcatSource> dcatSourceById2 = adminDataStore.getDcatSourceById(dcatSource2.getId());
+
+		assertTrue("", dcatSourceById2.isPresent());
+
+
+	}
 
 	@Test
 	public void testGetAllDcatSourcesForUser() throws UserAlreadyExistsException, Exception {
