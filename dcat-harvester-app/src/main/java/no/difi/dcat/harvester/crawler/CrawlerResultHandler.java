@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.difi.dcat.datastore.DcatDataStore;
-import no.difi.dcat.datastore.DcatSource;
 import no.difi.dcat.datastore.Fuseki;
+import no.difi.dcat.datastore.domain.DcatSource;
 
 public class CrawlerResultHandler {
 

@@ -35,7 +35,7 @@ public class UserDto {
 		this.role = role;
 	}
 
-	public String getUserid() {
+	public String getId() {
 		return userid;
 	}
 	

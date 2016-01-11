@@ -21,8 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 import no.difi.dcat.admin.settings.ApplicationSettings;
 import no.difi.dcat.admin.settings.FusekiSettings;
 import no.difi.dcat.datastore.AdminDataStore;
-import no.difi.dcat.datastore.DcatSource;
 import no.difi.dcat.datastore.Fuseki;
+import no.difi.dcat.datastore.domain.DcatSource;
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -39,6 +39,12 @@ public class DcatAdminController {
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
+	}
+	
+
+	@RequestMapping("/")
+	public ModelAndView index() {
+		return new ModelAndView("redirect:/admin");
 	}
 
 	@RequestMapping("/admin")

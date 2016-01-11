@@ -1,4 +1,4 @@
-package no.difi.dcat.datastore;
+package no.difi.dcat.datastore.domain;
 
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Model;

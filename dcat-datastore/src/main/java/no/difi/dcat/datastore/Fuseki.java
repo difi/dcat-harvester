@@ -82,6 +82,22 @@ public class Fuseki {
 				prefixes + query);
 		return q.execAsk();
 	}
+	
+	public boolean ask(String sparql, Map<String, String> map) {
+		ParameterizedSparqlString p = new ParameterizedSparqlString();
+		p.setCommandText(prefixes + sparql);
+		map.keySet()
+				.stream()
+				.forEach((key) -> p.setLiteral(key, map.get(key)));
+		
+		Query query = QueryFactory.create(p.toString());
+		
+		logger.trace(query.toString());
+		
+		QueryExecution q = QueryExecutionFactory.sparqlService(serviceUri,
+				query);
+		return q.execAsk();
+	}
 
 	public void update(String name, Model model) {
 		logger.trace("Updating graph {} with data", name);

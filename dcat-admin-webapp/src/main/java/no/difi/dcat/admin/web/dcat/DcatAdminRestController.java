@@ -8,6 +8,8 @@ import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 
 import no.difi.dcat.datastore.*;
+import no.difi.dcat.datastore.domain.DcatSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

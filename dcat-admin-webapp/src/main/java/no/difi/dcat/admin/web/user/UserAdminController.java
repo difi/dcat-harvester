@@ -1,7 +1,6 @@
 package no.difi.dcat.admin.web.user;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import no.difi.dcat.admin.settings.FusekiSettings;
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.Fuseki;
+import no.difi.dcat.datastore.domain.User;
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -39,9 +39,9 @@ public class UserAdminController {
 	public ModelAndView viewUsers(@RequestParam(value="edit", required=false) String editUsername, Principal principal) {
 		String name = principal.getName();
 		
-		List<UserDto> users = new ArrayList<>();
-		users.add(new UserDto("1", "test_user", "password", "test_user@example.org", "USER"));
-		users.add(new UserDto("2,","test_admin", "password", "test_admin@example.org", "ADMIN"));
+		List<User> users = adminDataStore.getUsers();
+		users.add(new User("1", "test_user", "password", "test_user@example.org", "USER"));
+		users.add(new User("2,","test_admin", "password", "test_admin@example.org", "ADMIN"));
 		
 		ModelAndView model = new ModelAndView("users");
 		model.addObject("users", users);
@@ -49,7 +49,7 @@ public class UserAdminController {
 		
 	    if (editUsername != null) {
 	    	logger.trace("Looking for username to edit {}", editUsername);
-	    	Optional<UserDto> editUser = users.stream().filter((UserDto user) -> user.getUsername().equalsIgnoreCase(editUsername)).findFirst();
+	    	Optional<User> editUser = users.stream().filter((User user) -> user.getUsername().equalsIgnoreCase(editUsername)).findFirst();
 	    	if (editUser.isPresent()) {
 	    		logger.trace("User found {}", editUsername);
 	    		model.addObject("editUser", editUser.get());

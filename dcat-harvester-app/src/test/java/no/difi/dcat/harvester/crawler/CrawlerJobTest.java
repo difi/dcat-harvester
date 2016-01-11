@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import no.difi.dcat.datastore.DcatDataStore;
-import no.difi.dcat.datastore.DcatSource;
+import no.difi.dcat.datastore.domain.DcatSource;
 
 public class CrawlerJobTest {
 	

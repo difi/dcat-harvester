@@ -1,11 +1,28 @@
 package no.difi.dcat.datastore;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.atlas.iterator.Iter;
 import org.apache.jena.atlas.lib.FileOps;
 import org.apache.jena.fuseki.jetty.JettyFuseki;
 import org.apache.jena.fuseki.jetty.JettyServerConfig;
-import org.apache.jena.fuseki.server.*;
+import org.apache.jena.fuseki.server.DataAccessPointRegistry;
+import org.apache.jena.fuseki.server.FusekiEnv;
+import org.apache.jena.fuseki.server.FusekiServer;
+import org.apache.jena.fuseki.server.FusekiServerListener;
+import org.apache.jena.fuseki.server.ServerInitialConfig;
+import org.apache.jena.fuseki.server.SystemState;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.Model;
@@ -21,11 +38,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 
-import java.io.File;
-import java.net.URI;
-import java.util.*;
-
-import static org.junit.Assert.*;
+import no.difi.dcat.datastore.domain.DcatSource;
 
 /**
  * Created by havardottestad on 05/01/16.
@@ -133,7 +146,7 @@ public class FusekiTest {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
-		adminDataStore.addUser("testUserName", "", "");
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
 		Map<String, String> testUserName = adminDataStore.getUser("testUserName");
 
@@ -155,8 +168,8 @@ public class FusekiTest {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
-		adminDataStore.addUser("testUserName", "", "");
-		adminDataStore.addUser("testUserName", "", "");
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
 	}
 
@@ -165,7 +178,7 @@ public class FusekiTest {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
-		adminDataStore.addUser("testUserName", "", "");
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
 		DcatSource dcatSource = new DcatSource();
 		dcatSource.setDescription("desc");
@@ -200,7 +213,7 @@ public class FusekiTest {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
-		adminDataStore.addUser("testUserName", "", "");
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
 		DcatSource dcatSource = new DcatSource();
 		dcatSource.setDescription("desc");
@@ -227,14 +240,14 @@ public class FusekiTest {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
-		adminDataStore.addUser("testUserName", "", "");
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
 		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName"));
 		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName"));
 		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName"));
 
 
-		adminDataStore.addUser("testUserName2", "", "");
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName2", "", "", ""));
 
 		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2"));
 		adminDataStore.addDcatSource(new DcatSource(null, "sourc22", "http:22", "testUserName2"));
@@ -254,7 +267,7 @@ public class FusekiTest {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
-		adminDataStore.addUser("testUserName", "", "");
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
 		List<DcatSource> testUserNameDcatSources = adminDataStore.getDcatSourcesForUser("testUserName");
 		List<DcatSource> testUserName2DcatSources = adminDataStore.getDcatSourcesForUser("testUserName2");
@@ -269,7 +282,7 @@ public class FusekiTest {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
-		adminDataStore.addUser("testUserName", "", "");
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
 		DcatSource dcatSource = new DcatSource();
 		dcatSource.setDescription("desc");

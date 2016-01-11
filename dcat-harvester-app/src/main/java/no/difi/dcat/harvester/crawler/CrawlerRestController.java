@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import no.difi.dcat.datastore.AdminDataStore;
-import no.difi.dcat.datastore.DcatSource;
 import no.difi.dcat.datastore.Fuseki;
+import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.harvester.settings.FusekiSettings;
 
 @RestController
