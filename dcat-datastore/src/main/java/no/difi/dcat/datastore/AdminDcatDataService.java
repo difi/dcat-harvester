@@ -27,6 +27,8 @@ public class AdminDcatDataService {
 		this.dcatDataStore = dcatDataStore;
 	}
 
+
+
 	/**
 	 * @param dcatSourceId
 	 */
@@ -48,6 +50,8 @@ public class AdminDcatDataService {
 				"	graph <http://dcat.difi.no/usersGraph/> {",
 				"		?dcatSource ?b ?c.",
 				"		?c ?d ?e.",
+				"		?f ?g ?dcatSource ." ,
+
 				"	}",
 				"} where {",
 				"           BIND(IRI(?dcatSourceUri) as ?dcatSource)",
@@ -55,6 +59,10 @@ public class AdminDcatDataService {
 				"		OPTIONAL{" ,
 				"			?c ?d ?e." ,
 				"		}",
+				"		OPTIONAL{" ,
+				"			?f ?g ?dcatSource ." ,
+				"		}",
+
 				"}");
 
 		Map<String, String> map = new HashMap<>();

@@ -237,7 +237,7 @@ public class FusekiTest {
 
 
 	}
-	
+
 	@Test
 	public void testDeleteOneofTwoDcatSources() throws UserAlreadyExistsException, Exception {
 
@@ -256,7 +256,7 @@ public class FusekiTest {
 
 		dcatSource = adminDataStore.addDcatSource(dcatSource);
 		assertNotNull("There should exist a dcat source", dcatSource);
-		
+
 		DcatSource dcatSource2 = new DcatSource();
 		dcatSource2.setDescription("desc2");
 		dcatSource2.setUser("testUserName");
@@ -272,7 +272,7 @@ public class FusekiTest {
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
 
 		assertFalse("", dcatSourceById.isPresent());
-		
+
 		Optional<DcatSource> dcatSourceById2 = adminDataStore.getDcatSourceById(dcatSource2.getId());
 
 		assertTrue("", dcatSourceById2.isPresent());
@@ -303,6 +303,27 @@ public class FusekiTest {
 
 		assertEquals("", 3, testUserNameDcatSources.size());
 		assertEquals("", 2, testUserName2DcatSources.size());
+
+	}
+
+
+	@Test
+	public void testGetAllDcatSourcesForUserWithDelete() throws UserAlreadyExistsException, Exception {
+
+		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
+
+		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
+
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName"));
+		DcatSource dcatSource = adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName"));
+
+		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(fuseki));
+		adminDcatDataService.deleteDcatSource(dcatSource.getId(), adminDataStore.getUserObject("testUserName"));
+
+		List<DcatSource> testUserNameDcatSources = adminDataStore.getDcatSourcesForUser("testUserName");
+
+		assertEquals("", 1, testUserNameDcatSources.size());
 
 	}
 
@@ -431,6 +452,41 @@ public class FusekiTest {
 
 
 	}
+
+
+	@Test
+	public void testMultipleDcatFiles() throws UserAlreadyExistsException, Exception {
+
+		DcatDataStore dcatDataStore = new DcatDataStore(new Fuseki("http://localhost:3131/admin/"));
+
+		DcatSource dcatSource = new DcatSource();
+		dcatSource.setGraph("http://example.com/1");
+
+		Model defaultModel = ModelFactory.createDefaultModel();
+		defaultModel.createResource().addLiteral(RDFS.label, "hello");
+
+		dcatDataStore.saveDataCatalogue(dcatSource, defaultModel);
+
+
+		DcatSource dcatSource2 = new DcatSource();
+		dcatSource2.setGraph("http://example.com/2");
+
+		Model defaultModel2 = ModelFactory.createDefaultModel();
+		defaultModel2.createResource().addLiteral(RDFS.label, "test");
+
+		dcatDataStore.saveDataCatalogue(dcatSource2, defaultModel2);
+
+		Model allDataCatalogues = dcatDataStore.getAllDataCatalogues();
+
+		long size = allDataCatalogues.size();
+
+		assertEquals("Two graphs with 1 triple each should make 2 triples.", 2, size);
+
+	}
+
+
+
+
 
 
 
