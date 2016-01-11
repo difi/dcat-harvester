@@ -306,6 +306,32 @@ public class FusekiTest {
 
 	}
 
+	@Test
+	public void testGetAllDcatSources() throws UserAlreadyExistsException, Exception {
+
+		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
+
+		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
+
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName"));
+
+
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName2", "", "", ""));
+
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc22", "http:22", "testUserName2"));
+
+		List<DcatSource> allSources = adminDataStore.getDcatSources();
+
+		assertEquals("", 5, allSources.size());
+
+	}
+
+
+
 
 	@Test
 	public void testWhenNoSourcesForUse() throws UserAlreadyExistsException, Exception {
