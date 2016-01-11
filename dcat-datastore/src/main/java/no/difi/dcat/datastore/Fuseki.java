@@ -43,18 +43,6 @@ public class Fuseki {
 				.stream()
 				.forEach((key) -> p.setLiteral(key, map.get(key)));
 
-//		Map<Var, Node> map2 = new HashMap<>() ;
-//		map.forEach((k,v) -> map2.put( Var.alloc(k), NodeFactoryExtra.createLiteralNode(v, null, null)) ) ;
-//
-//
-//		UpdateRequest updates = UpdateFactory.create(prefixes+sparql);
-//
-//		System.out.println(updates.toString());
-//
-//		UpdateRequest transform = UpdateTransformOps.transform(updates, map2);
-//
-//		System.out.println(transform.toString());
-
 		try{
 			UpdateExecutionFactory.createRemoteForm(UpdateFactory.create(p.toString()), updateServiceUri).execute();
 
