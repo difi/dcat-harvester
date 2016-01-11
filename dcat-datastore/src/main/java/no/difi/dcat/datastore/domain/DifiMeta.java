@@ -18,7 +18,7 @@ public class DifiMeta {
 	public static final Property harvested = ResourceFactory.createProperty(DIFI_META + "harvested");
 
 	public static final Property status = ResourceFactory.createProperty(DIFI_META + "status");
-	
+
 	public static final Resource ok = ResourceFactory.createResource(DIFI_META + "ok");
 	public static final Resource warning = ResourceFactory.createResource(DIFI_META + "warning");
 	public static final Resource error = ResourceFactory.createResource(DIFI_META + "error");

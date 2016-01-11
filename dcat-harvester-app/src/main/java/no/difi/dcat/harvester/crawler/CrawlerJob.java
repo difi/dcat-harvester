@@ -1,7 +1,7 @@
 package no.difi.dcat.harvester.crawler;
 
 import no.difi.dcat.datastore.AdminDataStore;
-import no.difi.dcat.datastore.DifiMeta;
+import no.difi.dcat.datastore.domain.DifiMeta;
 import org.apache.jena.atlas.web.HttpException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
