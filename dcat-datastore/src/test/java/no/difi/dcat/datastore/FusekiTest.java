@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import no.difi.dcat.datastore.domain.DifiMeta;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.atlas.iterator.Iter;
 import org.apache.jena.atlas.lib.FileOps;
@@ -174,6 +175,20 @@ public class FusekiTest {
 	}
 
 	@Test
+	public void testUpdateUser() throws UserAlreadyExistsException {
+		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
+
+		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
+
+		Map<String, String> testUserName = adminDataStore.getUser("testUserName");
+
+
+
+	}
+
+
+	@Test
 	public void testAddDcatSource() throws UserAlreadyExistsException, Exception {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
@@ -316,6 +331,50 @@ public class FusekiTest {
 		assertEquals("Id should be equal", fromFuseki.getId(), fromFuseki2.getId());
 
 	}
+
+
+	@Test
+	public void testCrawlDcatSourceLogging() throws UserAlreadyExistsException, Exception {
+		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
+
+		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
+		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
+
+		DcatSource dcatSource = new DcatSource();
+		dcatSource.setDescription("desc");
+		dcatSource.setUser("testUserName");
+		dcatSource.setUrl("http://url");
+
+		dcatSource = adminDataStore.addDcatSource(dcatSource);
+		assertNotNull("There should exist a dcat source", dcatSource);
+
+		adminDataStore.addCrawlResults(dcatSource, DifiMeta.warning, "some warning");
+
+		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
+		assertTrue("There should exist a dcat source", dcatSourceById.isPresent());
+
+		DcatSource dcatSource1 = dcatSourceById.get();
+		List<DcatSource.Harvest> harvested = dcatSource1.getHarvested();
+
+
+		assertEquals("", 1, harvested.size());
+		assertEquals("", DifiMeta.warning, harvested.get(0).getStatus());
+		assertEquals("", "some warning", harvested.get(0).getMessage());
+
+
+		adminDataStore.addCrawlResults(dcatSource, DifiMeta.warning, "another warning");
+
+		Optional<DcatSource> dcatSourceById2 = adminDataStore.getDcatSourceById(dcatSource.getId());
+		assertTrue("There should exist a dcat source", dcatSourceById2.isPresent());
+
+		DcatSource dcatSource2 = dcatSourceById2.get();
+		List<DcatSource.Harvest> harvested2 = dcatSource2.getHarvested();
+
+		assertEquals("", 2, harvested2.size());
+
+
+	}
+
 
 
 	public void fuseki() throws Exception {

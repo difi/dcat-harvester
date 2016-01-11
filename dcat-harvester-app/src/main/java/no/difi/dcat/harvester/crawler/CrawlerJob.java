@@ -1,7 +1,11 @@
 package no.difi.dcat.harvester.crawler;
 
+import no.difi.dcat.datastore.AdminDataStore;
+import no.difi.dcat.datastore.domain.DifiMeta;
+import org.apache.jena.atlas.web.HttpException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RiotException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,12 +15,14 @@ public class CrawlerJob implements Runnable {
 
 	private CrawlerResultHandler handler;
 	private DcatSource dcatSource;
+	private AdminDataStore adminDataStore;
 	
 	private final Logger logger = LoggerFactory.getLogger(CrawlerJob.class);
 	
-	public CrawlerJob(CrawlerResultHandler handler, DcatSource dcatSource) {
+	public CrawlerJob(CrawlerResultHandler handler, DcatSource dcatSource, AdminDataStore adminDataStore) {
 		this.handler = handler;
 		this.dcatSource = dcatSource;
+		this.adminDataStore = adminDataStore;
 	}
 
 	@Override
@@ -26,7 +32,15 @@ public class CrawlerJob implements Runnable {
 		Model model = ModelFactory.createDefaultModel();
 		
 		try {
-			model.read(dcatSource.getUrl());
+			try{
+				model.read(dcatSource.getUrl());
+			}catch (RiotException e){
+				adminDataStore.addCrawlResults(dcatSource, DifiMeta.syntaxError, e.getMessage());
+				throw e;
+			}catch (HttpException e){
+				adminDataStore.addCrawlResults(dcatSource, DifiMeta.networkError, e.getMessage());
+				throw e;
+			}
 			handler.process(dcatSource, model);
 		} catch (Exception e) {
 			logger.error("Error running crawler job", e);
@@ -36,7 +50,7 @@ public class CrawlerJob implements Runnable {
 	}
 	
 	public static void main(String[] args) {
-		CrawlerJob crawler = new CrawlerJob(new CrawlerResultHandler("http://localhost:8080/fuseki/dcat"), DcatSource.getDefault());
+		CrawlerJob crawler = new CrawlerJob(new CrawlerResultHandler("http://localhost:8080/fuseki/dcat", "http://localhost:8080/fuseki/admin"), DcatSource.getDefault(), null);
 		crawler.run();
 	}
 

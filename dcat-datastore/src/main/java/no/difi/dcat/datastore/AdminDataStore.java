@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.RDF;
@@ -314,4 +315,40 @@ public class AdminDataStore {
 
 		return userMap;
 	}
+
+	public void addCrawlResults(DcatSource dcatSource, Resource status, String message) {
+
+		logger.trace("Adding crawl result to dcat source {}", dcatSource.getId());
+		Map<String, String> map = new HashMap<>();
+
+		String sparqlMessage = "";
+		if(message != null){
+			sparqlMessage = "rdfs:comment ?message;";
+			map.put("message", message);
+		}
+
+		String query = String.join("\n",
+				"insert {",
+				"     graph <http://dcat.difi.no/usersGraph/> {",
+				"           <" + dcatSource.getId() + "> difiMeta:harvested [",
+				"			a difiMeta:Harvest;",
+				"			dct:created ?dateCreated;",
+				"			difiMeta:status <"+status.getURI()+">;",
+				sparqlMessage,
+				"			",
+				"            ].",
+				"     }",
+				"} where {",
+				"     BIND(NOW() as ?dateCreated)",
+				"}"
+		);
+
+
+		fuseki.sparqlUpdate(query, map);
+
+
+
+	}
+
+
 }

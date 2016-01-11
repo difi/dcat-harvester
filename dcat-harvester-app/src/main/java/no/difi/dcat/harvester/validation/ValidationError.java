@@ -41,12 +41,44 @@ public class ValidationError{
       }
 
 
-      enum RuleSeverity{
-            error, warning
+
+
+      public enum RuleSeverity{
+            error, warning, ok
       }
 
 
+      public String getClassName() {
+            return className;
+      }
 
+      public int getRuleId() {
+            return ruleId;
+      }
+
+      public RuleSeverity getRuleSeverity() {
+            return ruleSeverity;
+      }
+
+      public String getRuleDescription() {
+            return ruleDescription;
+      }
+
+      public String getMessage() {
+            return message;
+      }
+
+      public RDFNode getS() {
+            return s;
+      }
+
+      public RDFNode getP() {
+            return p;
+      }
+
+      public RDFNode getO() {
+            return o;
+      }
 
       @Override
       public String toString() {
