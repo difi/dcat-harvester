@@ -1,5 +1,7 @@
 package no.difi.dcat.admin.web.user;
 
+import java.security.Principal;
+
 import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 
@@ -58,8 +60,11 @@ public class UserAdminRestController {
 	}
 	
 	@RequestMapping(value = "/api/admin/user", method = RequestMethod.DELETE)
-	public void deleteUser(@Valid @RequestParam("delete") String username) {
-		adminDcatDataService.deleteUser(username);
+	public void deleteUser(@Valid @RequestParam("delete") String username, Principal principal) {
+		if (principal == null) {
+			return;
+		}
+		adminDcatDataService.deleteUser(username, adminDataStore.getUserObject(principal.getName()));
 	}
 	
 	private static User convertToDomain(UserDto dto) {

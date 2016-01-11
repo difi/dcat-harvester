@@ -67,6 +67,14 @@ public class User {
 		this.role = role;
 	}
 	
+	public boolean isAdmin() {
+		return role.equalsIgnoreCase("ADMIN");
+	}
+	
+	public boolean isRegularUser() {
+		return role.equalsIgnoreCase("USER");
+	}
+	
 	public static User fromQuerySolution(QuerySolution qs) {
 		return new User(
 				qs.get("userid").asResource().getURI(),

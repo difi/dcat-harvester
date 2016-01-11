@@ -75,9 +75,9 @@ public class DcatAdminController {
 	}
 	
 	@RequestMapping(value= "/admin/harvestDcatSource", method = RequestMethod.GET)
-	public ModelAndView harvestDcatSource(@RequestParam("name") String dcatSourceName, ModelMap model) {
+	public ModelAndView harvestDcatSource(@RequestParam("id") String dcatSourceId, ModelMap model) {
 		try {
-			URL url = new URL(applicationSettings.getHarvesterUrl() + "/api/admin/harvest?name=" + dcatSourceName);
+			URL url = new URL(applicationSettings.getHarvesterUrl() + "/api/admin/harvest?id=" + dcatSourceId);
 			url.openConnection().getInputStream();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

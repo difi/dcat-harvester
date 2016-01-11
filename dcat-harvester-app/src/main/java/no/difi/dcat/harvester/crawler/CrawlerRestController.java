@@ -34,21 +34,21 @@ public class CrawlerRestController {
 	}
 	
 	@RequestMapping("/api/admin/harvest")
-	public void harvestDataSoure(@RequestParam(value="name") String dcatSourceName) {
-		logger.debug("Received request to harvest {}", dcatSourceName);
-		Optional<DcatSource> dcatSource = adminDataStore.getDcatSourceById(dcatSourceName);
+	public void harvestDataSoure(@RequestParam(value="id") String dcatSourceId) {
+		logger.debug("Received request to harvest {}", dcatSourceId);
+		Optional<DcatSource> dcatSource = adminDataStore.getDcatSourceById(dcatSourceId);
 		if (dcatSource.isPresent()) {
 			CrawlerResultHandler handler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
 			CrawlerJob job = new CrawlerJob(handler, dcatSource.get(), adminDataStore);
 			try {
-				logger.debug("Manually starting crawler job for {}", dcatSourceName);
+				logger.debug("Manually starting crawler job for {}", dcatSourceId);
 				job.run();
 			} catch (Exception e) {
 				logger.error("Error running crawler manually", e);
 			}
-			logger.debug("Finished manuel crawler job for {}", dcatSourceName);
+			logger.debug("Finished manuel crawler job for {}", dcatSourceId);
 		} else {
-			logger.warn("No stored dcat source with name {}", dcatSourceName);
+			logger.warn("No stored dcat source with id {}", dcatSourceId);
 		}
 	}
 	

@@ -350,5 +350,8 @@ public class AdminDataStore {
 
 	}
 
-
+	public User getUserObject(String username) {
+		Map<String,String> userMap = getUser(username);
+		return new User("", userMap.get("username"), "", "", userMap.get("role"));
+	}
 }
