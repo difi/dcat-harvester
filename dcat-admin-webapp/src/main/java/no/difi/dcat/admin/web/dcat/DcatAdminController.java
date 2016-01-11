@@ -40,6 +40,12 @@ public class DcatAdminController {
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
 	}
+	
+
+	@RequestMapping("/")
+	public ModelAndView index() {
+		return new ModelAndView("redirect:/admin");
+	}
 
 	@RequestMapping("/admin")
 	public ModelAndView viewAllDcatSources(@RequestParam(value="edit", required=false) String editDcatSourceName, Principal principal) {
