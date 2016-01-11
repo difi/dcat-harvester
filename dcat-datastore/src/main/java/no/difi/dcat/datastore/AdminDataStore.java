@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.sparql.vocabulary.FOAF;
@@ -38,23 +39,30 @@ public class AdminDataStore {
 		logger.trace("Listing all dcat sources");
 		List<DcatSource> dcatSources = new ArrayList<DcatSource>();
 
-		StringBuilder qb = new StringBuilder();
-		qb.append("PREFIX difi: <http://dcat.difi.no/>\n");
-		qb.append("SELECT ?name ?url ?user ?description\n");
-		qb.append("WHERE {\n");
-		qb.append("?name difi:url ?url .\n");
-		qb.append("?name difi:description ?description .\n");
-		qb.append("?name difi:user ?user\n");
-		qb.append("} limit 100");
 
-		ResultSet results = fuseki.select(qb.toString());
+		Map<String, String> map = new HashMap<>();
 
-		while (results.hasNext()) {
-			DcatSource dcatSource = DcatSource.fromQuerySolution(results.next());
-			dcatSources.add(dcatSource);
+		String query = String.join("\n",
+				"describe ?a ?user where {",
+				"	?user difiMeta:dcatSource ?a.",
+				"}"
+		);
+		Model dcatModel = fuseki.describe(query, map);
+
+		System.out.println(DifiMeta.DcatSource);
+
+		List<DcatSource> ret = new ArrayList<>();
+
+		ResIterator resIterator = dcatModel.listResourcesWithProperty(RDF.type, DifiMeta.DcatSource);
+
+
+		while(resIterator.hasNext()){
+			String uri = resIterator.nextResource().getURI();
+			ret.add(new DcatSource(dcatModel, uri));
+
 		}
 
-		return dcatSources;
+		return ret;
 
 	}
 
