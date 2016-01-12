@@ -301,7 +301,7 @@ public class AdminDataStore {
 			map.put("role", user.getRole());
 			map.put("password", user.getPassword());
 			map.put("email", user.getEmail());
-			map.put("userID", user.getId());
+			map.put("userId", user.getId());
 
 
 			fuseki.sparqlUpdate(query, map);

@@ -204,6 +204,26 @@ public class FusekiTest {
 
 
 	@Test
+	public void testUpdateUserMultipleUsers() throws UserAlreadyExistsException {
+		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
+
+		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
+		User testUser = adminDataStore.addUser(new User("", "testUserName", "", "", ""));
+		User testUser2 = adminDataStore.addUser(new User("", "testUserName2", "", "", ""));
+
+		testUser.setEmail("real@example.com");
+		adminDataStore.addUser(testUser);
+
+		List<User> users = adminDataStore.getUsers();
+		boolean atLeast1UserWithOldEmail = users.stream().filter(user -> !user.getEmail().equals(testUser.getEmail())).findAny().isPresent();
+
+		assertTrue("", atLeast1UserWithOldEmail);
+
+
+	}
+
+
+	@Test
 	public void testAddDcatSource() throws UserAlreadyExistsException, Exception {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
