@@ -358,8 +358,9 @@ public class AdminDataStore {
 	/**
 	 * @param username
 	 * @return
+	 * @throws UserNotFoundException 
 	 */
-	public Map<String, String> getUser(String username) {
+	public Map<String, String> getUser(String username) throws UserNotFoundException {
 		logger.trace("Getting user {}", username);
 
 		Map<String, String> map = new HashMap<>();
@@ -382,6 +383,10 @@ public class AdminDataStore {
 			userMap.put("role", qs.get("role").asLiteral().toString());
 		}
 
+		if (!userMap.containsKey("username")) {
+			throw new UserNotFoundException("User not found in database: " + username);
+		}
+		
 		return userMap;
 	}
 
@@ -414,13 +419,10 @@ public class AdminDataStore {
 
 
 		fuseki.sparqlUpdate(query, map);
-
-
-
 	}
 
 
-	public User getUserObject(String username) {
+	public User getUserObject(String username) throws UserNotFoundException {
 		Map<String,String> userMap = getUser(username);
 		return new User("", userMap.get("username"), "", "", userMap.get("role"));
 	}

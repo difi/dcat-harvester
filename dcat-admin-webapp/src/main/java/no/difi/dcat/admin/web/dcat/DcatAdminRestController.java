@@ -40,7 +40,6 @@ public class DcatAdminRestController {
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
 		adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki(fusekiSettings.getAdminServiceUri())));
-
 	}
 
 	@RequestMapping("/api/admin/dcat-sources")
@@ -53,31 +52,36 @@ public class DcatAdminRestController {
 	}
 
 	@RequestMapping(value = "/api/admin/dcat-source", method = RequestMethod.POST)
-	public void addDataSource(@Valid @RequestBody DcatSourceDto dcatSourceDto) {
+	public ResponseEntity<String> addDataSource(@Valid @RequestBody DcatSourceDto dcatSourceDto) {
 		DcatSource dcatSource = convertToDomain(dcatSourceDto);
 		if (dcatSource.getId() == null || dcatSource.getId().isEmpty()) {
 			dcatSource.setId(String.format("http://dcat.difi.no/%s", UUID.randomUUID().toString()));
 		}
 		
 		adminDataStore.addDcatSource(dcatSource);
+		
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 
 	@RequestMapping(value = "/api/admin/dcat-source", method = RequestMethod.DELETE)
-	public void deleteDataSource(@Valid @RequestParam("delete") String dcatName, Principal principal) {
+	public ResponseEntity<String> deleteDataSource(@Valid @RequestParam("delete") String dcatName, Principal principal) throws UserNotFoundException {
 		if (principal == null) {
-			return;
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		adminDcatDataService.deleteDcatSource(dcatName, adminDataStore.getUserObject(principal.getName()));
+		try {
+			adminDcatDataService.deleteDcatSource(dcatName, adminDataStore.getUserObject(principal.getName()));
+		} catch (UserNotFoundException e) {
+			throw e;
+		}
+		
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 	
 	private DcatSource convertToDomain(DcatSourceDto dto) {
-		return new DcatSource(dto.getName(), dto.getDescription(), dto.getUrl(), dto.getUser());
+		return new DcatSource(dto.getId(), dto.getDescription(), dto.getUrl(), dto.getUser());
 	}
 	
 	private DcatSourceDto convertToDto(DcatSource domain) {
 		return new DcatSourceDto(domain.getId(), domain.getDescription(), domain.getUrl(), domain.getUser());
 	}
-	
-
-
 }

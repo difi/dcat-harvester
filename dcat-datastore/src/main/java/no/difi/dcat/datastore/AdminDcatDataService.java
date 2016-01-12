@@ -77,7 +77,7 @@ public class AdminDcatDataService {
 	public void deleteUser(String username, User user) {
 		logger.trace("Deleting user {}", username);
 		
-		if (user.getRole().equalsIgnoreCase("ADMIN")) {
+		if ("ADMIN".equalsIgnoreCase(user.getRole())) {
 				
 				String query = String.join("\n",
 						"delete {",

@@ -22,14 +22,16 @@
 			Log out </a>
 	</p>
 
+	<div class="alert alert-danger" role="alert" id="errors"></div>
+
 	<div class="row">
 
 		<div class="col-md-3">
 
 			<c:set var="editUser" value="${editUser}"/>
 		
-			<input type="hidden" id="inputUserId" value="${editUser.userid}"></input> 
-		
+			<input type="hidden" id="inputUserId" value="${editUser.getId()}"></input> 
+
 			<div class="form-group">
 				<label for="inputUsername">Username</label> <input type="text"
 					class="form-control" id="inputUsername" placeholder="Username" value="${editUser.username}"></input> 
@@ -94,9 +96,9 @@
 	
 	</div>
 
+	<script src="${pageContext.request.contextPath}/js/scripts.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var saveUser = function () {
-
 			var userid = document.getElementById('inputUserId').value;
 			var username = document.getElementById('inputUsername').value;
 			var password = document.getElementById('inputPassword').value;
@@ -111,26 +113,14 @@
 				'role': role
 			};
 
-			if (!username || !email || !role) {
-				console.log("Empty values not allowed", data);
-				return;
-			}
-			
-			var request = new XMLHttpRequest();
-			request.open('POST', '${pageContext.request.contextPath}/api/admin/user', true);
-			request.onload = function() { location.reload(); };
-			request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-			request.send(JSON.stringify(data));
+			sendRequest('POST', '${pageContext.request.contextPath}/api/admin/user', data);
 		};
 
 		var deleteUser = function (username) {
-
-			var request = new XMLHttpRequest();
-			request.open('DELETE', '${pageContext.request.contextPath}/api/admin/user?delete='+username, true);
-			request.onload = function() { location.reload(); };
-			request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-			request.send();
+			sendRequest('DELETE', '${pageContext.request.contextPath}/api/admin/user?delete='+username, null);
 		};
+
+		clearErrors();
 	</script>
 
 </body>
