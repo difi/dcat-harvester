@@ -43,15 +43,12 @@ public class FusekiUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 		Map<String,String> userMap = new HashMap<>();
+	
+		createTestUser("test_user", "password", "USER");
+		createTestUser("test_admin", "password", "ADMIN");
 		
 		try {
-			if (username.equalsIgnoreCase("test_user")) {
-				userMap = getTestUser("test_user", "password", "USER");
-			} else if (username.equalsIgnoreCase("test_admin")) {
-				userMap = getTestUser("test_admin", "password", "ADMIN");
-			} else {
-				userMap = adminDataStore.getUser(username);
-			}
+			userMap = adminDataStore.getUser(username);
 		} catch (UserNotFoundException e) {
 			throw new UsernameNotFoundException(e.getMessage());
 		}
@@ -59,19 +56,12 @@ public class FusekiUserDetailsService implements UserDetailsService {
 		return new User(username, userMap.get("password"), Arrays.asList(new SimpleGrantedAuthority(userMap.get("role"))));
 	}
 	
-	private Map<String,String> getTestUser(String username, String password, String role) {
-		Map<String,String> userMap = new HashMap<>();
-		userMap.put("username", username);
-		userMap.put("password", passwordEncoder.encode(password));
-		userMap.put("role", role);
-		
+	private void createTestUser(String username, String password, String role) {
 		try {
-			no.difi.dcat.datastore.domain.User user = new no.difi.dcat.datastore.domain.User(null, userMap.get("username"), userMap.get("password"), username+"@example.org", userMap.get("role"));
+			no.difi.dcat.datastore.domain.User user = new no.difi.dcat.datastore.domain.User(null, username, passwordEncoder.encode(password), username+"@example.org", role);
 			adminDataStore.addUser(user);
 		} catch (Exception e) {
 			logger.warn(e.getMessage());
 		}
-		return userMap;
 	}
-
 }
