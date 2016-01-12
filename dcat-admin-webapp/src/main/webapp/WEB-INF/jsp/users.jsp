@@ -30,7 +30,7 @@
 
 			<c:set var="editUser" value="${editUser}"/>
 		
-			<input type="hidden" id="inputUserId" value="${editUser.userid}"></input> 
+			<input type="hidden" id="inputUserId" value="${editUser.getId()}"></input> 
 
 			<div class="form-group">
 				<label for="inputUsername">Username</label> <input type="text"
