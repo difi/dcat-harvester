@@ -4,7 +4,7 @@ import org.apache.jena.query.QuerySolution;
 
 public class User {
 
-	private String userid;
+	private String id;
 	private String username;
 	private String password;
 	private String email;
@@ -15,12 +15,12 @@ public class User {
 	}
 	
 	public User(
-			String userid,
+			String id,
 			String username,
 			String password,
 			String email,
 			String role) {
-		this.userid = userid;
+		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.email = email;
@@ -28,11 +28,11 @@ public class User {
 	}
 
 	public String getId() {
-		return userid;
+		return id;
 	}
 
 	public void setId(String userid) {
-		this.userid = userid;
+		this.id = userid;
 	}
 
 	public String getUsername() {

@@ -64,6 +64,13 @@ public class FusekiUserDetailsService implements UserDetailsService {
 		userMap.put("username", username);
 		userMap.put("password", passwordEncoder.encode(password));
 		userMap.put("role", role);
+		
+		try {
+			no.difi.dcat.datastore.domain.User user = new no.difi.dcat.datastore.domain.User(null, userMap.get("username"), userMap.get("password"), username+"@example.org", userMap.get("role"));
+			adminDataStore.addUser(user);
+		} catch (Exception e) {
+			logger.warn(e.getMessage());
+		}
 		return userMap;
 	}
 
