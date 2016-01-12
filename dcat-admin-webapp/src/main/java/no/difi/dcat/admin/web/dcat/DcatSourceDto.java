@@ -47,5 +47,4 @@ public class DcatSourceDto {
 	public String getUser() {
 		return user;
 	}
-
 }

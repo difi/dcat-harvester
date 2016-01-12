@@ -55,6 +55,8 @@
 						<th>Id</th>
 						<th>Description</th>
 						<th>URL</th>
+						<th>Time</th>
+						<th>Status</th>
 						<th>Harvest</th>
 						<th>Edit</th>
 						<th>Remove</th>
@@ -66,6 +68,18 @@
 							<td>${dcatSource.id}</td>
 							<td>${dcatSource.description}</td>
 							<td>${dcatSource.url}</td>
+							<td>
+								<c:if test="${dcatSource.getLastHarvest().isPresent()}">
+									${dcatSource.getLastHarvest().get().getCreatedDateFormatted()}	
+								</c:if>
+							</td>
+							<td>
+								<c:if test="${dcatSource.getLastHarvest().isPresent()}">
+									<a href="#" data-toggle="tooltip" title="${dcatSource.getLastHarvest().get().message}">
+										${dcatSource.getLastHarvest().get().status.getLocalName()}
+									</a>
+								</c:if>
+							</td>
 							<td><a class="btn btn-default" role="button" href="${pageContext.request.contextPath}/admin/harvestDcatSource?id=${dcatSource.id}"> <span
 									class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
 							</a></td>

@@ -479,8 +479,7 @@ public class FusekiTest {
 		assertEquals("", 1, harvested.size());
 		assertEquals("", DifiMeta.warning, harvested.get(0).getStatus());
 		assertEquals("", "some warning", harvested.get(0).getMessage());
-
-
+		
 		adminDataStore.addCrawlResults(dcatSource, DifiMeta.warning, "another warning");
 
 		Optional<DcatSource> dcatSourceById2 = adminDataStore.getDcatSourceById(dcatSource.getId());
