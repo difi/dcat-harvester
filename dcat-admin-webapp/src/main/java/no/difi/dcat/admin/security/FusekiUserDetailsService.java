@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import no.difi.dcat.admin.settings.FusekiSettings;
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.Fuseki;
+import no.difi.dcat.datastore.UserNotFoundException;
 
 @Component
 public class FusekiUserDetailsService implements UserDetailsService {
@@ -43,19 +44,19 @@ public class FusekiUserDetailsService implements UserDetailsService {
 
 		Map<String,String> userMap = new HashMap<>();
 		
-		if (username.equalsIgnoreCase("test_user")) {
-			userMap = getTestUser("test_user", "password", "USER");
-		} else if (username.equalsIgnoreCase("test_admin")) {
-			userMap = getTestUser("test_admin", "password", "ADMIN");
-		} else {
-			userMap = adminDataStore.getUser(username);
+		try {
+			if (username.equalsIgnoreCase("test_user")) {
+				userMap = getTestUser("test_user", "password", "USER");
+			} else if (username.equalsIgnoreCase("test_admin")) {
+				userMap = getTestUser("test_admin", "password", "ADMIN");
+			} else {
+				userMap = adminDataStore.getUser(username);
+			}
+		} catch (UserNotFoundException e) {
+			throw new UsernameNotFoundException(e.getMessage());
 		}
 		
-		if (!userMap.containsKey("username")) {
-			throw new UsernameNotFoundException("Not such username: " + username);
-		} else {
-			return new User(username, userMap.get("password"), Arrays.asList(new SimpleGrantedAuthority(userMap.get("role"))));
-		}
+		return new User(username, userMap.get("password"), Arrays.asList(new SimpleGrantedAuthority(userMap.get("role"))));
 	}
 	
 	private Map<String,String> getTestUser(String username, String password, String role) {

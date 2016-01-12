@@ -1,5 +1,6 @@
 package no.difi.dcat.admin.web.user;
 
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -12,10 +13,10 @@ public class UserDto {
 	@NotEmpty
 	private final String username;
 	
-	@NotEmpty
 	private final String password;
 	
 	@NotEmpty
+	@Email
 	private final String email;
 	
 	@NotEmpty

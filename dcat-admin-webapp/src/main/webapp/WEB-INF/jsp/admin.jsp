@@ -22,6 +22,8 @@
 			Log out </a>
 	</p>
 
+	<div class="alert alert-danger" role="alert" id="errors"></div>
+
 	<div class="col-md-3">
 	
 		<c:set var="editDcatSource" value="${editDcatSource}"/>
@@ -94,26 +96,56 @@
 				'user': '${username}'
 			};
 
-			if (!description || !url) {
-				console.log("Empty values not allowed", data);
-				return;
-			}
-			
-			var request = new XMLHttpRequest();
-			request.open('POST', '${pageContext.request.contextPath}/api/admin/dcat-source', true);
-			request.onload = function() { location.reload(); };
-			request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-			request.send(JSON.stringify(data));
+			sendRequest('POST', '${pageContext.request.contextPath}/api/admin/dcat-source', data);
 		};
 
 		var deleteDcatSource = function (dcatSourceName) {
 
-			var request = new XMLHttpRequest();
-			request.open('DELETE', '${pageContext.request.contextPath}/api/admin/dcat-source?delete='+dcatSourceName, true);
-			request.onload = function() { location.reload(); };
-			request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-			request.send();
+			sendRequest('DELETE', '${pageContext.request.contextPath}/api/admin/dcat-source?delete='+dcatSourceName, null);
 		};
+
+		var sendRequest = function (method, url, data) {
+
+			clearErrors();
+			
+			var request = new XMLHttpRequest();
+			request.open(method, url, true);
+			request.onload = function() {
+				  if (request.status >= 200 && request.status < 400) {
+				    // Success!
+					location.reload();
+				  } else {
+				    // We reached our target server, but it returned an error
+				    var exception = request.responseText;
+				    handleException(exception);
+				  }
+				};
+			request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+			if (data) {
+				request.send(JSON.stringify(data));
+			} else {
+				request.send();
+			}
+			
+		};
+
+		var clearErrors = function () {
+			var errors = document.getElementById('errors');
+			errors.textContent  = '';
+			errors.style.display = 'none';
+		};
+		
+		var handleException = function (errors) {
+			console.log('errors', errors);
+			var json = JSON.parse(errors);
+			if (json.error && json.message) {
+				var errors = document.getElementById('errors');
+				errors.textContent = json.error + ': ' + json.message;
+				errors.style.display = '';
+			}
+		};
+
+		clearErrors();
 	</script>
 
 </body>

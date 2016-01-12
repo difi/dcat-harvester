@@ -6,14 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import no.difi.dcat.datastore.domain.DifiMeta;
-import no.difi.dcat.datastore.domain.User;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.atlas.iterator.Iter;
 import org.apache.jena.atlas.lib.FileOps;
@@ -35,6 +32,8 @@ import org.apache.jena.vocabulary.RDFS;
 import org.junit.Test;
 
 import no.difi.dcat.datastore.domain.DcatSource;
+import no.difi.dcat.datastore.domain.DifiMeta;
+import no.difi.dcat.datastore.domain.User;
 
 /**
  * Created by havardottestad on 05/01/16.
@@ -138,7 +137,7 @@ public class FusekiTest {
 
 
 	@Test
-	public void testAddUser() throws UserAlreadyExistsException {
+	public void testAddUser() throws UserAlreadyExistsException, UserNotFoundException {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);

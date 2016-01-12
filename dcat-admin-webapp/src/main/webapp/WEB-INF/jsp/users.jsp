@@ -22,6 +22,8 @@
 			Log out </a>
 	</p>
 
+	<div class="alert alert-danger" role="alert" id="errors"></div>
+
 	<div class="row">
 
 		<div class="col-md-3">
@@ -29,7 +31,7 @@
 			<c:set var="editUser" value="${editUser}"/>
 		
 			<input type="hidden" id="inputUserId" value="${editUser.userid}"></input> 
-		
+
 			<div class="form-group">
 				<label for="inputUsername">Username</label> <input type="text"
 					class="form-control" id="inputUsername" placeholder="Username" value="${editUser.username}"></input> 
@@ -96,7 +98,7 @@
 
 	<script type="text/javascript">
 		var saveUser = function () {
-
+			
 			var userid = document.getElementById('inputUserId').value;
 			var username = document.getElementById('inputUsername').value;
 			var password = document.getElementById('inputPassword').value;
@@ -111,26 +113,56 @@
 				'role': role
 			};
 
-			if (!username || !email || !role) {
-				console.log("Empty values not allowed", data);
-				return;
-			}
-			
-			var request = new XMLHttpRequest();
-			request.open('POST', '${pageContext.request.contextPath}/api/admin/user', true);
-			request.onload = function() { location.reload(); };
-			request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-			request.send(JSON.stringify(data));
+			sendRequest('POST', '${pageContext.request.contextPath}/api/admin/user', data);
 		};
 
 		var deleteUser = function (username) {
-
-			var request = new XMLHttpRequest();
-			request.open('DELETE', '${pageContext.request.contextPath}/api/admin/user?delete='+username, true);
-			request.onload = function() { location.reload(); };
-			request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-			request.send();
+			
+			sendRequest('DELETE', '${pageContext.request.contextPath}/api/admin/user?delete='+username, null);
 		};
+
+		var sendRequest = function (method, url, data) {
+
+			clearErrors();
+			
+			var request = new XMLHttpRequest();
+			request.open(method, url, true);
+			request.onload = function() {
+				  if (request.status >= 200 && request.status < 400) {
+				    // Success!
+					location.reload();
+				  } else {
+				    // We reached our target server, but it returned an error
+				    var exception = request.responseText;
+				    handleException(exception);
+				  }
+				};
+			request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+			if (data) {
+				request.send(JSON.stringify(data));
+			} else {
+				request.send();
+			}
+			
+		};
+
+		var clearErrors = function () {
+			var errors = document.getElementById('errors');
+			errors.textContent  = '';
+			errors.style.display = 'none';
+		};
+		
+		var handleException = function (errors) {
+			console.log('errors', errors);
+			var json = JSON.parse(errors);
+			if (json.error && json.message) {
+				var errors = document.getElementById('errors');
+				errors.textContent = json.error + ': ' + json.message;
+				errors.style.display = '';
+			}
+		};
+
+		clearErrors();
 	</script>
 
 </body>
