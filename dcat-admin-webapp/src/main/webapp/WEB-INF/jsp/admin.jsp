@@ -44,7 +44,7 @@
 				Save</span>
 		</button>
 		
-		<a class="btn btn-default" href="/admin" role="button">Clear</a>
+		<a class="btn btn-default" href="${pageContext.request.contextPath}/admin" role="button">Clear</a>
 	</div>
 
 	<div class="col-md-9">
