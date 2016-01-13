@@ -19,7 +19,7 @@ public class DcatNamespaces {
 		model.setNsPrefix("schema", "http://schema.org/");
 		model.setNsPrefix("skos", "http://www.w3.org/2004/02/skos/core#");
 		model.setNsPrefix("xsd", "http://www.w3.org/2001/XMLSchema#");
-		model.setNsPrefix("vcard", "http://www.w3.org/TR/vcard-rdf/");
+		model.setNsPrefix("vcard", "http://www.w3.org/TR/vcard/");
 		model.setNsPrefix("pod", "https://project-open-data.cio.gov/v1.1/schema/");
 		
 		return model;
