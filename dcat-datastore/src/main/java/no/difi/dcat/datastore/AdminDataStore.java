@@ -208,8 +208,13 @@ public class AdminDataStore {
 
 
 		fuseki.sparqlUpdate(query, map);
+		
 		if(!update) {
-			logger.info("[crawler_admin] Added DCAT source: {}", dcatSource.toString());
+			if (fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) {
+				logger.error("[crawler_admin] DCAT source was not added: {}", dcatSource.toString());
+			} else {
+				logger.info("[crawler_admin] Added DCAT source: {}", dcatSource.toString());
+			}
 		}
 
 		if (fuseki.ask("ask { ?a ?b <" + dcatSource.getId() + ">}")) {
@@ -251,9 +256,13 @@ public class AdminDataStore {
 			map.put("role", user.getRole());
 			map.put("password", user.getPassword());
 			map.put("email", user.getEmail());
+			
+			if (fuseki.ask("ask { ?user foaf:accountName ?username}", map)) { 
+				logger.error("[user_admin] User was not added: {}", user.toString());
+			} else {
+				logger.info("[user_admin] Added user: {}", user.toString());
+			}
 
-			logger.info("[user_admin] Added user: {}", user.toString());
-			//TODO: Check user has actually been added
 			fuseki.sparqlUpdate(query, map);
 			
 		} else {
@@ -332,8 +341,6 @@ public class AdminDataStore {
 
 		// throw exception if the user has a dcatSource.
 
-
-		logger.trace("Deleting user {}", username);
 		String user = String.format("http://dcat.difi.no/%s", username);
 		fuseki.drop(user);
 	}
