@@ -27,8 +27,8 @@ public class DcatDataStore {
 	}
 
 	public Model getAllDataCatalogues() {
-		logger.info("Getting all data catalogues");
-		Model model = fuseki.construct("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
+		logger.trace("Getting all data catalogues");
+		Model model = fuseki.graph();
 		return model;
 	}
 

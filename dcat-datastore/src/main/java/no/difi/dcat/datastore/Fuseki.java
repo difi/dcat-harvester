@@ -152,4 +152,17 @@ public class Fuseki {
 
 		return QueryExecutionFactory.sparqlService(serviceUri, query).execDescribe();
 	}
+
+	public Model graph(String graphName) {
+
+		DatasetAccessor accessor = DatasetAccessorFactory.createHTTP(serviceUri);
+
+		return accessor.getModel(graphName);
+
+	}
+
+	public Model graph() {
+
+		return graph("urn:x-arq:UnionGraph");
+	}
 }
