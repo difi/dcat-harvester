@@ -22,13 +22,11 @@
 			Log out </a>
 	</p>
 
-	<div class="alert alert-danger" role="alert" id="errors"></div>
-
 	<div class="col-md-3">
 	
 		<c:set var="editDcatSource" value="${editDcatSource}"/>
 		
-		<input type="hidden" id="inputId" value="${editDcatSource.id}"></input>
+		<input type="hidden" id="inputName" value="${editDcatSource.id}"></input>
 	
 		<div class="form-group">
 			<label for="inputDescription">Description</label> <input type="text"
@@ -44,7 +42,7 @@
 				Save</span>
 		</button>
 		
-		<a class="btn btn-default" href="${pageContext.request.contextPath}/admin" role="button">Clear</a>
+		<a class="btn btn-default" href="/admin" role="button">Clear</a>
 	</div>
 
 	<div class="col-md-9">
@@ -52,11 +50,9 @@
 			<table class="table table-striped">
 				<thead>
 					<tr>
-						<th>Id</th>
+						<th>Name</th>
 						<th>Description</th>
 						<th>URL</th>
-						<th>Time</th>
-						<th>Status</th>
 						<th>Harvest</th>
 						<th>Edit</th>
 						<th>Remove</th>
@@ -68,18 +64,6 @@
 							<td>${dcatSource.id}</td>
 							<td>${dcatSource.description}</td>
 							<td>${dcatSource.url}</td>
-							<td>
-								<c:if test="${dcatSource.getLastHarvest().isPresent()}">
-									${dcatSource.getLastHarvest().get().getCreatedDateFormatted()}	
-								</c:if>
-							</td>
-							<td>
-								<c:if test="${dcatSource.getLastHarvest().isPresent()}">
-									<a href="#" data-toggle="tooltip" title="${dcatSource.getLastHarvest().get().message}">
-										${dcatSource.getLastHarvest().get().status.getLocalName()}
-									</a>
-								</c:if>
-							</td>
 							<td><a class="btn btn-default" role="button" href="${pageContext.request.contextPath}/admin/harvestDcatSource?id=${dcatSource.id}"> <span
 									class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
 							</a></td>
@@ -96,28 +80,40 @@
 		</c:if>
 	</div>
 	
-	<script src="${pageContext.request.contextPath}/js/scripts.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var saveDcatSource = function () {
-			var id = document.getElementById('inputId').value;
+
+			var name = document.getElementById('inputName').value;
 			var description = document.getElementById('inputDescription').value;
 			var url = document.getElementById('inputUrl').value;
 			
 			var data = {
-				'id': id,
+				'name': name,
 				'description': description,
 				'url': url,
 				'user': '${username}'
 			};
 
-			sendRequest('POST', '${pageContext.request.contextPath}/api/admin/dcat-source', data);
+			if (!description || !url) {
+				console.log("Empty values not allowed", data);
+				return;
+			}
+			
+			var request = new XMLHttpRequest();
+			request.open('POST', '${pageContext.request.contextPath}/api/admin/dcat-source', true);
+			request.onload = function() { location.reload(); };
+			request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+			request.send(JSON.stringify(data));
 		};
 
-		var deleteDcatSource = function (dcatSourceId) {
-			sendRequest('DELETE', '${pageContext.request.contextPath}/api/admin/dcat-source?delete='+dcatSourceId, null);
-		};
+		var deleteDcatSource = function (dcatSourceName) {
 
-		clearErrors();
+			var request = new XMLHttpRequest();
+			request.open('DELETE', '${pageContext.request.contextPath}/api/admin/dcat-source?delete='+dcatSourceName, true);
+			request.onload = function() { location.reload(); };
+			request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+			request.send();
+		};
 	</script>
 
 </body>

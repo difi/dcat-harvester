@@ -11,7 +11,7 @@
 		<file>/usr/local/tomcat/logs/dcat-admin.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!--  Daily rollover -->
-			<fileNamePattern>dcat-admin.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>difi.%d{yyyy-MM-dd}.log</fileNamePattern>
 			<!--  Keep last 30 days -->
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>

@@ -1,17 +1,26 @@
 package no.difi.dcat.datastore.domain;
 
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.xml.bind.DatatypeConverter;
+
 import org.apache.jena.query.QuerySolution;
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDFS;
-
-import com.sun.javafx.binding.StringFormatter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
 
 public class DcatSource {
 
@@ -174,6 +183,21 @@ public class DcatSource {
 	public List<Harvest> getHarvested() {
 		return harvested;
 	}
+	
+	public Optional<Harvest> getLastHarvest() {
+		Optional<Harvest> harvest = harvested.stream().max(new Comparator<Harvest>() {
+
+			@Override
+			public int compare(Harvest o1, Harvest o2) {
+				Calendar c1 = DatatypeConverter.parseDateTime(o1.createdDate);
+				Calendar c2 = DatatypeConverter.parseDateTime(o1.createdDate);
+				
+				return c1.compareTo(c2);
+			}
+		});
+		
+		return harvest;
+	}
 
 	public class Harvest {
 		private Resource status;
@@ -184,6 +208,13 @@ public class DcatSource {
 			this.status = status;
 			this.createdDate = createdDate;
 			this.message = message;
+		}
+		
+		public String getCreatedDateFormatted() {
+			Calendar cal = DatatypeConverter.parseDateTime(createdDate);
+			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("NO"));
+			
+			return df.format(cal.getTime());
 		}
 
 		public Resource getStatus() {

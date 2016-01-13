@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DcatSourceDto {
 	
-	private final String name;
+	private final String id;
 	
 	@NotEmpty
 	private final String description;
@@ -22,18 +22,18 @@ public class DcatSourceDto {
 	
 	@JsonCreator
 	public DcatSourceDto(
-			@JsonProperty("name") String name, 
+			@JsonProperty("id") String id, 
 			@JsonProperty("description") String description,
 			@JsonProperty("url)") String url, 
 			@JsonProperty("user") String user) {
-		this.name = name;
+		this.id = id;
 		this.description = description;
 		this.url = url;
 		this.user = user;
 	}
 	
-	public String getName() {
-		return name;
+	public String getId() {
+		return id;
 	}
 	
 	public String getDescription() {
@@ -47,5 +47,4 @@ public class DcatSourceDto {
 	public String getUser() {
 		return user;
 	}
-
 }

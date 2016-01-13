@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import no.difi.dcat.datastore.domain.DifiMeta;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.atlas.iterator.Iter;
 import org.apache.jena.atlas.lib.FileOps;
@@ -33,6 +32,8 @@ import org.apache.jena.vocabulary.RDFS;
 import org.junit.Test;
 
 import no.difi.dcat.datastore.domain.DcatSource;
+import no.difi.dcat.datastore.domain.DifiMeta;
+import no.difi.dcat.datastore.domain.User;
 
 /**
  * Created by havardottestad on 05/01/16.
@@ -136,7 +137,7 @@ public class FusekiTest {
 
 
 	@Test
-	public void testAddUser() throws UserAlreadyExistsException {
+	public void testAddUser() throws UserAlreadyExistsException, UserNotFoundException {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
@@ -172,10 +173,50 @@ public class FusekiTest {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
-		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
+		User testUser = adminDataStore.addUser(new User("", "testUserName", "", "", ""));
 
-		Map<String, String> testUserName = adminDataStore.getUser("testUserName");
+		testUser.setEmail("real@example.com");
+		adminDataStore.addUser(testUser);
+		assertEquals("", testUser.getEmail(), adminDataStore.getUsers().get(0).getEmail());
+		assertEquals("", testUser.getPassword(), adminDataStore.getUsers().get(0).getPassword());
 
+		testUser.setPassword("hello");
+		adminDataStore.addUser(testUser);
+		assertEquals("", testUser.getPassword(), adminDataStore.getUsers().get(0).getPassword());
+
+		testUser.setPassword(null);
+		adminDataStore.addUser(testUser);
+		assertEquals("Password shouldn't change if it is not present", "hello", adminDataStore.getUsers().get(0).getPassword());
+
+
+		testUser.setUsername("hurra");
+		adminDataStore.addUser(testUser);
+		assertEquals("", testUser.getUsername(), adminDataStore.getUsers().get(0).getUsername());
+
+		testUser.setRole("role2");
+		adminDataStore.addUser(testUser);
+		assertEquals("", testUser.getRole(), adminDataStore.getUsers().get(0).getRole());
+
+
+
+	}
+
+
+	@Test
+	public void testUpdateUserMultipleUsers() throws UserAlreadyExistsException {
+		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
+
+		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
+		User testUser = adminDataStore.addUser(new User("", "testUserName", "", "", ""));
+		User testUser2 = adminDataStore.addUser(new User("", "testUserName2", "", "", ""));
+
+		testUser.setEmail("real@example.com");
+		adminDataStore.addUser(testUser);
+
+		List<User> users = adminDataStore.getUsers();
+		boolean atLeast1UserWithOldEmail = users.stream().filter(user -> !user.getEmail().equals(testUser.getEmail())).findAny().isPresent();
+
+		assertTrue("", atLeast1UserWithOldEmail);
 
 
 	}
@@ -438,8 +479,7 @@ public class FusekiTest {
 		assertEquals("", 1, harvested.size());
 		assertEquals("", DifiMeta.warning, harvested.get(0).getStatus());
 		assertEquals("", "some warning", harvested.get(0).getMessage());
-
-
+		
 		adminDataStore.addCrawlResults(dcatSource, DifiMeta.warning, "another warning");
 
 		Optional<DcatSource> dcatSourceById2 = adminDataStore.getDcatSourceById(dcatSource.getId());

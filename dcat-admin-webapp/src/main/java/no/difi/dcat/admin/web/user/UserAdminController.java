@@ -40,9 +40,7 @@ public class UserAdminController {
 		String name = principal.getName();
 		
 		List<User> users = adminDataStore.getUsers();
-		users.add(new User("1", "test_user", "password", "test_user@example.org", "USER"));
-		users.add(new User("2,","test_admin", "password", "test_admin@example.org", "ADMIN"));
-		
+
 		ModelAndView model = new ModelAndView("users");
 		model.addObject("users", users);
 	    model.addObject("username", name);

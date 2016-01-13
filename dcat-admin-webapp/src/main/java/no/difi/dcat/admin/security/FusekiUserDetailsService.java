@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import no.difi.dcat.admin.settings.FusekiSettings;
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.Fuseki;
+import no.difi.dcat.datastore.UserNotFoundException;
 
 @Component
 public class FusekiUserDetailsService implements UserDetailsService {
@@ -42,28 +43,25 @@ public class FusekiUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 		Map<String,String> userMap = new HashMap<>();
+	
+		createTestUser("test_user", "password", "USER");
+		createTestUser("test_admin", "password", "ADMIN");
 		
-		if (username.equalsIgnoreCase("test_user")) {
-			userMap = getTestUser("test_user", "password", "USER");
-		} else if (username.equalsIgnoreCase("test_admin")) {
-			userMap = getTestUser("test_admin", "password", "ADMIN");
-		} else {
+		try {
 			userMap = adminDataStore.getUser(username);
+		} catch (UserNotFoundException e) {
+			throw new UsernameNotFoundException(e.getMessage());
 		}
 		
-		if (!userMap.containsKey("username")) {
-			throw new UsernameNotFoundException("Not such username: " + username);
-		} else {
-			return new User(username, userMap.get("password"), Arrays.asList(new SimpleGrantedAuthority(userMap.get("role"))));
-		}
+		return new User(username, userMap.get("password"), Arrays.asList(new SimpleGrantedAuthority(userMap.get("role"))));
 	}
 	
-	private Map<String,String> getTestUser(String username, String password, String role) {
-		Map<String,String> userMap = new HashMap<>();
-		userMap.put("username", username);
-		userMap.put("password", passwordEncoder.encode(password));
-		userMap.put("role", role);
-		return userMap;
+	private void createTestUser(String username, String password, String role) {
+		try {
+			no.difi.dcat.datastore.domain.User user = new no.difi.dcat.datastore.domain.User(null, username, passwordEncoder.encode(password), username+"@example.org", role);
+			adminDataStore.addUser(user);
+		} catch (Exception e) {
+			logger.warn(e.getMessage());
+		}
 	}
-
 }
