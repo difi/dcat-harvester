@@ -4,7 +4,7 @@ import org.springframework.http.MediaType;
 
 public enum SupportedFormat {
 
-	JSONLD("application/ld+json", "JSONLD"),
+	JSONLD("application/json", "JSONLD"), //TODO: should this be application/ld+json?
 	RDFXML("application/rdf+xml", "RDF/XML");
 	
 	private final MediaType mimetype;

@@ -54,6 +54,8 @@ public class DcatRestController {
 		
 		Model model = dcatDataStore.getAllDataCatalogues();
 		
+		model = DcatNamespaces.setNsPrefixesOnModel(model);
+		
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			model.write(baos, supportedFormat.getLang());
 			
