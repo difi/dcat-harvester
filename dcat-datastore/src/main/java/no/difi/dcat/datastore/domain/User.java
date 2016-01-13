@@ -28,7 +28,7 @@ public class User {
 	}
 
 	public String toString() {
-		return String.format("user: user_id=%1$s, user_name=%2$s", this.getId(), this.getUsername());
+		return String.format("user_id=%1$s, user_name=%2$s", this.getId(), this.getUsername());
 	}
 	
 	public String getId() {

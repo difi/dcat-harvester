@@ -146,7 +146,7 @@ public class AdminDataStore {
 			Optional<DcatSource> dcatSourceById = getDcatSourceById(dcatSource.getId());
 			if (dcatSourceById.isPresent()) {
 				dcatSource.setGraph(dcatSourceById.get().getGraph());
-				logger.info("Updated DCAT source {}", dcatSource.toString());
+				logger.info("[crawler_admin] Updated DCAT source: {}", dcatSource.toString());
 				update = true;
 			}
 			
@@ -209,7 +209,7 @@ public class AdminDataStore {
 
 		fuseki.sparqlUpdate(query, map);
 		if(!update) {
-			logger.info("Added dcat source {}", dcatSource.toString());
+			logger.info("[crawler_admin] Added DCAT source: {}", dcatSource.toString());
 		}
 
 		if (fuseki.ask("ask { ?a ?b <" + dcatSource.getId() + ">}")) {
@@ -252,7 +252,7 @@ public class AdminDataStore {
 			map.put("password", user.getPassword());
 			map.put("email", user.getEmail());
 
-			logger.info("Added user: {}", user.toString());
+			logger.info("[user_admin] Added user: {}", user.toString());
 			//TODO: Check user has actually been added
 			fuseki.sparqlUpdate(query, map);
 			
@@ -312,7 +312,7 @@ public class AdminDataStore {
 
 
 			fuseki.sparqlUpdate(query, map);
-			logger.info("Updated user: {}", user.toString());
+			logger.info("[user_admin] Updated user: {}", user.toString());
 
 		}
 
