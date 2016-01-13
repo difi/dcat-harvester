@@ -28,7 +28,6 @@ import org.apache.jena.vocabulary.RDFS;
 
 public class DcatSource {
 
-
 	private String id;
 	private String description;
 	private String url;
@@ -45,21 +44,18 @@ public class DcatSource {
 		url = extractExactlyOneString(resource, DifiMeta.url);
 		graph = extractExactlyOneString(resource, DifiMeta.graph);
 		description = extractExactlyOneString(resource, RDFS.comment);
-		user = dcatModel.listResourcesWithProperty(DifiMeta.dcatSource)
-				.nextResource()
-				.listProperties(FOAF.accountName)
-				.next()
-				.getString();
+		user = dcatModel.listResourcesWithProperty(DifiMeta.dcatSource).nextResource().listProperties(FOAF.accountName)
+				.next().getString();
 
 		StmtIterator harvestedIterator = resource.listProperties(DifiMeta.harvested);
 		while (harvestedIterator.hasNext()) {
 			Statement next = harvestedIterator.next();
 			Resource resource1 = next.getObject().asResource();
 			String s = extractExactlyOneString(resource1, DCTerms.created);
-			harvested.add(new Harvest(extractExactlyOneResource(resource1, DifiMeta.status), s, extractExactlyOneStringOrNull(resource1, RDFS.comment)));
+			harvested.add(new Harvest(extractExactlyOneResource(resource1, DifiMeta.status), s,
+					extractExactlyOneStringOrNull(resource1, RDFS.comment)));
 
 		}
-
 
 	}
 
@@ -91,8 +87,6 @@ public class DcatSource {
 		return ret;
 	}
 
-
-
 	Resource extractExactlyOneResource(Resource resource, Property p) {
 		StmtIterator stmtIterator = resource.listProperties(p);
 		Resource ret;
@@ -110,17 +104,12 @@ public class DcatSource {
 	public DcatSource() {
 	}
 
-	public DcatSource(
-			String id,
-			String description,
-			String url,
-			String user) {
+	public DcatSource(String id, String description, String url, String user) {
 		this.id = id;
 		this.description = description;
 		this.url = url;
 		this.user = user;
 	}
-
 
 	public void setId(String id) {
 		this.id = id;
@@ -155,21 +144,14 @@ public class DcatSource {
 	}
 
 	public static DcatSource fromQuerySolution(QuerySolution qs) {
-		return new DcatSource(
-				qs.get("name").asResource().getURI(),
-				qs.get("description").asLiteral().getString(),
-				qs.get("url").asResource().getURI(),
-				qs.get("user").asLiteral().getString()
-		);
+		return new DcatSource(qs.get("name").asResource().getURI(), qs.get("description").asLiteral().getString(),
+				qs.get("url").asResource().getURI(), qs.get("user").asLiteral().getString());
 	}
 
 	public static DcatSource getDefault() {
-		return new DcatSource(
-				String.format("http://dcat.difi.no/%s", UUID.randomUUID().toString()),
-				"Npolar",
+		return new DcatSource(String.format("http://dcat.difi.no/%s", UUID.randomUUID().toString()), "Npolar",
 				"http://api.npolar.no/dataset/?q=&format=json&variant=dcat&limit=all&filter-links.rel=data&filter-draft=no",
-				"test"
-		);
+				"test");
 	}
 
 	public String getGraph() {
@@ -183,19 +165,28 @@ public class DcatSource {
 	public List<Harvest> getHarvested() {
 		return harvested;
 	}
-	
+
 	public Optional<Harvest> getLastHarvest() {
 		Optional<Harvest> harvest = harvested.stream().max(new Comparator<Harvest>() {
 
 			@Override
 			public int compare(Harvest o1, Harvest o2) {
+				if (o1 == o2) {
+					return 0;
+				}
+				if (o1 == null) {
+					return -1;
+				}
+				if (o2 == null) {
+					return 1;
+				}
 				Calendar c1 = DatatypeConverter.parseDateTime(o1.createdDate);
 				Calendar c2 = DatatypeConverter.parseDateTime(o1.createdDate);
-				
+
 				return c1.compareTo(c2);
 			}
 		});
-		
+
 		return harvest;
 	}
 
@@ -209,11 +200,11 @@ public class DcatSource {
 			this.createdDate = createdDate;
 			this.message = message;
 		}
-		
+
 		public String getCreatedDateFormatted() {
 			Calendar cal = DatatypeConverter.parseDateTime(createdDate);
 			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("NO"));
-			
+
 			return df.format(cal.getTime());
 		}
 
