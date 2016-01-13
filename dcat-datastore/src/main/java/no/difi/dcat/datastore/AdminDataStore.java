@@ -139,15 +139,17 @@ public class AdminDataStore {
 	 * @param dcatSource
 	 */
 	public DcatSource addDcatSource(DcatSource dcatSource) {
-
-		logger.trace("Adding dcat source {}", dcatSource.getId());
-
+		boolean update = false;
+		
 		if (dcatSource.getId() != null && dcatSource.getGraph() == null) {
 			//get current graph
 			Optional<DcatSource> dcatSourceById = getDcatSourceById(dcatSource.getId());
 			if (dcatSourceById.isPresent()) {
 				dcatSource.setGraph(dcatSourceById.get().getGraph());
+				logger.info("Updated DCAT source {}", dcatSource.toString());
+				update = true;
 			}
+			
 		}
 
 		if (dcatSource.getId() == null && dcatSource.getGraph() != null) {
@@ -206,6 +208,9 @@ public class AdminDataStore {
 
 
 		fuseki.sparqlUpdate(query, map);
+		if(!update) {
+			logger.info("Added dcat source {}", dcatSource.toString());
+		}
 
 		if (fuseki.ask("ask { ?a ?b <" + dcatSource.getId() + ">}")) {
 			return dcatSource;
@@ -221,7 +226,6 @@ public class AdminDataStore {
 	 * @param user
 	 */
 	public User addUser(User user) throws UserAlreadyExistsException {
-		logger.trace("Adding user {}", user.getUsername());
 
 		if (user.getId() == null || user.getId().isEmpty()) {
 			// insert new user
@@ -248,7 +252,10 @@ public class AdminDataStore {
 			map.put("password", user.getPassword());
 			map.put("email", user.getEmail());
 
+			logger.info("Added user: {}", user.toString());
+			//TODO: Check user has actually been added
 			fuseki.sparqlUpdate(query, map);
+			
 		} else {
 			// update exisiting user
 
@@ -305,12 +312,9 @@ public class AdminDataStore {
 
 
 			fuseki.sparqlUpdate(query, map);
-
-
+			logger.info("Updated user: {}", user.toString());
 
 		}
-
-
 
 		if (fuseki.ask("ask { <" + user.getId() + "> ?b ?c}")) {
 			return user;

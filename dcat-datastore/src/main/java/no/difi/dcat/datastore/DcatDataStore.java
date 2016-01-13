@@ -34,7 +34,6 @@ public class DcatDataStore {
 
 	public void deleteDataCatalogue(DcatSource dcatSource) {
 		if(dcatSource == null || dcatSource.getGraph() == null || dcatSource.getGraph().trim().equals("")) return;
-		logger.info("Deleted DCAT source {}", dcatSource.toString());
 		fuseki.drop(dcatSource.getGraph());
 	}
 }

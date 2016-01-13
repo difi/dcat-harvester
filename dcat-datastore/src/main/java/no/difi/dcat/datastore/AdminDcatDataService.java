@@ -71,7 +71,7 @@ public class AdminDcatDataService {
 		adminDataStore.fuseki.sparqlUpdate(query, map);
 
 		dcatDataStore.deleteDataCatalogue(dcatSource);
-		logger.info("Deleted dcat source {}", dcatSource.toString());
+		logger.info("Deleted DCAT source: {}", dcatSource.toString());
 	}
 	
 	public void deleteUser(String username, User user) {
@@ -94,11 +94,11 @@ public class AdminDcatDataService {
 				map.put("username", username);
 
 				adminDataStore.fuseki.sparqlUpdate(query, map);	
-			
+				//TODO: does this actually check if a user has been deleted?
 				if (adminDataStore.fuseki.ask("ask { ?user foaf:accountName ?username}", map)) {
-					logger.info("Deleted user {}", username);
+					logger.info("Deleted user {}", user.toString());
 				} else {
-					logger.error("User {} was not deleted", username);
+					logger.error("User was not deleted {}", user.toString());
 				}
 				
 		} else {

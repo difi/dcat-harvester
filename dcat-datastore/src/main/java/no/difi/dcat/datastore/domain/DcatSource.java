@@ -169,7 +169,7 @@ public class DcatSource {
 	}
 
 	public String toString() {
-		return String.format("crawler_id: %1$s, crawler_name: %2$s, crawler_url: %3$s", this.getId(), this.getDescription(), this.getUrl());
+		return String.format("crawler_id=%1$s, crawler_name=%2$s, crawler_url=%3$s", this.getId(), this.getDescription(), this.getUrl());
 	}
 	
 	public String getGraph() {
