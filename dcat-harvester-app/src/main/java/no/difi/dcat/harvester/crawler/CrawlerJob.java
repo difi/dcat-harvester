@@ -34,7 +34,7 @@ public class CrawlerJob implements Runnable {
 
 	@Override
 	public void run() {
-		logger.info("Started crawler job for {}", dcatSource.toString());
+		logger.info("[crawler_operations] Started crawler job: {}", dcatSource.toString());
 		LocalDateTime start = LocalDateTime.now();
 		Model model = ModelFactory.createDefaultModel();
 		
@@ -54,7 +54,7 @@ public class CrawlerJob implements Runnable {
 		}
 		
 		LocalDateTime stop = LocalDateTime.now();
-		logger.info("Finished crawler job for {}", dcatSource.toString() + ", Duration: " + returnCrawlDuration(start, stop));
+		logger.info("[crawler_operations] Finished crawler job: {}", dcatSource.toString() + ", Duration: " + returnCrawlDuration(start, stop));
 	}
 	
 	public static void main(String[] args) {
