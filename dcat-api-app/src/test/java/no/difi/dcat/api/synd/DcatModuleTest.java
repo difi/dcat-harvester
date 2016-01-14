@@ -13,7 +13,7 @@ import org.junit.Test;
 /**
  * Created by havardottestad on 13/01/16.
  */
-public class DcatEntryTest {
+public class DcatModuleTest {
 
 	@Test
 	public void testGetInstance() throws Exception {

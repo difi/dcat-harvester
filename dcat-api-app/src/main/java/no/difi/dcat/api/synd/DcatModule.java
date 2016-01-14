@@ -16,10 +16,10 @@ import com.rometools.rome.feed.CopyFrom;
 import com.rometools.rome.feed.module.ModuleImpl;
 
 public class DcatModule extends ModuleImpl {
-	
+
 	public static final String URI = "http://data.norge.no";
 	private static final long serialVersionUID = -2270589093650785086L;
-	
+
 	private Date modified;
 	private String publisher;
 	private String orgNumber;
@@ -30,8 +30,9 @@ public class DcatModule extends ModuleImpl {
 	public DcatModule() {
 		super(DcatModule.class, URI);
 	}
-	
-	public DcatModule(Date modified, String publisher, String orgNumber, String subject, List<String> keywords, List<String> formats) {
+
+	public DcatModule(Date modified, String publisher, String orgNumber, String subject, List<String> keywords,
+			List<String> formats) {
 		this();
 		this.modified = modified;
 		this.publisher = publisher;
@@ -40,7 +41,7 @@ public class DcatModule extends ModuleImpl {
 		this.keywords = keywords;
 		this.formats = formats;
 	}
-	
+
 	public Date getModified() {
 		return modified;
 	}
@@ -89,68 +90,67 @@ public class DcatModule extends ModuleImpl {
 		this.formats = formats;
 	}
 
-	static DcatModule getInstance(Resource r){
+	static DcatModule getInstance(Resource r) {
 
-		DcatModule dcatEntry = new DcatModule();
+		DcatModule dcatModule = new DcatModule();
 
-		dcatEntry.keywords = new ArrayList<>();
-		dcatEntry.formats = new ArrayList<>();
+		dcatModule.keywords = new ArrayList<>();
+		dcatModule.formats = new ArrayList<>();
 
-		dcatEntry.publisher = extractExactlyOneStringOrNull(r, DCTerms.publisher, FOAF.name);
-		dcatEntry.subject = extractExactlyOneStringOrNull(r, DCTerms.title);
+		dcatModule.publisher = extractExactlyOneStringOrNull(r, DCTerms.publisher, FOAF.name);
+		dcatModule.subject = extractExactlyOneStringOrNull(r, DCTerms.title);
 
-		StmtIterator keywordIterator = r.listProperties(ResourceFactory.createProperty("http://www.w3.org/ns/dcat#keyword"));
+		StmtIterator keywordIterator = r
+				.listProperties(ResourceFactory.createProperty("http://www.w3.org/ns/dcat#keyword"));
 
-		while(keywordIterator.hasNext()){
-			try{
-				dcatEntry.keywords.add(keywordIterator.next().getString());
-			}catch (JenaException e){
+		while (keywordIterator.hasNext()) {
+			try {
+				dcatModule.keywords.add(keywordIterator.next().getString());
+			} catch (JenaException e) {
 				e.printStackTrace();
 			}
 		}
 
-		StmtIterator distributionIterator = r.listProperties(ResourceFactory.createProperty("http://www.w3.org/ns/dcat#distribution"));
-		while(distributionIterator.hasNext()){
-			try{
+		StmtIterator distributionIterator = r
+				.listProperties(ResourceFactory.createProperty("http://www.w3.org/ns/dcat#distribution"));
+		while (distributionIterator.hasNext()) {
+			try {
 				Resource distribution = distributionIterator.next().getResource();
 				String format = extractExactlyOneStringOrNull(distribution, DCTerms.format);
-				if(format != null){
-					dcatEntry.formats.add(format);
+				if (format != null) {
+					dcatModule.formats.add(format);
 				}
 
-			}catch (JenaException e){
+			} catch (JenaException e) {
 
 			}
 		}
 
-		return dcatEntry;
+		return dcatModule;
 
 	}
 
-	private static String extractExactlyOneStringOrNull(Resource resource, Property ... p ) {
-
-		for (int i = 0; i<p.length; i++) {
-
-
+	private static String extractExactlyOneStringOrNull(Resource resource, Property... p) {
+		for (int i = 0; i < p.length; i++) {
 			StmtIterator stmtIterator = resource.listProperties(p[i]);
-			if(i==p.length-1){
+			if (i == p.length - 1) {
 				try {
-					return stmtIterator.next().getString();
+					if (stmtIterator.hasNext()) {
+						return stmtIterator.next().getString();
+					}
 				} catch (JenaException e) {
 					return null;
 				}
-			}else{
+			} else {
 				try {
-					resource = stmtIterator.next().getResource();
+					if (stmtIterator.hasNext()) {
+						resource = stmtIterator.next().getResource();
+					}
 				} catch (JenaException e) {
 					return null;
 				}
 			}
-
-
 		}
-
-
 		return null;
 	}
 
@@ -170,8 +170,4 @@ public class DcatModule extends ModuleImpl {
 		setFormats(module.getKeywords());
 	}
 
-
-
-
-	
 }

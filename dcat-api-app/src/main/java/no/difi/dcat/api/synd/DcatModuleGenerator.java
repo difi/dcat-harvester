@@ -1,15 +1,12 @@
 package no.difi.dcat.api.synd;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import org.springframework.format.datetime.DateFormatter;
 
 import com.rometools.rome.feed.module.Module;
 import com.rometools.rome.io.ModuleGenerator;

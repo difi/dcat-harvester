@@ -1,8 +1,6 @@
 package no.difi.dcat.api.synd;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +21,9 @@ public class DcatRssView extends AbstractRssFeedView {
 	@Override
 	protected void buildFeedMetadata(Map<String, Object> model, Channel channel, 
 			HttpServletRequest request) {
-		channel.setTitle("Concretepage.com");
-		channel.setLink("http://www.concretepage.com");
-		channel.setDescription("Concretepage.com is a java tutorial.");
+		channel.setTitle("DCAT Harvester");
+		channel.setLink("http://demo.difi.no");
+		channel.setDescription("DIFI DCAT Harvester Demo");
 	}
 	@Override
 	protected List<Item> buildFeedItems(
@@ -45,8 +43,7 @@ public class DcatRssView extends AbstractRssFeedView {
 	    		Content content = new Content();
 	    		content.setValue(dcatFeed.getDescription());
 	    		item.setContent(content);
-				DcatModule module = new DcatModule(new Date(), "Test", "123456789", "testing", Arrays.asList("test", "testing", "tests"), Arrays.asList("xml", "plaintext"));
-				item.getModules().add(module);
+				item.getModules().add(dcatFeed.getDcatModule());
 	    		items.add(item);
 	           }
 		}

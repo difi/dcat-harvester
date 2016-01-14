@@ -4,15 +4,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ResIterator;
+import org.apache.jena.rdf.model.Resource;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class DcatFeed {
+	
 	private String feedId;
 	private String title;
 	private String description;
 	private Date pubDate;
 	private String link;
+	private DcatModule dcatModule;
 
 	public String getFeedId() {
 		return feedId;
@@ -54,22 +59,32 @@ public class DcatFeed {
 		this.link = link;
 	}
 
-	public List<DcatFeed> createFeed() {
+	public DcatModule getDcatModule() {
+		return dcatModule;
+	}
+
+	public void setDcatModule(DcatModule dcatModule) {
+		this.dcatModule = dcatModule;
+	}
+	
+	public List<DcatFeed> createFeed(Model model) {
 		List<DcatFeed> feeds = new ArrayList<>();
-		DcatFeed feed1 = new DcatFeed();
-		feed1.setFeedId("100");
-		feed1.setTitle("Title one");
-		feed1.setDescription("This is description one");
-		feed1.setLink("http://www.urlone.com");
-		feed1.setPubDate(new Date());
-		feeds.add(feed1);
-		DcatFeed feed2 = new DcatFeed();
-		feed2.setFeedId("200");
-		feed2.setTitle("Title two");
-		feed2.setDescription("This is description two");
-		feed2.setLink("http://www.urltwo.com");
-		feed2.setPubDate(new Date());
-		feeds.add(feed2);
+		
+		ResIterator iterator = model.listResourcesWithProperty(model.createProperty("http://www.w3.org/ns/dcat#", "accessURL"));
+		while (iterator.hasNext()) {
+			Resource next = iterator.next();
+			DcatModule dcatModule = DcatModule.getInstance(next);
+			
+			DcatFeed dcatFeed = new DcatFeed();
+			dcatFeed.setFeedId("100");
+			dcatFeed.setTitle("Title one");
+			dcatFeed.setDescription("This is description one");
+			dcatFeed.setLink("http://www.urlone.com");
+			dcatFeed.setPubDate(new Date());
+			dcatFeed.setDcatModule(dcatModule);
+			feeds.add(dcatFeed);
+		}
+		
 		return feeds;
 	}
 }
