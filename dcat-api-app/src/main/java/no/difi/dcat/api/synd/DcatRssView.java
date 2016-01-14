@@ -1,6 +1,8 @@
 package no.difi.dcat.api.synd;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +17,9 @@ import com.rometools.rome.feed.rss.Item;
 
 public class DcatRssView extends AbstractRssFeedView {
 	
+	public DcatRssView() {
+	}
+	
 	@Override
 	protected void buildFeedMetadata(Map<String, Object> model, Channel channel, 
 			HttpServletRequest request) {
@@ -27,6 +32,7 @@ public class DcatRssView extends AbstractRssFeedView {
 			Map<String, Object> model, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		List<Item> items = new ArrayList<>();
+	
 		Object ob = model.get("feeds");
 		if (ob instanceof List){
 	           for(int i = 0; i < ((List<?>)ob).size(); i++){
@@ -39,6 +45,8 @@ public class DcatRssView extends AbstractRssFeedView {
 	    		Content content = new Content();
 	    		content.setValue(dcatFeed.getDescription());
 	    		item.setContent(content);
+				DcatModule module = new DcatModule(new Date(), "Test", "123456789", "testing", Arrays.asList("test", "testing", "tests"), Arrays.asList("xml", "plaintext"));
+				item.getModules().add(module);
 	    		items.add(item);
 	           }
 		}

@@ -11,17 +11,17 @@ public class FeedController {
 	
 	@Autowired
 	private DcatFeed dcatFeed;
-
+	
 	@RequestMapping(value="/api/atom/feed", method=RequestMethod.GET)
 	public ModelAndView getAtomContent() {
-		ModelAndView mav = new ModelAndView();
+		ModelAndView mav = new ModelAndView(new DcatAtomView());
 		mav.addObject("feeds", dcatFeed.createFeed());
 		return mav;
 	}
 	
 	@RequestMapping(value="/api/rss/feed", method=RequestMethod.GET)
 	public ModelAndView getRssContent() {
-		ModelAndView mav = new ModelAndView();
+		ModelAndView mav = new ModelAndView(new DcatRssView());
 		mav.addObject("feeds", dcatFeed.createFeed());
 		return mav;
 	}
