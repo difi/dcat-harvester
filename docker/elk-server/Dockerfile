@@ -71,6 +71,7 @@ ADD build/kibana.yml /opt/kibana/config/kibana.yml
 
 ### configure logstash
 ADD build/logstash.conf /etc/logstash/conf.d/logstash.conf
+ADD build/difi_template.json /etc/logstash/conf.d/difi_template.json
 
 ###############################################################################
 #                                   START
