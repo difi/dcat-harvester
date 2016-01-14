@@ -13,6 +13,8 @@ import org.springframework.oxm.castor.CastorMarshaller;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import no.difi.dcat.api.synd.XmlConverter;
+
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
 
@@ -20,6 +22,15 @@ public class Application extends SpringBootServletInitializer {
 	public CastorMarshaller castorMarshaller() {
 		return new CastorMarshaller();
 	}
+	
+	@Bean
+    public XmlConverter XmlConverter() {
+		XmlConverter converter = new XmlConverter();
+        CastorMarshaller marshaller = castorMarshaller();
+        converter.setMarshaller(marshaller);
+        converter.setUnmarshaller(marshaller);
+        return converter;
+    }
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {

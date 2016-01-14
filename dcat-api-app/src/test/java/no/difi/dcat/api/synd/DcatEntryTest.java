@@ -1,33 +1,44 @@
 package no.difi.dcat.api.synd;
 
-import org.apache.jena.base.Sys;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.util.CollectionFactory;
-import org.apache.jena.util.FileManager;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.util.FileManager;
+import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.oxm.castor.CastorMarshaller;
 
 /**
  * Created by havardottestad on 13/01/16.
  */
 public class DcatEntryTest {
 
-	@org.junit.Before
-	public void setUp() throws Exception {
-
+	@Test
+	public void testDcatMarshaling() throws Exception {
+		XmlConverter converter = new XmlConverter();
+        CastorMarshaller marshaller = new CastorMarshaller();
+        Resource resource = new ClassPathResource("mapping.xml");
+        marshaller.setMappingLocation(resource);
+        marshaller.afterPropertiesSet();
+        converter.setMarshaller(marshaller);
+        converter.setUnmarshaller(marshaller);
+        
+        DcatEntry dcatEntry = new DcatEntry(new Date(), "Test", "123456789", "testing", Arrays.asList("test", "testing", "tests"), Arrays.asList("xml", "plaintext"));
+        
+        String xml = converter.doMarshaling(dcatEntry);
+        
+        assertTrue(xml.contains("<datanorge:dcat xmlns:datanorge=\"http://data.norge.no\">"));
+        assertTrue(xml.contains("<datanorge:subject>testing</datanorge:subject>"));
+        assertTrue(xml.contains("<datanorge:keyword>test</datanorge:keyword>"));
 	}
-
-	@org.junit.After
-	public void tearDown() throws Exception {
-
-	}
-
-	@org.junit.Test
+	
+	@Test
 	public void testGetInstance() throws Exception {
 
 		String file = this.getClass().getClassLoader().getResource("test-perfect.rdf").getFile();

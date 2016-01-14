@@ -1,16 +1,16 @@
 package no.difi.dcat.api.synd;
 
-import org.apache.jena.rdf.model.*;
-import org.apache.jena.shared.JenaException;
-import org.apache.jena.sparql.vocabulary.FOAF;
-import org.apache.jena.vocabulary.DCTerms;
-import org.apache.jena.vocabulary.DC_10;
-import org.apache.jena.vocabulary.DC_11;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
+
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.sparql.vocabulary.FOAF;
+import org.apache.jena.vocabulary.DCTerms;
 
 public class DcatEntry {
 
@@ -28,6 +28,10 @@ public class DcatEntry {
 	private List<String> keywords;
 	private List<String> formats;
 
+	public DcatEntry() {
+		
+	}
+	
 	public DcatEntry(Date modified, String publisher, String orgNumber, String subject, List<String> keywords, List<String> formats) {
 		this.modified = modified;
 		this.publisher = publisher;
@@ -36,9 +40,7 @@ public class DcatEntry {
 		this.keywords = keywords;
 		this.formats = formats;
 	}
-
-	private DcatEntry(){}
-
+	
 	public Date getModified() {
 		return modified;
 	}

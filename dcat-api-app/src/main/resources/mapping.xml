@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN" 
+     "http://castor.org/mapping.dtd">
+<mapping>
+    <description>
+		Spring OXM and Castor
+    </description>
+    <class name="no.difi.dcat.api.synd.DcatEntry">
+        <map-to xml="dcat" ns-uri="http://data.norge.no" ns-prefix="datanorge" />
+        <field name="modified" type="date">
+            <bind-xml name="modified" node="element"/>
+        </field>
+        <field name="publisher" type="string">
+            <bind-xml name="publisher" node="element"/>
+        </field>
+        <field name="orgNumber" type="string">
+            <bind-xml name="orgnumber" node="element"/>
+        </field>
+        <field name="subject" type="string">
+            <bind-xml name="subject" node="element"/>
+        </field>
+        <field name="keywords" collection="arraylist" type="string">
+        	<bind-xml name="keyword"/>
+        </field>
+        <field name="formats" collection="arraylist" type="string">
+        	<bind-xml name="format"/>
+        </field>
+    </class>
+ </mapping> 
