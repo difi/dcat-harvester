@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.DatatypeConverter;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.vocabulary.DCTerms;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -67,24 +71,30 @@ public class DcatFeed {
 		this.dcatModule = dcatModule;
 	}
 	
+	public static DcatFeed getInstance(Resource r) {
+		DcatFeed dcatFeed = new DcatFeed();
+		
+		DcatModule dcatModule = DcatModule.getInstance(r);
+		dcatFeed.setDcatModule(dcatModule);
+		
+		dcatFeed.setFeedId(PropertyExtractor.extractExactlyOneStringOrNull(r, DCTerms.identifier));
+		dcatFeed.setTitle(PropertyExtractor.extractExactlyOneStringOrNull(r, DCTerms.title));
+		dcatFeed.setDescription(PropertyExtractor.extractExactlyOneStringOrNull(r, DCTerms.description));
+		dcatFeed.setLink(PropertyExtractor.extractExactlyOneStringOrNull(r, ResourceFactory.createProperty("http://www.w3.org/ns/dcat#", "accessURL")));
+		dcatFeed.setPubDate(DatatypeConverter.parseDate(PropertyExtractor.extractExactlyOneStringOrNull(r, DCTerms.modified)).getTime());
+		
+		return dcatFeed;
+	}
+	
 	public List<DcatFeed> createFeed(Model model) {
 		List<DcatFeed> feeds = new ArrayList<>();
 		
-		ResIterator iterator = model.listResourcesWithProperty(model.createProperty("http://www.w3.org/ns/dcat#", "accessURL"));
+		ResIterator iterator = model.listResourcesWithProperty(ResourceFactory.createProperty("http://www.w3.org/ns/dcat#", "accessURL"));
 		while (iterator.hasNext()) {
 			Resource next = iterator.next();
-			DcatModule dcatModule = DcatModule.getInstance(next);
-			
-			DcatFeed dcatFeed = new DcatFeed();
-			dcatFeed.setFeedId("100");
-			dcatFeed.setTitle("Title one");
-			dcatFeed.setDescription("This is description one");
-			dcatFeed.setLink("http://www.urlone.com");
-			dcatFeed.setPubDate(new Date());
-			dcatFeed.setDcatModule(dcatModule);
+			DcatFeed dcatFeed = DcatFeed.getInstance(next);
 			feeds.add(dcatFeed);
 		}
-		
 		return feeds;
 	}
 }

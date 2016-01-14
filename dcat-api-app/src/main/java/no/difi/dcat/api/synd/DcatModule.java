@@ -97,8 +97,8 @@ public class DcatModule extends ModuleImpl {
 		dcatModule.keywords = new ArrayList<>();
 		dcatModule.formats = new ArrayList<>();
 
-		dcatModule.publisher = extractExactlyOneStringOrNull(r, DCTerms.publisher, FOAF.name);
-		dcatModule.subject = extractExactlyOneStringOrNull(r, DCTerms.title);
+		dcatModule.publisher = PropertyExtractor.extractExactlyOneStringOrNull(r, DCTerms.publisher, FOAF.name);
+		dcatModule.subject = PropertyExtractor.extractExactlyOneStringOrNull(r, DCTerms.title);
 
 		StmtIterator keywordIterator = r
 				.listProperties(ResourceFactory.createProperty("http://www.w3.org/ns/dcat#keyword"));
@@ -116,7 +116,7 @@ public class DcatModule extends ModuleImpl {
 		while (distributionIterator.hasNext()) {
 			try {
 				Resource distribution = distributionIterator.next().getResource();
-				String format = extractExactlyOneStringOrNull(distribution, DCTerms.format);
+				String format = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.format);
 				if (format != null) {
 					dcatModule.formats.add(format);
 				}
@@ -128,30 +128,6 @@ public class DcatModule extends ModuleImpl {
 
 		return dcatModule;
 
-	}
-
-	private static String extractExactlyOneStringOrNull(Resource resource, Property... p) {
-		for (int i = 0; i < p.length; i++) {
-			StmtIterator stmtIterator = resource.listProperties(p[i]);
-			if (i == p.length - 1) {
-				try {
-					if (stmtIterator.hasNext()) {
-						return stmtIterator.next().getString();
-					}
-				} catch (JenaException e) {
-					return null;
-				}
-			} else {
-				try {
-					if (stmtIterator.hasNext()) {
-						resource = stmtIterator.next().getResource();
-					}
-				} catch (JenaException e) {
-					return null;
-				}
-			}
-		}
-		return null;
 	}
 
 	@Override
