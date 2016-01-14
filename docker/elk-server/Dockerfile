@@ -70,7 +70,7 @@ ADD build/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 ADD build/kibana.yml /opt/kibana/config/kibana.yml
 
 ### configure logstash
-ADD build/logstash.conf /etc/lgostash/conf.d/logstash.conf
+ADD build/logstash.conf /etc/logstash/conf.d/logstash.conf
 
 ###############################################################################
 #                                   START
