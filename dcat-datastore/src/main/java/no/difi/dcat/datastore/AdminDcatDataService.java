@@ -73,9 +73,9 @@ public class AdminDcatDataService {
 		dcatDataStore.deleteDataCatalogue(dcatSource);
 		
 		if (adminDataStore.fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) { 
-			logger.error("[user_admin] DCAT source was not deleted: {}", dcatSource.toString());
+			logger.error("[user_admin] [fail] DCAT source was not deleted: {}", dcatSource.toString());
 		} else {
-			logger.info("[user_admin] Deleted DCAT source: {}", dcatSource.toString());
+			logger.info("[user_admin] [success] Deleted DCAT source: {}", dcatSource.toString());
 		}
 		
 	}
@@ -101,9 +101,9 @@ public class AdminDcatDataService {
 
 				adminDataStore.fuseki.sparqlUpdate(query, map);	
 				if (adminDataStore.fuseki.ask("ask { ?user foaf:accountName ?username}", map)) {
-					logger.error("[user_admin] User was not deleted: {}", user.toString());
+					logger.error("[user_admin] [fail] User was not deleted: {}", user.toString());
 				} else {
-					logger.info("[user_admin] Deleted user {}", user.toString());
+					logger.info("[user_admin] [success] Deleted user: {}", user.toString());
 				}
 				
 		} else {
