@@ -20,8 +20,9 @@
 		</encoder>
 	</appender>
 
-	<logger name="no.difi.dcat" level="INFO">
+	<logger name="no.difi.dcat">
 		<appender-ref ref="dcat-harvester-logger" />
 	</logger>
+	
     
 </configuration>
