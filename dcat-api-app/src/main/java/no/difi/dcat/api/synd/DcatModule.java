@@ -11,7 +11,6 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.vocabulary.FOAF;
-import org.apache.jena.vocabulary.DC;
 import org.apache.jena.vocabulary.DCTerms;
 
 import com.rometools.rome.feed.CopyFrom;
@@ -99,17 +98,12 @@ public class DcatModule extends ModuleImpl {
 		dcatModule.keywords = new ArrayList<>();
 		dcatModule.formats = new ArrayList<>();
 
-		String modified = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.modified);
-		if (modified != null) {
-			dcatModule.setModified(DatatypeConverter.parseDate(modified).getTime());
-		}
+		// Dataset
 		
 		dcatModule.setPublisher(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.publisher, FOAF.name));
-		dcatModule.setSubject(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.title));
-
+		
 		StmtIterator keywordIterator = dataset
 				.listProperties(ResourceFactory.createProperty("http://www.w3.org/ns/dcat#keyword"));
-
 		while (keywordIterator.hasNext()) {
 			try {
 				dcatModule.getKeywords().add(keywordIterator.next().getString());
@@ -117,7 +111,16 @@ public class DcatModule extends ModuleImpl {
 				e.printStackTrace();
 			}
 		}
-
+		
+		// Distribution
+		
+		dcatModule.setSubject(PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.title));
+		
+		String modified = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.modified);
+		if (modified != null) {
+			dcatModule.setModified(DatatypeConverter.parseDate(modified).getTime());
+		}
+		
 		String format = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.format);
 		if (format != null) {
 			dcatModule.getFormats().add(format);
@@ -128,7 +131,6 @@ public class DcatModule extends ModuleImpl {
 		}
 
 		return dcatModule;
-
 	}
 
 	@Override

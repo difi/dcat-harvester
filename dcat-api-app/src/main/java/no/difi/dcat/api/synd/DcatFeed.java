@@ -80,11 +80,17 @@ public class DcatFeed {
 		DcatModule dcatModule = DcatModule.getInstance(dataset, distribution);
 		dcatFeed.setDcatModule(dcatModule);
 		
+		// Dataset
+		
 		dcatFeed.setFeedId(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.identifier));
 		dcatFeed.setTitle(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.title));
 		dcatFeed.setDescription(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.description));
+	
+		
+		// Distribution
+		
 		dcatFeed.setLink(PropertyExtractor.extractExactlyOneStringOrNull(distribution, ResourceFactory.createProperty(DCAT_NAMESPACE, "accessURL")));
-		String pubDate = PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.issued);
+		String pubDate = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.issued);
 		if (pubDate != null) {
 			dcatFeed.setPubDate(DatatypeConverter.parseDate(pubDate).getTime());
 		}
