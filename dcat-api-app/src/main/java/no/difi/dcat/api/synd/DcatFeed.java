@@ -11,6 +11,7 @@ import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.vocabulary.DCTerms;
+import org.apache.jena.vocabulary.RDF;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -23,6 +24,8 @@ public class DcatFeed {
 	private String link;
 	private DcatModule dcatModule;
 
+	public static final String DCAT_NAMESPACE = "http://www.w3.org/ns/dcat#";
+	
 	public String getFeedId() {
 		return feedId;
 	}
@@ -71,17 +74,20 @@ public class DcatFeed {
 		this.dcatModule = dcatModule;
 	}
 	
-	public static DcatFeed getInstance(Resource r) {
+	public static DcatFeed getInstance(Resource dataset, Resource distribution) {
 		DcatFeed dcatFeed = new DcatFeed();
 		
-		DcatModule dcatModule = DcatModule.getInstance(r);
+		DcatModule dcatModule = DcatModule.getInstance(dataset, distribution);
 		dcatFeed.setDcatModule(dcatModule);
 		
-		dcatFeed.setFeedId(PropertyExtractor.extractExactlyOneStringOrNull(r, DCTerms.identifier));
-		dcatFeed.setTitle(PropertyExtractor.extractExactlyOneStringOrNull(r, DCTerms.title));
-		dcatFeed.setDescription(PropertyExtractor.extractExactlyOneStringOrNull(r, DCTerms.description));
-		dcatFeed.setLink(PropertyExtractor.extractExactlyOneStringOrNull(r, ResourceFactory.createProperty("http://www.w3.org/ns/dcat#", "accessURL")));
-		dcatFeed.setPubDate(DatatypeConverter.parseDate(PropertyExtractor.extractExactlyOneStringOrNull(r, DCTerms.modified)).getTime());
+		dcatFeed.setFeedId(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.identifier));
+		dcatFeed.setTitle(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.title));
+		dcatFeed.setDescription(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.description));
+		dcatFeed.setLink(PropertyExtractor.extractExactlyOneStringOrNull(distribution, ResourceFactory.createProperty(DCAT_NAMESPACE, "accessURL")));
+		String pubDate = PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.issued);
+		if (pubDate != null) {
+			dcatFeed.setPubDate(DatatypeConverter.parseDate(pubDate).getTime());
+		}
 		
 		return dcatFeed;
 	}
@@ -89,11 +95,15 @@ public class DcatFeed {
 	public List<DcatFeed> createFeed(Model model) {
 		List<DcatFeed> feeds = new ArrayList<>();
 		
-		ResIterator iterator = model.listResourcesWithProperty(ResourceFactory.createProperty("http://www.w3.org/ns/dcat#", "accessURL"));
-		while (iterator.hasNext()) {
-			Resource next = iterator.next();
-			DcatFeed dcatFeed = DcatFeed.getInstance(next);
-			feeds.add(dcatFeed);
+		ResIterator datasets = model.listResourcesWithProperty(RDF.type, ResourceFactory.createProperty(DCAT_NAMESPACE, "Dataset"));
+		while (datasets.hasNext()) {
+			Resource dataset = datasets.next();
+			ResIterator distributions = model.listResourcesWithProperty(RDF.type, ResourceFactory.createProperty(DCAT_NAMESPACE, "Distribution"));
+			while (distributions.hasNext()) {
+				Resource distribution = distributions.next();
+				DcatFeed dcatFeed = DcatFeed.getInstance(dataset, distribution);
+				feeds.add(dcatFeed);
+			}
 		}
 		return feeds;
 	}

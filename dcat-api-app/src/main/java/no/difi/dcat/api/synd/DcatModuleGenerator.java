@@ -65,7 +65,7 @@ public class DcatModuleGenerator implements ModuleGenerator {
 			}
 		}		
 		if (dcatModule.getFormats() != null) {
-			for (String format : dcatModule.getKeywords()) {
+			for (String format : dcatModule.getFormats()) {
 				Element el = new Element("format", NAMESPACE);
 				el.setText(format);
 				element.addContent(el);

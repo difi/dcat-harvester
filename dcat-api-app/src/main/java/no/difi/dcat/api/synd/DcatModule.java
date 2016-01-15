@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.jena.rdf.model.Property;
+import javax.xml.bind.DatatypeConverter;
+
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.vocabulary.FOAF;
+import org.apache.jena.vocabulary.DC;
 import org.apache.jena.vocabulary.DCTerms;
 
 import com.rometools.rome.feed.CopyFrom;
@@ -90,40 +92,39 @@ public class DcatModule extends ModuleImpl {
 		this.formats = formats;
 	}
 
-	static DcatModule getInstance(Resource r) {
+	static DcatModule getInstance(Resource dataset, Resource distribution) {
 
 		DcatModule dcatModule = new DcatModule();
 
 		dcatModule.keywords = new ArrayList<>();
 		dcatModule.formats = new ArrayList<>();
 
-		dcatModule.publisher = PropertyExtractor.extractExactlyOneStringOrNull(r, DCTerms.publisher, FOAF.name);
-		dcatModule.subject = PropertyExtractor.extractExactlyOneStringOrNull(r, DCTerms.title);
+		String modified = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.modified);
+		if (modified != null) {
+			dcatModule.setModified(DatatypeConverter.parseDate(modified).getTime());
+		}
+		
+		dcatModule.setPublisher(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.publisher, FOAF.name));
+		dcatModule.setSubject(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.title));
 
-		StmtIterator keywordIterator = r
+		StmtIterator keywordIterator = dataset
 				.listProperties(ResourceFactory.createProperty("http://www.w3.org/ns/dcat#keyword"));
 
 		while (keywordIterator.hasNext()) {
 			try {
-				dcatModule.keywords.add(keywordIterator.next().getString());
+				dcatModule.getKeywords().add(keywordIterator.next().getString());
 			} catch (JenaException e) {
 				e.printStackTrace();
 			}
 		}
 
-		StmtIterator distributionIterator = r
-				.listProperties(ResourceFactory.createProperty("http://www.w3.org/ns/dcat#distribution"));
-		while (distributionIterator.hasNext()) {
-			try {
-				Resource distribution = distributionIterator.next().getResource();
-				String format = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.format);
-				if (format != null) {
-					dcatModule.formats.add(format);
-				}
-
-			} catch (JenaException e) {
-
-			}
+		String format = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.format);
+		if (format != null) {
+			dcatModule.getFormats().add(format);
+		}
+		String mediaType = PropertyExtractor.extractExactlyOneStringOrNull(distribution, ResourceFactory.createProperty(DcatFeed.DCAT_NAMESPACE, "mediaType"));
+		if (mediaType != null) {
+			dcatModule.getFormats().add(mediaType);
 		}
 
 		return dcatModule;
