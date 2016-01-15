@@ -11,6 +11,8 @@ import org.springframework.web.servlet.view.feed.AbstractRssFeedView;
 
 import com.rometools.rome.feed.rss.Channel;
 import com.rometools.rome.feed.rss.Content;
+import com.rometools.rome.feed.rss.Description;
+import com.rometools.rome.feed.rss.Guid;
 import com.rometools.rome.feed.rss.Item;
 
 public class DcatRssView extends AbstractRssFeedView {
@@ -40,9 +42,12 @@ public class DcatRssView extends AbstractRssFeedView {
 	    		item.setTitle(dcatFeed.getTitle());
 	    		item.setLink(dcatFeed.getLink());
 	    		item.setPubDate(dcatFeed.getPubDate());
-	    		Content content = new Content();
-	    		content.setValue(dcatFeed.getDescription());
-	    		item.setContent(content);
+	    		Guid guid = new Guid();
+	    		guid.setValue(dcatFeed.getGuid());
+	    		item.setGuid(guid);
+	    		Description description = new Description();
+	    		description.setValue(dcatFeed.getDescription());
+	    		item.setDescription(description);
 				item.getModules().add(dcatFeed.getDcatModule());
 	    		items.add(item);
 	           }

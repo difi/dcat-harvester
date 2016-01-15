@@ -17,21 +17,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class DcatFeed {
 	
-	private String feedId;
+	private String guid;
 	private String title;
 	private String description;
 	private Date pubDate;
 	private String link;
 	private DcatModule dcatModule;
-
-	public static final String DCAT_NAMESPACE = "http://www.w3.org/ns/dcat#";
 	
-	public String getFeedId() {
-		return feedId;
+	public String getGuid() {
+		return guid;
 	}
 
-	public void setFeedId(String feedId) {
-		this.feedId = feedId;
+	public void setGuid(String guid) {
+		this.guid = guid;
 	}
 
 	public String getTitle() {
@@ -82,14 +80,13 @@ public class DcatFeed {
 		
 		// Dataset
 		
-		dcatFeed.setFeedId(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.identifier));
+		dcatFeed.setGuid(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.identifier));
 		dcatFeed.setTitle(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.title));
 		dcatFeed.setDescription(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.description));
 	
-		
 		// Distribution
 		
-		dcatFeed.setLink(PropertyExtractor.extractExactlyOneStringOrNull(distribution, ResourceFactory.createProperty(DCAT_NAMESPACE, "accessURL")));
+		dcatFeed.setLink(PropertyExtractor.extractExactlyOneStringOrNull(distribution, ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "accessURL")));
 		String pubDate = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.issued);
 		if (pubDate != null) {
 			dcatFeed.setPubDate(DatatypeConverter.parseDate(pubDate).getTime());
@@ -101,10 +98,10 @@ public class DcatFeed {
 	public List<DcatFeed> createFeed(Model model) {
 		List<DcatFeed> feeds = new ArrayList<>();
 		
-		ResIterator datasets = model.listResourcesWithProperty(RDF.type, ResourceFactory.createProperty(DCAT_NAMESPACE, "Dataset"));
+		ResIterator datasets = model.listResourcesWithProperty(RDF.type, ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "Dataset"));
 		while (datasets.hasNext()) {
 			Resource dataset = datasets.next();
-			ResIterator distributions = model.listResourcesWithProperty(RDF.type, ResourceFactory.createProperty(DCAT_NAMESPACE, "Distribution"));
+			ResIterator distributions = model.listResourcesWithProperty(RDF.type, ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "Distribution"));
 			while (distributions.hasNext()) {
 				Resource distribution = distributions.next();
 				DcatFeed dcatFeed = DcatFeed.getInstance(dataset, distribution);

@@ -8,6 +8,8 @@ import org.apache.jena.shared.JenaException;
 
 public class PropertyExtractor {
 
+	public static final String DCAT_NAMESPACE = "http://www.w3.org/ns/dcat#";
+	
 	public static String extractExactlyOneStringOrNull(Resource resource, Property... p) {
 		for (int i = 0; i < p.length; i++) {
 			StmtIterator stmtIterator = resource.listProperties(p[i]);

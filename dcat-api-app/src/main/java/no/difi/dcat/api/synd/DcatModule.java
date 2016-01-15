@@ -103,7 +103,7 @@ public class DcatModule extends ModuleImpl {
 		dcatModule.setPublisher(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.publisher, FOAF.name));
 		
 		StmtIterator keywordIterator = dataset
-				.listProperties(ResourceFactory.createProperty("http://www.w3.org/ns/dcat#keyword"));
+				.listProperties(ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "keyword"));
 		while (keywordIterator.hasNext()) {
 			try {
 				dcatModule.getKeywords().add(keywordIterator.next().getString());
@@ -125,7 +125,7 @@ public class DcatModule extends ModuleImpl {
 		if (format != null) {
 			dcatModule.getFormats().add(format);
 		}
-		String mediaType = PropertyExtractor.extractExactlyOneStringOrNull(distribution, ResourceFactory.createProperty(DcatFeed.DCAT_NAMESPACE, "mediaType"));
+		String mediaType = PropertyExtractor.extractExactlyOneStringOrNull(distribution, ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "mediaType"));
 		if (mediaType != null) {
 			dcatModule.getFormats().add(mediaType);
 		}
