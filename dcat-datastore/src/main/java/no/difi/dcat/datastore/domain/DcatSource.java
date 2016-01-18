@@ -1,6 +1,7 @@
 package no.difi.dcat.datastore.domain;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -167,30 +168,11 @@ public class DcatSource {
 	}
 
 	public Optional<Harvest> getLastHarvest() {
-		Optional<Harvest> harvest = harvested.stream().max(new Comparator<Harvest>() {
-
-			@Override
-			public int compare(Harvest o1, Harvest o2) {
-				if (o1 == o2) {
-					return 0;
-				}
-				if (o1 == null) {
-					return -1;
-				}
-				if (o2 == null) {
-					return 1;
-				}
-				Calendar c1 = DatatypeConverter.parseDateTime(o1.createdDate);
-				Calendar c2 = DatatypeConverter.parseDateTime(o1.createdDate);
-
-				return c1.compareTo(c2);
-			}
-		});
-
+		Optional<Harvest> harvest = harvested.stream().max(new HarvestComparator());
 		return harvest;
 	}
 
-	public class Harvest {
+	public static class Harvest {
 		private Resource status;
 		private String createdDate;
 		private String message;
@@ -218,6 +200,28 @@ public class DcatSource {
 
 		public String getMessage() {
 			return message;
+		}
+	}
+	
+	public static class HarvestComparator implements Comparator<Harvest> {
+
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
+		
+		@Override
+		public int compare(Harvest o1, Harvest o2) {
+			if (o1 == o2) {
+				return 0;
+			}
+			if (o1 == null) {
+				return -1;
+			}
+			if (o2 == null) {
+				return 1;
+			}
+			Calendar c1 = DatatypeConverter.parseDateTime(o1.createdDate);
+			Calendar c2 = DatatypeConverter.parseDateTime(o2.createdDate);
+
+			return c1.compareTo(c2);		
 		}
 	}
 }
