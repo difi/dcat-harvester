@@ -13,7 +13,7 @@ public class CrawlerJobTest {
 	
 	@Test
 	public void testCrawlerJob() {
-		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/npolar.jsonld", "tester");
+		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/npolar.jsonld", "tester", "123456789");
 		
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
 		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(), Mockito.anyObject());
@@ -27,7 +27,7 @@ public class CrawlerJobTest {
 	
 	@Test
 	public void testCrawlerResultHandlerWithNoException() {
-		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/npolar.jsonld", "tester");
+		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/npolar.jsonld", "tester", null);
 		
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
 		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
@@ -40,7 +40,7 @@ public class CrawlerJobTest {
 	@Test(expected=Exception.class)
 	@Ignore //TODO: finne testfil som er gyldig
 	public void testCrawlerResultHandlerWithExpectedException() {
-		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/npolar.jsonld", "tester");
+		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/npolar.jsonld", "tester", "");
 		
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
 		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(), Mockito.anyObject());

@@ -20,6 +20,11 @@
 		You are logged in as <b>${username}</b>. <a class="btn btn-default"
 			href="${pageContext.request.contextPath}/login?logout" role="button">
 			Log out </a>
+			<c:if test="${isAdmin}">
+			<a class="btn btn-primary"
+			href="${pageContext.request.contextPath}/admin/users" role="button">
+			Users Admin</a>
+			</c:if>
 	</p>
 
 	<div class="alert alert-danger" role="alert" id="errors"></div>
@@ -38,6 +43,10 @@
 			<label for="inputUrl">URL</label> <input type="text"
 				class="form-control" id="inputUrl" placeholder="URL" value="${editDcatSource.url}"></input> 
 		</div>
+		<div class="form-group">
+			<label for="inputUrl">Orgnumber</label> <input type="text"
+				class="form-control" id="inputOrgnumber" placeholder="Orgnumber" value="${editDcatSource.orgnumber}"></input> 
+		</div>
 		
 		<button class="btn btn-default" type="button" onclick="saveDcatSource();">
 			<span class="glyphicon glyphicon-floppy-save" aria-hidden="true">
@@ -55,6 +64,7 @@
 						<th>Id</th>
 						<th>Description</th>
 						<th>URL</th>
+						<th>Orgnumber</th>
 						<th>Time</th>
 						<th>Status</th>
 						<th>Harvest</th>
@@ -68,6 +78,7 @@
 							<td>${dcatSource.id}</td>
 							<td>${dcatSource.description}</td>
 							<td>${dcatSource.url}</td>
+							<td>${dcatSource.orgnumber}</td>
 							<td>
 								<c:if test="${dcatSource.getLastHarvest().isPresent()}">
 									${dcatSource.getLastHarvest().get().getCreatedDateFormatted()}	
@@ -102,12 +113,14 @@
 			var id = document.getElementById('inputId').value;
 			var description = document.getElementById('inputDescription').value;
 			var url = document.getElementById('inputUrl').value;
+			var orgnumber = document.getElementById('inputOrgnumber').value;
 			
 			var data = {
 				'id': id,
 				'description': description,
 				'url': url,
-				'user': '${username}'
+				'user': '${username}',
+				'orgnumber': orgnumber
 			};
 
 			sendRequest('POST', '${pageContext.request.contextPath}/api/admin/dcat-source', data);

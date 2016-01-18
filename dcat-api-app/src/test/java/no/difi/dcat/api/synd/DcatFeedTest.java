@@ -22,9 +22,9 @@ public class DcatFeedTest {
 
 		Model m = FileManager.get().loadModel(file);
 		m.write(System.out, "TTL");
-		DcatFeed instance = DcatFeed.getInstance(m.getResource("http://nobelprize.org/datasets/dcat#ds1"), m.getResource("http://nobelprize.org/datasets/dcat#dist1"));
+		DcatFeed instance = DcatFeed.getInstance(m.getResource("http://nobelprize.org/datasets/dcat#ds1"));
 
-		assertEquals("Subject should be 'Linked Data endpoint'", "Linked Data endpoint",instance.getDcatModule().getSubject());
+		assertEquals("Subject should be 'Linked Nobel prizes'", "Linked Nobel prizes",instance.getDcatModule().getSubject());
 		assertEquals("Subject should be 'Nobel Media AB'", "Nobel Media AB",instance.getDcatModule().getPublisher());
 
 		List<String> expectedKeywords = Arrays.asList("prize", "science", "Nobel prize");

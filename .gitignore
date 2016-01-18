@@ -4,6 +4,8 @@
 .settings/
 target/
 
+logs/
+
 node
 node_modules
 

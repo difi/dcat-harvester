@@ -78,10 +78,10 @@ public class DcatAdminRestController {
 	}
 	
 	private DcatSource convertToDomain(DcatSourceDto dto) {
-		return new DcatSource(dto.getId(), dto.getDescription(), dto.getUrl(), dto.getUser());
+		return new DcatSource(dto.getId(), dto.getDescription(), dto.getUrl(), dto.getUser(), dto.getOrgnumber());
 	}
 	
 	private DcatSourceDto convertToDto(DcatSource domain) {
-		return new DcatSourceDto(domain.getId(), domain.getDescription(), domain.getUrl(), domain.getUser());
+		return new DcatSourceDto(domain.getId(), domain.getDescription(), domain.getUrl(), domain.getUser(), domain.getOrgnumber());
 	}
 }
