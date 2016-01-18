@@ -25,10 +25,12 @@ import no.difi.dcat.datastore.domain.User;
 public class AdminDataStore {
 
 	protected final Fuseki fuseki;
+	protected final Elasticsearch elasticsearch;
 	private final Logger logger = LoggerFactory.getLogger(AdminDataStore.class);
 
-	public AdminDataStore(Fuseki fuseki) {
+	public AdminDataStore(Fuseki fuseki, Elasticsearch elasticsearch) {
 		this.fuseki = fuseki;
+		this.elasticsearch = elasticsearch;
 	}
 
 	/**
@@ -138,6 +140,7 @@ public class AdminDataStore {
 	/**
 	 * @param dcatSource
 	 */
+	// TODO: add elasticsearch create index call here somewhere
 	public DcatSource addDcatSource(DcatSource dcatSource) {
 		boolean update = false;
 		

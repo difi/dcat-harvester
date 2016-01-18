@@ -1,6 +1,7 @@
 package no.difi.dcat.datastore;
 
 import org.apache.jena.rdf.model.Model;
+import org.elasticsearch.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,10 +10,12 @@ import no.difi.dcat.datastore.domain.DcatSource;
 public class DcatDataStore {
 
 	private final Fuseki fuseki;
+	private final Elasticsearch elasticsearch;
 	private final Logger logger = LoggerFactory.getLogger(AdminDataStore.class);
 
-	public DcatDataStore(Fuseki fuseki) {
+	public DcatDataStore(Fuseki fuseki, Elasticsearch elasticsearch) {
 		this.fuseki = fuseki;
+		this.elasticsearch = elasticsearch;
 	}
 
 	/**
@@ -33,9 +36,10 @@ public class DcatDataStore {
 		return model;
 	}
 
-	public void deleteDataCatalogue(DcatSource dcatSource) {
+	// TODO: should client creation and closure go here?
+	public void deleteDataCatalogue(DcatSource dcatSource, Client client, String indexName) {
 		if(dcatSource == null || dcatSource.getGraph() == null || dcatSource.getGraph().trim().equals("")) return;
 		fuseki.drop(dcatSource.getGraph());
-		// elasticsearch goes here
+		elasticsearch.deleteElasticsearchIndex(client, indexName);
 	}
 }

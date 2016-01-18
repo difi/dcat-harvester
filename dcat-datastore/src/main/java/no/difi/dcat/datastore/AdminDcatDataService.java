@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.elasticsearch.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ public class AdminDcatDataService {
 	/**
 	 * @param dcatSourceId
 	 */
+	// TODO: add elasticsearch delete index call
 	public void deleteDcatSource(String dcatSourceId, User loggedInUser) {
 
 
@@ -70,13 +72,18 @@ public class AdminDcatDataService {
 
 		adminDataStore.fuseki.sparqlUpdate(query, map);
 
-		dcatDataStore.deleteDataCatalogue(dcatSource);
+		// TODO: create client, when done, close it.
+		Client client = null;
+		String indexName = null;
+		dcatDataStore.deleteDataCatalogue(dcatSource, client, indexName);
 		
 		if (adminDataStore.fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) { 
 			logger.error("[user_admin] [fail] DCAT source was not deleted: {}", dcatSource.toString());
 		} else {
 			logger.info("[user_admin] [success] Deleted DCAT source: {}", dcatSource.toString());
 		}
+		
+		// TODO: should the deleted index check be done here or within the delete method itself? 
 		
 	}
 	
