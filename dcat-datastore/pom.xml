@@ -5,7 +5,6 @@
 	<artifactId>dcat-datastore</artifactId>
 	<packaging>jar</packaging>
 
-
 	<parent>
 		<artifactId>dcat-harvester</artifactId>
 		<groupId>no.difi</groupId>
@@ -20,6 +19,11 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>2.1.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.jena</groupId>

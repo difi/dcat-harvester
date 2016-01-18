@@ -24,6 +24,7 @@ public class DcatDataStore {
 		logger.info("Adding data catalogue {}", dcatSource.getGraph());
 		fuseki.drop(dcatSource.getGraph());
 		fuseki.update(dcatSource.getGraph(), dcatModel);
+		// elasticsearch goes here
 	}
 
 	public Model getAllDataCatalogues() {
@@ -35,5 +36,6 @@ public class DcatDataStore {
 	public void deleteDataCatalogue(DcatSource dcatSource) {
 		if(dcatSource == null || dcatSource.getGraph() == null || dcatSource.getGraph().trim().equals("")) return;
 		fuseki.drop(dcatSource.getGraph());
+		// elasticsearch goes here
 	}
 }
