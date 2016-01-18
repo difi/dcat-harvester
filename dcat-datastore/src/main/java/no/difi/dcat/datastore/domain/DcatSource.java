@@ -30,6 +30,7 @@ public class DcatSource {
 	private String url;
 	private String user;
 	private String graph;
+	private String orgnumber;
 
 	private List<Harvest> harvested = new ArrayList<>();
 
@@ -43,7 +44,8 @@ public class DcatSource {
 		description = extractExactlyOneString(resource, RDFS.comment);
 		user = dcatModel.listResourcesWithProperty(DifiMeta.dcatSource).nextResource().listProperties(FOAF.accountName)
 				.next().getString();
-
+		orgnumber = extractExactlyOneStringOrNull(resource, DifiMeta.orgnumber);
+		
 		StmtIterator harvestedIterator = resource.listProperties(DifiMeta.harvested);
 		while (harvestedIterator.hasNext()) {
 			Statement next = harvestedIterator.next();
@@ -101,11 +103,12 @@ public class DcatSource {
 	public DcatSource() {
 	}
 
-	public DcatSource(String id, String description, String url, String user) {
+	public DcatSource(String id, String description, String url, String user, String orgnumber) {
 		this.id = id;
 		this.description = description;
 		this.url = url;
 		this.user = user;
+		this.orgnumber = orgnumber;
 	}
 
 	public void setId(String id) {
@@ -139,16 +142,25 @@ public class DcatSource {
 	public String getUser() {
 		return user;
 	}
+	
+	public void setOrgnumber(String orgnumber) {
+		this.orgnumber = orgnumber;
+		
+	}
+	
+	public String getOrgnumber() {
+		return orgnumber;
+	}
 
 	public static DcatSource fromQuerySolution(QuerySolution qs) {
 		return new DcatSource(qs.get("name").asResource().getURI(), qs.get("description").asLiteral().getString(),
-				qs.get("url").asResource().getURI(), qs.get("user").asLiteral().getString());
+				qs.get("url").asResource().getURI(), qs.get("user").asLiteral().getString(), qs.get("orgnumber").asLiteral().getString());
 	}
 
 	public static DcatSource getDefault() {
 		return new DcatSource(String.format("http://dcat.difi.no/%s", UUID.randomUUID().toString()), "Npolar",
 				"http://api.npolar.no/dataset/?q=&format=json&variant=dcat&limit=all&filter-links.rel=data&filter-draft=no",
-				"test");
+				"test", "123456789");
 	}
 
 	public String toString() {
@@ -163,6 +175,9 @@ public class DcatSource {
 		this.graph = graph;
 	}
 
+
+
+	
 	public List<Harvest> getHarvested() {
 		return harvested;
 	}

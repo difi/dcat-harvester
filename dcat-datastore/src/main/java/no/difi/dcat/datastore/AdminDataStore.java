@@ -167,12 +167,18 @@ public class AdminDataStore {
 		if (dcatSource.getGraph() == null) {
 			dcatSource.setGraph("http://dcat.difi.no/dcatSource_" + UUID.randomUUID().toString());
 		}
+		
+		String insertOrgnumber = "";
+		if (dcatSource.getOrgnumber() != null) {
+			insertOrgnumber = "                             difiMeta:orgnumber ?orgnumber;";
+		}
 
 		String query = String.join("\n",
 				"delete {",
 				"	graph <http://dcat.difi.no/usersGraph/> {",
 				"		?dcatSource difiMeta:graph  ?originalDcatGraphUri. ",
 				"		?dcatSource difiMeta:url  ?originalUrl.",
+				"		?dcatSource difiMeta:orgnumber  ?originalOrgnumber. ",
 				"		?dcatSource rdfs:comment  ?originalDescription. ",
 				"	}",
 				"}",
@@ -182,6 +188,7 @@ public class AdminDataStore {
 				"          ?dcatSource a difiMeta:DcatSource ; ",
 				"                             difiMeta:graph ?dcatGraphUri; ",
 				"                             difiMeta:url ?url;",
+				insertOrgnumber,
 				"					rdfs:comment ?description",
 				"",
 				"",
@@ -192,8 +199,8 @@ public class AdminDataStore {
 				"           ?user foaf:accountName ?username",
 				"		OPTIONAL{ ?dcatSource difiMeta:graph  ?originalDcatGraphUri} ",
 				"		OPTIONAL{ ?dcatSource difiMeta:url  ?originalUrl} ",
+				"		OPTIONAL{ ?dcatSource difiMeta:orgnumber  ?originalOrgnumber} ",
 				"		OPTIONAL{ ?dcatSource rdfs:comment  ?originalDescription} ",
-
 				"}");
 
 
@@ -203,6 +210,10 @@ public class AdminDataStore {
 		map.put("dcatSourceUri", dcatSource.getId());
 		map.put("dcatGraphUri", dcatSource.getGraph());
 		map.put("description", dcatSource.getDescription());
+		
+		if (dcatSource.getOrgnumber() != null) {
+			map.put("orgnumber", dcatSource.getOrgnumber());
+		}
 
 		map.put("url", dcatSource.getUrl());
 

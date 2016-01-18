@@ -74,7 +74,7 @@ public class CrawlerResultHandlerTest {
 
 		CrawlerResultHandler crawlerResultHandler = new CrawlerResultHandler(dcatDataStore, adminDataStore);
 
-		crawlerResultHandler.process(new DcatSource("", "", "", ""), ModelFactory.createDefaultModel());
+		crawlerResultHandler.process(new DcatSource("", "", "", "", ""), ModelFactory.createDefaultModel());
 
 	}
 
@@ -100,7 +100,7 @@ public class CrawlerResultHandlerTest {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource("validation-test-data/test-perfect.rdf").getFile());
 		Model model = FileManager.get().loadModel(file.getCanonicalPath());
-		crawlerResultHandler.process(new DcatSource("", "", "", ""), model);
+		crawlerResultHandler.process(new DcatSource("", "", "", "", ""), model);
 
 	}
 
@@ -128,7 +128,7 @@ public class CrawlerResultHandlerTest {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource("syntax-error.jsonld").getFile());
 
-		CrawlerJob crawlerJob = new CrawlerJob(null, new DcatSource("", "", file.getCanonicalPath(), ""), adminDataStore);
+		CrawlerJob crawlerJob = new CrawlerJob(null, new DcatSource("", "", file.getCanonicalPath(), "", ""), adminDataStore);
 
 		crawlerJob.run();
 
@@ -160,9 +160,9 @@ public class CrawlerResultHandlerTest {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource("syntax-error.jsonld").getFile());
 
-		new CrawlerJob(null, new DcatSource("", "", "http://example.com/nothing.jsonld", ""), adminDataStore).run();
-		new CrawlerJob(null, new DcatSource("", "", "http://fje389403wlkfklewfl.local/nothing.jsonld", ""), adminDataStore).run();
-		new CrawlerJob(null, new DcatSource("", "", "http://localhost:9452/nothing.jsonld", ""), adminDataStore).run();
+		new CrawlerJob(null, new DcatSource("", "", "http://example.com/nothing.jsonld", "", ""), adminDataStore).run();
+		new CrawlerJob(null, new DcatSource("", "", "http://fje389403wlkfklewfl.local/nothing.jsonld", "", ""), adminDataStore).run();
+		new CrawlerJob(null, new DcatSource("", "", "http://localhost:9452/nothing.jsonld", "", ""), adminDataStore).run();
 
 		assertTrue("The addCrawlResults was not called", addCrawlResultsDidRun[0]);
 	}

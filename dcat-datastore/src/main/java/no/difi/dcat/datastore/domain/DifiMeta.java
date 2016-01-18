@@ -13,6 +13,7 @@ public class DifiMeta {
 
 	public static final Property graph = ResourceFactory.createProperty(DIFI_META + "graph");
 	public static final Property url = ResourceFactory.createProperty(DIFI_META + "url");
+	public static final Property orgnumber = ResourceFactory.createProperty(DIFI_META + "orgnumber");
 	public static final Property dcatSource = ResourceFactory.createProperty(DIFI_META + "dcatSource");
 	public static final Resource DcatSource = ResourceFactory.createResource(DIFI_META + "DcatSource");
 	public static final Property harvested = ResourceFactory.createProperty(DIFI_META + "harvested");
@@ -24,5 +25,7 @@ public class DifiMeta {
 	public static final Resource error = ResourceFactory.createResource(DIFI_META + "error");
 	public static final Resource syntaxError = ResourceFactory.createResource(DIFI_META + "syntaxError");
 	public static final Resource networkError = ResourceFactory.createResource(DIFI_META + "networkError");
+
+	
 
 }
