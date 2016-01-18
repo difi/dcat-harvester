@@ -77,6 +77,24 @@ public class DcatAdminController {
 	    
 		return model;
 	}
+
+	@RequestMapping("/dcatSource")
+	public ModelAndView viewSingleDcatSource(@RequestParam(value="id", required=true) String id, Principal principal) {
+		String name = principal.getName();
+
+		System.out.println(id);
+		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(id);
+
+		System.out.println(dcatSourceById.get());
+
+
+		ModelAndView model = new ModelAndView("dcatSource");
+		model.addObject("dcatSource", dcatSourceById.get());
+
+
+
+		return model;
+	}
 	
 	@RequestMapping(value= "/admin/harvestDcatSource", method = RequestMethod.GET)
 	public ModelAndView harvestDcatSource(@RequestParam("id") String dcatSourceId, ModelMap model) {
