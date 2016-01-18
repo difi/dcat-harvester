@@ -38,7 +38,7 @@ public class DcatSource {
 		Resource resource = dcatModel.getResource(id);
 
 		this.id = id;
-
+		
 		url = extractExactlyOneString(resource, DifiMeta.url);
 		graph = extractExactlyOneString(resource, DifiMeta.graph);
 		description = extractExactlyOneString(resource, RDFS.comment);

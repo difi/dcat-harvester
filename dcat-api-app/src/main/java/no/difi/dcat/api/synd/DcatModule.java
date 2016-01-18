@@ -6,12 +6,14 @@ import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
+import org.apache.jena.vocabulary.RDF;
 
 import com.rometools.rome.feed.CopyFrom;
 import com.rometools.rome.feed.module.ModuleImpl;
@@ -91,7 +93,7 @@ public class DcatModule extends ModuleImpl {
 		this.formats = formats;
 	}
 
-	static DcatModule getInstance(Resource dataset, Resource distribution) {
+	static DcatModule getInstance(Resource dataset) {
 
 		DcatModule dcatModule = new DcatModule();
 
@@ -112,22 +114,31 @@ public class DcatModule extends ModuleImpl {
 			}
 		}
 		
-		// Distribution
+		dcatModule.setSubject(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.title));
 		
-		dcatModule.setSubject(PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.title));
-		
-		String modified = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.modified);
+		String modified = PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.modified);
 		if (modified != null) {
 			dcatModule.setModified(DatatypeConverter.parseDate(modified).getTime());
 		}
 		
-		String format = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.format);
-		if (format != null) {
-			dcatModule.getFormats().add(format);
-		}
-		String mediaType = PropertyExtractor.extractExactlyOneStringOrNull(distribution, ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "mediaType"));
-		if (mediaType != null) {
-			dcatModule.getFormats().add(mediaType);
+		// Distribution
+		
+		ResIterator distributions = dataset.getModel().listResourcesWithProperty(RDF.type, ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "Distribution"));
+		while (distributions.hasNext()) {
+			Resource distribution = distributions.next();
+			String format = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.format);
+			if (format != null) {
+				if (!dcatModule.getFormats().contains(format)) {
+					dcatModule.getFormats().add(format);
+				}
+				
+			}
+			String mediaType = PropertyExtractor.extractExactlyOneStringOrNull(distribution, ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "mediaType"));
+			if (mediaType != null) {
+				if (!dcatModule.getFormats().contains(mediaType)) {
+					dcatModule.getFormats().add(mediaType);
+				}
+			}
 		}
 
 		return dcatModule;

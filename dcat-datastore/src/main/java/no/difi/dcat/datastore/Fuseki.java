@@ -61,6 +61,8 @@ public class Fuseki {
 
 		Query query = QueryFactory.create(p.toString());
 
+		logger.trace(query.toString());
+		
 		return QueryExecutionFactory.sparqlService(serviceUri, query).execSelect();
 	}
 
