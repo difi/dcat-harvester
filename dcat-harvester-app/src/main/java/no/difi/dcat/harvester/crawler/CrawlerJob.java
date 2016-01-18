@@ -4,10 +4,13 @@ import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.domain.DifiMeta;
 
 import java.time.LocalDateTime;
+import java.util.Iterator;
 
 import org.apache.jena.atlas.web.HttpException;
+import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +39,21 @@ public class CrawlerJob implements Runnable {
 	public void run() {
 		logger.info("[crawler_operations] [success] Started crawler job: {}", dcatSource.toString());
 		LocalDateTime start = LocalDateTime.now();
-		Model model = ModelFactory.createDefaultModel();
-		
+
+
 		try {
+			Model union = null;
 			try{
-				model.read(dcatSource.getUrl());
+
+				Dataset dataset = RDFDataMgr.loadDataset(dcatSource.getUrl());
+
+				 union = ModelFactory.createUnion(ModelFactory.createDefaultModel(), dataset.getDefaultModel());
+				Iterator<String> stringIterator = dataset.listNames();
+
+				while(stringIterator.hasNext()){
+					union = ModelFactory.createUnion(union, dataset.getNamedModel(stringIterator.next()));
+				}
+
 			}catch (RiotException e){
 				adminDataStore.addCrawlResults(dcatSource, DifiMeta.syntaxError, e.getMessage());
 				throw e;
@@ -48,7 +61,7 @@ public class CrawlerJob implements Runnable {
 				adminDataStore.addCrawlResults(dcatSource, DifiMeta.networkError, e.getMessage());
 				throw e;
 			}
-			handler.process(dcatSource, model);
+			handler.process(dcatSource, union);
 			LocalDateTime stop = LocalDateTime.now();
 			logger.info("[crawler_operations] [success] Finished crawler job: {}", dcatSource.toString() + ", Duration: " + returnCrawlDuration(start, stop));
 		} catch (Exception e) {
