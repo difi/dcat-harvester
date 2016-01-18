@@ -1,4 +1,5 @@
 FROM ubuntu:latest
+ENV TERM xterm
 
 ###############################################################################
 #                                INSTALLATION
@@ -17,10 +18,13 @@ RUN apt-get update -qq \
 		elasticsearch \
 		openjdk-7-jdk \
     vim
+    #npm
 
 ### install elasticsearch plugins
 
 RUN /usr/share/elasticsearch/bin/plugin install mobz/elasticsearch-head
+## RUN ln -s /usr/bin/nodejs /usr/bin/node
+#RUN npm install elasticdump –g
 
 ### install Logstash
 
@@ -68,9 +72,11 @@ ADD build/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 
 ### configure kibana
 ADD build/kibana.yml /opt/kibana/config/kibana.yml
+ADD build/kibana-exported.json /opt/kibana/config/kibana-exported.json
 
 ### configure logstash
-ADD build/logstash.conf /etc/lgostash/conf.d/logstash.conf
+ADD build/logstash.conf /etc/logstash/conf.d/logstash.conf
+ADD build/difi_template.json /etc/logstash/conf.d/difi_template.json
 
 ###############################################################################
 #                                   START
@@ -78,6 +84,7 @@ ADD build/logstash.conf /etc/lgostash/conf.d/logstash.conf
 
 ADD build/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
+#RUN elasticdump --input=/opt/kibana/config/kibana-exported.json --output=http://localhost:9200/.kibana --type=data
 
 EXPOSE 5601 9200 9300 5000 5044
 VOLUME /var/lib/elasticsearch

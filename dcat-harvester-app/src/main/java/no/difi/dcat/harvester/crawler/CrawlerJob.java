@@ -20,7 +20,7 @@ public class CrawlerJob implements Runnable {
 	private DcatSource dcatSource;
 	private AdminDataStore adminDataStore;
 	
-	private final Logger logger = LoggerFactory.getLogger(CrawlerJob.class);
+	private final Logger logger = LoggerFactory.getLogger("no.difi.dcat");
 	
 	public CrawlerJob(CrawlerResultHandler handler, DcatSource dcatSource, AdminDataStore adminDataStore) {
 		this.handler = handler;
@@ -49,12 +49,13 @@ public class CrawlerJob implements Runnable {
 				throw e;
 			}
 			handler.process(dcatSource, model);
+			LocalDateTime stop = LocalDateTime.now();
+			logger.info("[crawler_operations] [success] Finished crawler job: {}", dcatSource.toString() + ", Duration: " + returnCrawlDuration(start, stop));
 		} catch (Exception e) {
-			logger.error("Error running crawler job", e);
+			logger.error(String.format("[crawler_operations] [fail] Error running crawler job: %1$s, error=%2$s", dcatSource.toString(), e.toString()));
 		}
 		
-		LocalDateTime stop = LocalDateTime.now();
-		logger.info("[crawler_operations] [success] Finished crawler job: {}", dcatSource.toString() + ", Duration: " + returnCrawlDuration(start, stop));
+
 	}
 	
 	public static void main(String[] args) {
