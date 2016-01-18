@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,7 +23,9 @@ import no.difi.dcat.admin.settings.ApplicationSettings;
 import no.difi.dcat.admin.settings.FusekiSettings;
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.Fuseki;
+import no.difi.dcat.datastore.UserNotFoundException;
 import no.difi.dcat.datastore.domain.DcatSource;
+import no.difi.dcat.datastore.domain.User;
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -51,8 +54,10 @@ public class DcatAdminController {
 	public ModelAndView viewAllDcatSources(@RequestParam(value="edit", required=false) String editDcatSourceName, Principal principal) {
 		String name = principal.getName();
 		
+		boolean isAdmin = User.isAdmin(name, adminDataStore);
+		
 		List<DcatSource> dcatSources;
-		if (name.equalsIgnoreCase("admin")) {
+		if (isAdmin) {
 			dcatSources = adminDataStore.getDcatSources();
 		} else {
 			dcatSources = adminDataStore.getDcatSourcesForUser(name);
@@ -61,7 +66,8 @@ public class DcatAdminController {
 		ModelAndView model = new ModelAndView("admin");
 		model.addObject("dcatSources", dcatSources);
 	    model.addObject("username", name);
-		
+		model.addObject("isAdmin", isAdmin);
+	    
 	    if (editDcatSourceName != null) {
 	    	logger.trace("Looking for dcat source name to edit {}", editDcatSourceName);
 	    	Optional<DcatSource> editDcatSource = dcatSources.stream().filter((DcatSource dcatSource) -> dcatSource.getId().equalsIgnoreCase(editDcatSourceName)).findFirst();

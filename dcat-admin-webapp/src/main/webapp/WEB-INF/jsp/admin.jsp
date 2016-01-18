@@ -20,6 +20,11 @@
 		You are logged in as <b>${username}</b>. <a class="btn btn-default"
 			href="${pageContext.request.contextPath}/login?logout" role="button">
 			Log out </a>
+			<c:if test="${isAdmin}">
+			<a class="btn btn-primary"
+			href="${pageContext.request.contextPath}/admin/users" role="button">
+			Users Admin</a>
+			</c:if>
 	</p>
 
 	<div class="alert alert-danger" role="alert" id="errors"></div>
