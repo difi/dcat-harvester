@@ -144,8 +144,10 @@ public class AdminDataStore {
 	public DcatSource addDcatSource(DcatSource dcatSource) {
 		boolean update = false;
 		
+
 		if (dcatSource.getId() != null && dcatSource.getGraph() == null) {
 			//get current graph
+			// TODO: check if elasticsearch index already exists
 			Optional<DcatSource> dcatSourceById = getDcatSourceById(dcatSource.getId());
 			if (dcatSourceById.isPresent()) {
 				dcatSource.setGraph(dcatSourceById.get().getGraph());
@@ -402,6 +404,7 @@ public class AdminDataStore {
 		return userMap;
 	}
 
+	// TODO: add elasticsearch stuff here?
 	public void addCrawlResults(DcatSource dcatSource, Resource status, String message) {
 
 		logger.trace("Adding crawl result to dcat source {}", dcatSource.getId());

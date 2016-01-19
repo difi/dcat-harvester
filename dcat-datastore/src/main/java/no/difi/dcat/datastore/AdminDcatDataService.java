@@ -73,17 +73,15 @@ public class AdminDcatDataService {
 		adminDataStore.fuseki.sparqlUpdate(query, map);
 
 		// TODO: create client, when done, close it.
-		Client client = null;
-		String indexName = null;
-		dcatDataStore.deleteDataCatalogue(dcatSource, client, indexName);
+		Client client = adminDataStore.elasticsearch.elasticsearchTransportClient("localhost", 9200, "is this", "necessary");
+		dcatDataStore.deleteDataCatalogue(dcatSource, client, dcatSource.getId());
+		client.close();
 		
 		if (adminDataStore.fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) { 
 			logger.error("[user_admin] [fail] DCAT source was not deleted: {}", dcatSource.toString());
 		} else {
 			logger.info("[user_admin] [success] Deleted DCAT source: {}", dcatSource.toString());
 		}
-		
-		// TODO: should the deleted index check be done here or within the delete method itself? 
 		
 	}
 	

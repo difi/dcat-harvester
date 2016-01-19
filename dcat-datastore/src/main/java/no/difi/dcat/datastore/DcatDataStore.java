@@ -36,7 +36,6 @@ public class DcatDataStore {
 		return model;
 	}
 
-	// TODO: should client creation and closure go here?
 	public void deleteDataCatalogue(DcatSource dcatSource, Client client, String indexName) {
 		if(dcatSource == null || dcatSource.getGraph() == null || dcatSource.getGraph().trim().equals("")) return;
 		fuseki.drop(dcatSource.getGraph());
