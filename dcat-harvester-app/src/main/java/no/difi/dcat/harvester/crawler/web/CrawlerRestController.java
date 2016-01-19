@@ -18,7 +18,7 @@ import no.difi.dcat.datastore.Fuseki;
 import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.harvester.crawler.Crawler;
 import no.difi.dcat.harvester.crawler.CrawlerJob;
-import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
+import no.difi.dcat.harvester.crawler.CrawlerJobFactory;
 import no.difi.dcat.harvester.settings.FusekiSettings;
 
 @RestController
@@ -34,6 +34,9 @@ public class CrawlerRestController {
 	@Autowired
 	private Crawler crawler;
 	
+	@Autowired
+	private CrawlerJobFactory crawlerJobFactory;
+	
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
@@ -44,8 +47,7 @@ public class CrawlerRestController {
 		logger.debug("Received request to harvest {}", dcatSourceId);
 		Optional<DcatSource> dcatSource = adminDataStore.getDcatSourceById(dcatSourceId);
 		if (dcatSource.isPresent()) {
-			FusekiResultHandler handler = new FusekiResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
-			CrawlerJob job = new CrawlerJob(dcatSource.get(), adminDataStore, handler);
+			CrawlerJob job = crawlerJobFactory.createCrawlerJob(dcatSource.get());
 			crawler.execute(job);
 		} else {
 			logger.warn("No stored dcat source {}", dcatSource.toString());
@@ -56,10 +58,9 @@ public class CrawlerRestController {
 	public void harvestDataSoure() {
 		logger.debug("Received request to harvest all dcat sources");
 		
-		FusekiResultHandler handler = new FusekiResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
 		List<DcatSource> dcatSources = adminDataStore.getDcatSources();
 		for (DcatSource dcatSource : dcatSources) {
-			CrawlerJob job = new CrawlerJob(dcatSource, adminDataStore, handler);
+			CrawlerJob job = crawlerJobFactory.createCrawlerJob(dcatSource);
 			crawler.execute(job);
 		}
 		logger.debug("Finished all crawler jobs");

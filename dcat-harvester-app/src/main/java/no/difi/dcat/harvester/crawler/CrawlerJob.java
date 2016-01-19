@@ -30,7 +30,7 @@ public class CrawlerJob implements Runnable {
 	
 	private final Logger logger = LoggerFactory.getLogger("no.difi.dcat");
 	
-	public CrawlerJob(DcatSource dcatSource, AdminDataStore adminDataStore, CrawlerResultHandler... handlers) {
+	protected CrawlerJob(DcatSource dcatSource, AdminDataStore adminDataStore, CrawlerResultHandler... handlers) {
 		this.handlers = Arrays.asList(handlers);
 		this.dcatSource = dcatSource;
 		this.adminDataStore = adminDataStore;
