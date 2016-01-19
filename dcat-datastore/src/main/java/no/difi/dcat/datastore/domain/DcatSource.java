@@ -1,19 +1,15 @@
 package no.difi.dcat.datastore.domain;
 
-import java.text.DateFormat;
-import java.time.*;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Model;
