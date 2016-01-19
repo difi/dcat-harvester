@@ -86,7 +86,7 @@
 							</td>
 							<td>
 								<c:if test="${dcatSource.getLastHarvest().isPresent()}">
-									<a href="#" data-toggle="tooltip" title="${dcatSource.getLastHarvest().get().message}">
+									<a href="${pageContext.request.contextPath}/dcatSource?id=${dcatSource.id}" data-toggle="tooltip" title="${dcatSource.getLastHarvest().get().message}">
 										${dcatSource.getLastHarvest().get().status.getLocalName()}
 									</a>
 								</c:if>

@@ -1,7 +1,8 @@
 package no.difi.dcat.datastore.domain;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -10,6 +11,7 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -38,14 +40,14 @@ public class DcatSource {
 		Resource resource = dcatModel.getResource(id);
 
 		this.id = id;
-		
+
 		url = extractExactlyOneString(resource, DifiMeta.url);
 		graph = extractExactlyOneString(resource, DifiMeta.graph);
 		description = extractExactlyOneString(resource, RDFS.comment);
 		user = dcatModel.listResourcesWithProperty(DifiMeta.dcatSource).nextResource().listProperties(FOAF.accountName)
 				.next().getString();
 		orgnumber = extractExactlyOneStringOrNull(resource, DifiMeta.orgnumber);
-		
+
 		StmtIterator harvestedIterator = resource.listProperties(DifiMeta.harvested);
 		while (harvestedIterator.hasNext()) {
 			Statement next = harvestedIterator.next();
@@ -142,12 +144,12 @@ public class DcatSource {
 	public String getUser() {
 		return user;
 	}
-	
+
 	public void setOrgnumber(String orgnumber) {
 		this.orgnumber = orgnumber;
-		
+
 	}
-	
+
 	public String getOrgnumber() {
 		return orgnumber;
 	}
@@ -175,19 +177,21 @@ public class DcatSource {
 		this.graph = graph;
 	}
 
-
-
-	
 	public List<Harvest> getHarvested() {
 		return harvested;
 	}
 
+	public List<Harvest> getHarvestedSorted() {
+
+		return harvested.stream().sorted().collect(Collectors.toList());
+	}
+
 	public Optional<Harvest> getLastHarvest() {
-		Optional<Harvest> harvest = harvested.stream().max(new HarvestComparator());
+		Optional<Harvest> harvest = harvested.stream().sorted().findFirst();
 		return harvest;
 	}
 
-	public static class Harvest {
+	public class Harvest  implements Comparable<Harvest>{
 		private Resource status;
 		private String createdDate;
 		private String message;
@@ -199,10 +203,10 @@ public class DcatSource {
 		}
 
 		public String getCreatedDateFormatted() {
-			Calendar cal = DatatypeConverter.parseDateTime(createdDate);
-			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("NO"));
-
-			return df.format(cal.getTime());
+			OffsetDateTime parse = OffsetDateTime.parse(createdDate);
+			ZonedDateTime zonedDateTime = parse.atZoneSameInstant(ZoneId.of("Europe/Oslo"));
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy H:mm");
+			return zonedDateTime.format(formatter);
 		}
 
 		public Resource getStatus() {
@@ -216,27 +220,16 @@ public class DcatSource {
 		public String getMessage() {
 			return message;
 		}
-	}
-	
-	public static class HarvestComparator implements Comparator<Harvest> {
 
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
-		
+		public String getMessageOrEmpty() {
+			if(message == null) return "";
+			return message;
+		}
+
+
 		@Override
-		public int compare(Harvest o1, Harvest o2) {
-			if (o1 == o2) {
-				return 0;
-			}
-			if (o1 == null) {
-				return -1;
-			}
-			if (o2 == null) {
-				return 1;
-			}
-			Calendar c1 = DatatypeConverter.parseDateTime(o1.createdDate);
-			Calendar c2 = DatatypeConverter.parseDateTime(o2.createdDate);
-
-			return c1.compareTo(c2);		
+		public int compareTo(Harvest o) {
+			return o.createdDate.compareTo(createdDate);
 		}
 	}
 }
