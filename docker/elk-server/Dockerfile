@@ -55,13 +55,17 @@ RUN sed -i -e 's#^LS_HOME=$#LS_HOME='$LOGSTASH_HOME'#' /etc/init.d/logstash \
   && rm -f ${KIBANA_PACKAGE} \
   && groupadd -r kibana \
   && useradd -r -s /usr/sbin/nologin -d ${KIBANA_HOME} -c "Kibana service user" -g kibana kibana \
-  && chown -R kibana:kibana ${KIBANA_HOME}
+  && chown -R kibana:kibana ${KIBANA_HOME} \
+  && mkdir /var/log/kibana
 
- ADD build/kibana-init /etc/init.d/kibana
- RUN sed -i -e 's#^KIBANA_HOME=$#KIBANA_HOME='$KIBANA_HOME'#' /etc/init.d/kibana \
-  && chmod +x /etc/init.d/kibana
+ADD build/kibana-default /etc/default/kibana
+ADD build/kibana-init /etc/init.d/kibana
+RUN sed -i -e 's#^KIBANA_HOME=$#KIBANA_HOME='$KIBANA_HOME'#' /etc/init.d/kibana \
+  && update-rc.d kibana defaults 96 9 && chmod +x /etc/init.d/kibana
 
 RUN /opt/kibana/bin/kibana plugin --install elastic/sense
+
+RUN chown -R kibana:kibana /opt/kibana
 
 ###############################################################################
 #                               CONFIGURATION
