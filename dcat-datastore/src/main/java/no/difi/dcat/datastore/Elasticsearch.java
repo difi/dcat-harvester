@@ -48,7 +48,7 @@ public class Elasticsearch {
 		return null;
 	}
 
-	private boolean elasticsearchRunning(Client client) {
+	public boolean elasticsearchRunning(Client client) {
 		return client.admin().cluster().prepareHealth().execute().actionGet().getStatus() != null;
 	}
 

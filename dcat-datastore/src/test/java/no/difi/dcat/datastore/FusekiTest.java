@@ -79,9 +79,9 @@ public class FusekiTest {
 		fuseki();
 
 		homeDir = new File("src/test/resources/elasticsearch");
-		settings = Settings.settingsBuilder().put("path.home", homeDir.toString())//.put("cluster.name", "elasticsearch")
+		settings = Settings.settingsBuilder().put("path.home", homeDir.toString())
 				.build();
-		node = NodeBuilder.nodeBuilder()//.local(true)
+		node = NodeBuilder.nodeBuilder()
 				.settings(settings).build();
 		node.start();
 		client = node.client();

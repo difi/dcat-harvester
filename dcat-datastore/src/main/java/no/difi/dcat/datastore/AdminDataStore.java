@@ -146,6 +146,7 @@ public class AdminDataStore {
 			//get current graph
 			Optional<DcatSource> dcatSourceById = getDcatSourceById(dcatSource.getId());
 			if (dcatSourceById.isPresent()) {
+				// only need to check if graph requires update
 				dcatSource.setGraph(dcatSourceById.get().getGraph());
 				logger.info("[crawler_admin] [success] Updated DCAT source: {}", dcatSource.toString());
 				update = true;
@@ -211,9 +212,15 @@ public class AdminDataStore {
 		fuseki.sparqlUpdate(query, map);
 		// Create data source dashboard
 		if (dcatSource.getId() != null) {
-			// TODO: should prolly check if elasticsearch is actually up and running?
 			kibana = new Kibana();
-			kibana.doStuff(dcatSource.getId());
+			// Create crawler search
+			if(kibana.addCrawlerSearch(dcatSource.getId())) {
+				// TODO: log successful .kibana search add
+				// Crawler created, can continue with dashboard and visualisations
+			} else {
+				// TODO: log failed .kibana search add
+			}
+			
 		}
 		
 		if(!update) {

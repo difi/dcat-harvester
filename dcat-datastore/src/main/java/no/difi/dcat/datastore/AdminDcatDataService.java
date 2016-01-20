@@ -73,9 +73,9 @@ public class AdminDcatDataService {
 		dcatDataStore.deleteDataCatalogue(dcatSource);
 		
 		if (adminDataStore.fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) { 
-			logger.error("[user_admin] [fail] DCAT source was not deleted: {}", dcatSource.toString());
+			logger.error("[crawler_admin] [fail] DCAT source was not deleted: {}", dcatSource.toString());
 		} else {
-			logger.info("[user_admin] [success] Deleted DCAT source: {}", dcatSource.toString());
+			logger.info("[crawler_admin] [success] Deleted DCAT source: {}", dcatSource.toString());
 		}
 		
 	}
