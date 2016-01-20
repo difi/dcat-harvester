@@ -7,6 +7,10 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,16 +23,15 @@ public class Kibana {
 	private static final String INDEX_PATTERN_ID = "difi-*";
 	private static final String INDEX_PATTERN_TYPE = "index-pattern";
 	private static final String KIBANA_INDEX = ".kibana";
-	private Client client;
-	private Elasticsearch elasticsearch;
+	private Elasticsearch elasticsearch = new Elasticsearch();
 
 	private final Logger logger = LoggerFactory.getLogger(Kibana.class);
 
 	public void doStuff(String crawlerId) {
-		this.elasticsearch = new Elasticsearch();
-		// TODO: do host and port really need to be configurable?
+		
+		Client client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
+
 		// TODO: check elasticsearch is actually running?
-		this.client = elasticsearch.returnElasticsearchTransportClient("localhost", 9200, "elasticseach");
 		// Check .kibana index exists, create it if not
 		if (!indexExists(KIBANA_INDEX, client)) {
 			createIndex(KIBANA_INDEX, client);
@@ -39,15 +42,7 @@ public class Kibana {
 			document.put(TITLE, INDEX_PATTERN_ID);
 			createDocument(KIBANA_INDEX, INDEX_PATTERN_TYPE, INDEX_PATTERN_ID, document, client);
 		}
-		// TODO: Could potentially use this instead of a million maps?
-		// import static org.elasticsearch.common.xcontent.XContentFactory.*;
-		//
-		// XContentBuilder builder = jsonBuilder()
-		// .startObject()
-		// .field("user", "kimchy")
-		// .field("postDate", new Date())
-		// .field("message", "trying out Elasticsearch")
-		// .endObject()
+		// TODO: Could potentially use jsonBuilder instead of a million maps?
 		// Check saved search exists for new crawler, create it if not
 		if (!documentExists(KIBANA_INDEX, SEARCH_TYPE, crawlerId, client)) {
 			Map<String, Object> document = new HashMap<String, Object>();
@@ -68,13 +63,15 @@ public class Kibana {
 			createDocument(KIBANA_INDEX, SEARCH_TYPE, crawlerId, document, client);
 		}
 
-		// TODO: visualisations and dashboard should then just be templateable, elasticdump?
+		// TODO: visualisations and dashboard should then just be
+		// templateable, elasticdump?
 
 		// Always close the client when we're done with it
 		client.close();
+
 	}
 
-	// A lot (if not all) of this could be moved into the Elasticsearch class tbh
+	// A lot (if not all) of this could be moved into the Elasticsearch class
 	private void createDocument(String index, String type, String id, Map<String, Object> document, Client client) {
 		IndexResponse rsp = client.prepareIndex(index, type, id).setSource(document).execute().actionGet();
 	}

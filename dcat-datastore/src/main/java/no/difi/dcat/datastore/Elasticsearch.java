@@ -26,7 +26,11 @@ public class Elasticsearch {
 		} catch (UnknownHostException e) {
 			logger.error(e.toString());
 		}
-		return client;
+		
+		if(elasticsearchRunning(client)) {
+			return client;
+		}
+		return null;
 	}
 
 	public Client returnElasticsearchTransportClient(String host, int port) {
@@ -37,7 +41,15 @@ public class Elasticsearch {
 		} catch (UnknownHostException e) {
 			logger.error(e.toString());
 		}
-		return client;
+		
+		if(elasticsearchRunning(client)) {
+			return client;
+		}
+		return null;
+	}
+
+	private boolean elasticsearchRunning(Client client) {
+		return client.admin().cluster().prepareHealth().execute().actionGet().getStatus() != null;
 	}
 
 }
