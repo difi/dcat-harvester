@@ -20,6 +20,12 @@ import no.difi.dcat.datastore.Elasticsearch;
 
 public class Kibana {
 
+	private static final String SEARCH_SOURCE_JSON = "searchSourceJson";
+	private static final String KIBANA_SAVED_OBJECT_META = "kibanaSavedObjectMeta";
+	private static final String ANALYZE_WILDCARD = "analyze_wildcard";
+	private static final String QUERY_STRING = "queryString";
+	private static final String INDEX = "index";
+	private static final String QUERY = "query";
 	private static final String SEARCH_TYPE = "search";
 	private static final String TITLE = "title";
 	private static final String INDEX_PATTERN_ID = "difi-*";
@@ -30,10 +36,8 @@ public class Kibana {
 
 	private final Logger logger = LoggerFactory.getLogger(Kibana.class);
 
-	public Kibana() {
-
-		client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
-
+	public Kibana(Client client) {
+		this.client = client;
 		if (elasticsearch.elasticsearchRunning(client)) {
 			// Check .kibana index exists, create it if not
 			if (!indexExists(KIBANA_INDEX, client)) {
@@ -45,11 +49,6 @@ public class Kibana {
 				document.put(TITLE, INDEX_PATTERN_ID);
 				indexDocument(KIBANA_INDEX, INDEX_PATTERN_TYPE, INDEX_PATTERN_ID, document, client);
 			}
-
-			// TODO: visualisations and dashboard templates
-
-			// Always close the client when we're done with it
-			client.close();
 		}
 
 	}
@@ -57,19 +56,9 @@ public class Kibana {
 	public boolean delete_everything(String crawlerId) {
 		// Check saved search exists, delete if so
 		if (documentExists(KIBANA_INDEX, SEARCH_TYPE, crawlerId, client)) {
-			return(deleteDocument(KIBANA_INDEX, SEARCH_TYPE, crawlerId, client));
+			return (deleteDocument(KIBANA_INDEX, SEARCH_TYPE, crawlerId, client));
 		}
 		// TODO: what else do we need to delete? everything is kinda broad.
-		return true;
-	}
-	
-	public boolean addCrawlerSearch(String crawlerId) {
-		// Check saved search exists for new crawler, create it if not
-		if (!documentExists(KIBANA_INDEX, SEARCH_TYPE, crawlerId, client)) {
-			// Create saved search document for new crawler
-			Map<String, Object> document = createCrawlerSearchDocument(crawlerId);
-			return indexDocument(KIBANA_INDEX, SEARCH_TYPE, crawlerId, document, client);
-		}
 		return true;
 	}
 
@@ -77,24 +66,30 @@ public class Kibana {
 	private Map<String, Object> createCrawlerSearchDocument(String crawlerId) {
 		Map<String, Object> document = new HashMap<String, Object>();
 		document.put(TITLE, crawlerId);
+		// Create query section
 		Map<String, Object> kibanaSavedObjectMeta = new HashMap<String, Object>();
 		Map<String, Object> searchSourceJson = new HashMap<String, Object>();
 		Map<String, Object> query = new HashMap<String, Object>();
 		Map<String, Object> queryString = new HashMap<String, Object>();
-		queryString.put("query", "crawler_id:\"" + crawlerId + "\"");
-		queryString.put("analyze_wildcard", true);
-		query.put("queryString", queryString);
-		searchSourceJson.put("index", INDEX_PATTERN_ID);
-		searchSourceJson.put("query", query);
-		kibanaSavedObjectMeta.put("searchSourceJson", searchSourceJson);
-		document.put("kibanaSavedObjectMeta", kibanaSavedObjectMeta);
+		queryString.put(QUERY, "crawler_id:\"" + crawlerId + "\"");
+		queryString.put(ANALYZE_WILDCARD, true);
+		query.put(QUERY_STRING, queryString);
+		searchSourceJson.put(INDEX, INDEX_PATTERN_ID);
+		searchSourceJson.put(QUERY, query);
+		kibanaSavedObjectMeta.put(SEARCH_SOURCE_JSON, searchSourceJson);
+		// End create query section
+		document.put(KIBANA_SAVED_OBJECT_META, kibanaSavedObjectMeta);
 		return document;
 	}
 
-	// TODO: A lot (if not all) of this could be moved into Elasticsearch
+	// A lot (if not all) of this could be moved into the Elasticsearch class
 	private boolean indexDocument(String index, String type, String id, Map<String, Object> document, Client client) {
 		IndexResponse rsp = client.prepareIndex(index, type, id).setSource(document).execute().actionGet();
 		return rsp.isCreated();
+	}
+
+	private boolean documentExists(String index, String type, String id, Client client) {
+		return client.prepareGet(index, type, id).execute().actionGet().isExists();
 	}
 
 	private boolean deleteDocument(String index, String type, String id, Client client) {
@@ -102,8 +97,13 @@ public class Kibana {
 		return rsp.isFound();
 	}
 
-	private boolean documentExists(String index, String type, String id, Client client) {
-		return client.prepareGet(index, type, id).execute().actionGet().isExists();
+	public boolean addCrawlerSearch(String crawlerId) {
+		// Check saved search exists for new crawler, create it if not
+		if (!documentExists(KIBANA_INDEX, SEARCH_TYPE, crawlerId, client)) {
+			Map<String, Object> document = createCrawlerSearchDocument(crawlerId);
+			return indexDocument(KIBANA_INDEX, SEARCH_TYPE, crawlerId, document, client);
+		}
+		return true;
 	}
 
 	private boolean indexExists(String index, Client client) {

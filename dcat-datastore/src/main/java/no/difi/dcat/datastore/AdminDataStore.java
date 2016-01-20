@@ -15,6 +15,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.RDF;
+import org.elasticsearch.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,7 @@ public class AdminDataStore {
 
 	protected final Fuseki fuseki;
 	private Kibana kibana;
+	private Elasticsearch elasticsearch;
 	private final Logger logger = LoggerFactory.getLogger(AdminDataStore.class);
 
 	public AdminDataStore(Fuseki fuseki) {
@@ -39,14 +41,9 @@ public class AdminDataStore {
 		logger.trace("Listing all dcat sources");
 		List<DcatSource> dcatSources = new ArrayList<DcatSource>();
 
-
 		Map<String, String> map = new HashMap<>();
 
-		String query = String.join("\n",
-				"describe ?a ?user where {",
-				"	?user difiMeta:dcatSource ?a.",
-				"}"
-		);
+		String query = String.join("\n", "describe ?a ?user where {", "	?user difiMeta:dcatSource ?a.", "}");
 		Model dcatModel = fuseki.describe(query, map);
 
 		System.out.println(DifiMeta.DcatSource);
@@ -55,8 +52,7 @@ public class AdminDataStore {
 
 		ResIterator resIterator = dcatModel.listResourcesWithProperty(RDF.type, DifiMeta.DcatSource);
 
-
-		while(resIterator.hasNext()){
+		while (resIterator.hasNext()) {
 			String uri = resIterator.nextResource().getURI();
 			ret.add(new DcatSource(dcatModel, uri));
 
@@ -73,24 +69,18 @@ public class AdminDataStore {
 	public List<DcatSource> getDcatSourcesForUser(String username) {
 		logger.trace("Listing dcat sources for user {}", username);
 
-
 		Map<String, String> map = new HashMap<>();
 		map.put("username", username);
 
-		String query = String.join("\n",
-				"describe ?a ?user where {",
-				"	?user foaf:accountName ?username;",
-				"	difiMeta:dcatSource ?a.",
-				"}"
-		);
+		String query = String.join("\n", "describe ?a ?user where {", "	?user foaf:accountName ?username;",
+				"	difiMeta:dcatSource ?a.", "}");
 		Model dcatModel = fuseki.describe(query, map);
 
 		if (dcatModel.isEmpty()) {
 			return new ArrayList<>();
 		}
 
-		StmtIterator stmtIterator = dcatModel
-				.listResourcesWithProperty(FOAF.accountName).next()
+		StmtIterator stmtIterator = dcatModel.listResourcesWithProperty(FOAF.accountName).next()
 				.listProperties(DifiMeta.dcatSource);
 
 		List<DcatSource> dcatSources = new ArrayList<>();
@@ -114,12 +104,8 @@ public class AdminDataStore {
 		Map<String, String> map = new HashMap<>();
 		map.put("dcatSourceId", dcatSourceId);
 
-		String query = String.join("\n",
-				"describe ?a ?user where {",
-				"	BIND(IRI(?dcatSourceId) as ?a)",
-				"	?user difiMeta:dcatSource ?a.",
-				"}"
-		);
+		String query = String.join("\n", "describe ?a ?user where {", "	BIND(IRI(?dcatSourceId) as ?a)",
+				"	?user difiMeta:dcatSource ?a.", "}");
 		Model dcatModel = fuseki.describe(query, map);
 
 		System.out.println(DifiMeta.DcatSource);
@@ -133,7 +119,6 @@ public class AdminDataStore {
 
 		return Optional.of(new DcatSource(dcatModel, dcatSourceId));
 
-
 	}
 
 	/**
@@ -141,9 +126,9 @@ public class AdminDataStore {
 	 */
 	public DcatSource addDcatSource(DcatSource dcatSource) {
 		boolean update = false;
-		
+
 		if (dcatSource.getId() != null && dcatSource.getGraph() == null) {
-			//get current graph
+			// get current graph
 			Optional<DcatSource> dcatSourceById = getDcatSourceById(dcatSource.getId());
 			if (dcatSourceById.isPresent()) {
 				// only need to check if graph requires update
@@ -151,11 +136,12 @@ public class AdminDataStore {
 				logger.info("[crawler_admin] [success] Updated DCAT source: {}", dcatSource.toString());
 				update = true;
 			}
-			
+
 		}
 
 		if (dcatSource.getId() == null && dcatSource.getGraph() != null) {
-			throw new UnsupportedOperationException("dcatSource id can not  ==null while the graph is != null. This is potentially dangerous behaviour.");
+			throw new UnsupportedOperationException(
+					"dcatSource id can not  ==null while the graph is != null. This is potentially dangerous behaviour.");
 		}
 
 		if (dcatSource.getUser() == null) {
@@ -170,34 +156,21 @@ public class AdminDataStore {
 			dcatSource.setGraph("http://dcat.difi.no/dcatSource_" + UUID.randomUUID().toString());
 		}
 
-		String query = String.join("\n",
-				"delete {",
-				"	graph <http://dcat.difi.no/usersGraph/> {",
+		String query = String.join("\n", "delete {", "	graph <http://dcat.difi.no/usersGraph/> {",
 				"		?dcatSource difiMeta:graph  ?originalDcatGraphUri. ",
 				"		?dcatSource difiMeta:url  ?originalUrl.",
-				"		?dcatSource rdfs:comment  ?originalDescription. ",
-				"	}",
-				"}",
-				"insert {",
-				"     graph <http://dcat.difi.no/usersGraph/> {",
-				"          ?user difiMeta:dcatSource ?dcatSource .",
+				"		?dcatSource rdfs:comment  ?originalDescription. ", "	}", "}", "insert {",
+				"     graph <http://dcat.difi.no/usersGraph/> {", "          ?user difiMeta:dcatSource ?dcatSource .",
 				"          ?dcatSource a difiMeta:DcatSource ; ",
 				"                             difiMeta:graph ?dcatGraphUri; ",
-				"                             difiMeta:url ?url;",
-				"					rdfs:comment ?description",
-				"",
-				"",
-				" . ",
-				"     }",
-				"} where {",
-				"           BIND(IRI(?dcatSourceUri) as ?dcatSource)",
+				"                             difiMeta:url ?url;", "					rdfs:comment ?description", "",
+				"", " . ", "     }", "} where {", "           BIND(IRI(?dcatSourceUri) as ?dcatSource)",
 				"           ?user foaf:accountName ?username",
 				"		OPTIONAL{ ?dcatSource difiMeta:graph  ?originalDcatGraphUri} ",
 				"		OPTIONAL{ ?dcatSource difiMeta:url  ?originalUrl} ",
 				"		OPTIONAL{ ?dcatSource rdfs:comment  ?originalDescription} ",
 
 				"}");
-
 
 		Map<String, String> map = new HashMap<>();
 
@@ -212,18 +185,22 @@ public class AdminDataStore {
 		fuseki.sparqlUpdate(query, map);
 		// Create data source dashboard
 		if (dcatSource.getId() != null) {
-			kibana = new Kibana();
-			// Create crawler search
-			if(kibana.addCrawlerSearch(dcatSource.getId())) {
+			// TODO: should prolly check if elasticsearch is actually up and
+			// running?
+			elasticsearch = new Elasticsearch();
+			Client client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
+			kibana = new Kibana(client);
+			if (kibana.addCrawlerSearch(dcatSource.getId())) {
 				// TODO: log successful .kibana search add
-				// Crawler created, can continue with dashboard and visualisations
+				// Crawler created, can continue with dashboard and
+				// visualisations
 			} else {
 				// TODO: log failed .kibana search add
 			}
-			
+			client.close();
 		}
-		
-		if(!update) {
+
+		if (!update) {
 			if (fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) {
 				logger.error("[crawler_admin] [fail] Error adding DCAT source: {}", dcatSource.toString());
 			} else {
@@ -234,12 +211,11 @@ public class AdminDataStore {
 		if (fuseki.ask("ask { ?a ?b <" + dcatSource.getId() + ">}")) {
 			return dcatSource;
 		} else {
-			//@TODO throw exception?
+			// @TODO throw exception?
 			return null;
 		}
 
 	}
-
 
 	/**
 	 * @param user
@@ -250,80 +226,61 @@ public class AdminDataStore {
 			// insert new user
 			user.setId("http://dcat.difi.no/user_" + UUID.randomUUID().toString());
 
-			String query = String.join("\n",
-					"insert {",
-					"     graph <http://dcat.difi.no/usersGraph/> {",
+			String query = String.join("\n", "insert {", "     graph <http://dcat.difi.no/usersGraph/> {",
 					"           <" + user.getId() + "> foaf:accountName ?username;",
 					"                               difiMeta:role ?role;",
 					"                               difiMeta:email ?email;",
-					"                               difiMeta:password ?password;" ,
-					"                               a difiMeta:User;",
-					"            .",
-					"     }",
-					"} where {",
-					"     FILTER(!EXISTS{?a foaf:accountName ?username. })",
-					"}"
-			);
+					"                               difiMeta:password ?password;",
+					"                               a difiMeta:User;", "            .", "     }", "} where {",
+					"     FILTER(!EXISTS{?a foaf:accountName ?username. })", "}");
 
 			Map<String, String> map = new HashMap<>();
 			map.put("username", user.getUsername());
 			map.put("role", user.getRole());
 			map.put("password", user.getPassword());
 			map.put("email", user.getEmail());
-			if (fuseki.ask("ask { ?user foaf:accountName ?username}", map)) { 
+			if (fuseki.ask("ask { ?user foaf:accountName ?username}", map)) {
 				logger.error("[user_admin] [fail] Error adding user: {}", user.toString());
 			} else {
 				logger.info("[user_admin] [success] Added user: {}", user.toString());
 			}
 
 			fuseki.sparqlUpdate(query, map);
-			
+
 		} else {
 			// update exisiting user
 
-			//get password if not exists
-			if(user.getPassword() == null || user.getPassword().isEmpty()){
+			// get password if not exists
+			if (user.getPassword() == null || user.getPassword().isEmpty()) {
 				String getPasswordQuery = "select * where {BIND(IRI(?userId) as ?user). ?user difiMeta:password ?password. }";
 				Map<String, String> map = new HashMap<>();
 				map.put("userId", user.getId());
 				ResultSet select = fuseki.select(getPasswordQuery, map);
-				if(select.hasNext()){
+				if (select.hasNext()) {
 					String password = select.next().getLiteral("password").getString();
 					user.setPassword(password);
-				}else{
-					throw new RuntimeException("No such user: "+user.getId() + " "+ user.getUsername());
+				} else {
+					throw new RuntimeException("No such user: " + user.getId() + " " + user.getUsername());
 				}
 			}
 
-
-			String query = String.join("\n",
-					"delete{",
-					"     graph <http://dcat.difi.no/usersGraph/> {",
+			String query = String.join("\n", "delete{", "     graph <http://dcat.difi.no/usersGraph/> {",
 					"           ?user foaf:accountName ?original_username;",
 					"                               difiMeta:role ?original_role;",
 					"                               difiMeta:email ?original_email;",
 					"                               difiMeta:password ?original_password;",
-					"                               a difiMeta:User;",
-					"            .",
-					"	}",
-					"}insert {",
-					"     graph <http://dcat.difi.no/usersGraph/> {",
-					"           ?user foaf:accountName ?username;",
+					"                               a difiMeta:User;", "            .", "	}", "}insert {",
+					"     graph <http://dcat.difi.no/usersGraph/> {", "           ?user foaf:accountName ?username;",
 					"                               difiMeta:role ?role;",
 					"                               difiMeta:email ?email;",
-					"                               difiMeta:password ?password;" +
-							"                               a difiMeta:User;",
-					"            .",
-					"     }",
-					"} where {",
-					"	BIND(IRI(?userId) as ?user).",
+					"                               difiMeta:password ?password;"
+							+ "                               a difiMeta:User;",
+					"            .", "     }", "} where {", "	BIND(IRI(?userId) as ?user).",
 					"           ?user foaf:accountName ?original_username;",
 					"                               difiMeta:role ?original_role;",
 					"                               difiMeta:email ?original_email;",
 					"                               difiMeta:password ?original_password;",
-					"                               a difiMeta:User;",
-					"}"
-			);
+					"                               a difiMeta:User;", "}");
 
 			Map<String, String> map = new HashMap<>();
 			map.put("username", user.getUsername());
@@ -331,7 +288,6 @@ public class AdminDataStore {
 			map.put("password", user.getPassword());
 			map.put("email", user.getEmail());
 			map.put("userId", user.getId());
-
 
 			fuseki.sparqlUpdate(query, map);
 			logger.info("[user_admin] [success] Updated user: {}", user.toString());
@@ -349,26 +305,19 @@ public class AdminDataStore {
 	 * @param username
 	 */
 	public void deleteUser(String username) {
-		//@TODO Use SPARQL update instead
-
+		// @TODO Use SPARQL update instead
 
 		// throw exception if the user has a dcatSource.
 
 		String user = String.format("http://dcat.difi.no/%s", username);
 		fuseki.drop(user);
 	}
-	
+
 	public List<User> getUsers() {
 		Map<String, String> map = new HashMap<>();
-		String query = String.join("\n",
-				"select ?userid ?username ?password ?email ?role where {",
-				"     ?userid foaf:accountName ?username ;",
-				"           difiMeta:password ?password ;",
-				"			difiMeta:email ?email ;",
-				"           difiMeta:role ?role ;",
-				".",
-				"}"
-		);
+		String query = String.join("\n", "select ?userid ?username ?password ?email ?role where {",
+				"     ?userid foaf:accountName ?username ;", "           difiMeta:password ?password ;",
+				"			difiMeta:email ?email ;", "           difiMeta:role ?role ;", ".", "}");
 		ResultSet results = fuseki.select(query, map);
 
 		List<User> users = new ArrayList<>();
@@ -382,21 +331,15 @@ public class AdminDataStore {
 	/**
 	 * @param username
 	 * @return
-	 * @throws UserNotFoundException 
+	 * @throws UserNotFoundException
 	 */
 	public Map<String, String> getUser(String username) throws UserNotFoundException {
 		logger.trace("Getting user {}", username);
 
 		Map<String, String> map = new HashMap<>();
 		map.put("username", username);
-		String query = String.join("\n",
-				"select ?password ?role where {",
-				"     ?user foaf:accountName ?username ;",
-				"           difiMeta:password ?password ;",
-				"           difiMeta:role ?role ;",
-				".",
-				"}"
-		);
+		String query = String.join("\n", "select ?password ?role where {", "     ?user foaf:accountName ?username ;",
+				"           difiMeta:password ?password ;", "           difiMeta:role ?role ;", ".", "}");
 		ResultSet results = fuseki.select(query, map);
 
 		Map<String, String> userMap = new HashMap<>();
@@ -410,7 +353,7 @@ public class AdminDataStore {
 		if (!userMap.containsKey("username")) {
 			throw new UserNotFoundException("User not found in database: " + username);
 		}
-		
+
 		return userMap;
 	}
 
@@ -420,34 +363,22 @@ public class AdminDataStore {
 		Map<String, String> map = new HashMap<>();
 
 		String sparqlMessage = "";
-		if(message != null){
+		if (message != null) {
 			sparqlMessage = "rdfs:comment ?message;";
 			map.put("message", message);
 		}
 
-		String query = String.join("\n",
-				"insert {",
-				"     graph <http://dcat.difi.no/usersGraph/> {",
-				"           <" + dcatSource.getId() + "> difiMeta:harvested [",
-				"			a difiMeta:Harvest;",
-				"			dct:created ?dateCreated;",
-				"			difiMeta:status <"+status.getURI()+">;",
-				sparqlMessage,
-				"			",
-				"            ].",
-				"     }",
-				"} where {",
-				"     BIND(NOW() as ?dateCreated)",
-				"}"
-		);
-
+		String query = String.join("\n", "insert {", "     graph <http://dcat.difi.no/usersGraph/> {",
+				"           <" + dcatSource.getId() + "> difiMeta:harvested [", "			a difiMeta:Harvest;",
+				"			dct:created ?dateCreated;", "			difiMeta:status <" + status.getURI() + ">;",
+				sparqlMessage, "			", "            ].", "     }", "} where {",
+				"     BIND(NOW() as ?dateCreated)", "}");
 
 		fuseki.sparqlUpdate(query, map);
 	}
 
-
 	public User getUserObject(String username) throws UserNotFoundException {
-		Map<String,String> userMap = getUser(username);
+		Map<String, String> userMap = getUser(username);
 		return new User("", userMap.get("username"), "", "", userMap.get("role"));
 	}
 }
