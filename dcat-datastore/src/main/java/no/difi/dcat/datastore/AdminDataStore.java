@@ -211,8 +211,8 @@ public class AdminDataStore {
 		fuseki.sparqlUpdate(query, map);
 		// Create data source dashboard
 		if (dcatSource.getId() != null) {
-			System.out.println("\n\n\n\n wat \n\n\n\n");
 			// TODO: should prolly check if elasticsearch is actually up and running?
+			kibana = new Kibana();
 			kibana.doStuff(dcatSource.getId());
 		}
 		

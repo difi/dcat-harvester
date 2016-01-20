@@ -27,7 +27,8 @@ public class Kibana {
 	public void doStuff(String crawlerId) {
 		this.elasticsearch = new Elasticsearch();
 		// TODO: do host and port really need to be configurable?
-		this.client = elasticsearch.returnElasticsearchTransportClient("localhost", 9200);
+		// TODO: check elasticsearch is actually running?
+		this.client = elasticsearch.returnElasticsearchTransportClient("localhost", 9200, "elasticseach");
 		// Check .kibana index exists, create it if not
 		if (!indexExists(KIBANA_INDEX, client)) {
 			createIndex(KIBANA_INDEX, client);

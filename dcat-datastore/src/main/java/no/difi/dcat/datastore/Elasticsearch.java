@@ -16,7 +16,7 @@ public class Elasticsearch {
 	private static final String CLUSTER_NAME = "cluster.name";
 	private final Logger logger = LoggerFactory.getLogger(Elasticsearch.class);
 
-	public Client returnElasticsearchTransportClient(String host, int port, String clusterName, String nodeName) {
+	public Client returnElasticsearchTransportClient(String host, int port, String clusterName) {
 		Client client = null;
 		Settings settings = null;
 		try {
