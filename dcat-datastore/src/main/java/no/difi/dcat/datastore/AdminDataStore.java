@@ -268,6 +268,7 @@ public class AdminDataStore {
 			} else {
 				logger.info("[user_admin] [success] Added user: {}", user.toString());
 			}
+
 			fuseki.sparqlUpdate(query, map);
 			
 		} else {
