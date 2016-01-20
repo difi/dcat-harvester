@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 
 import no.difi.dcat.datastore.DcatDataStore;
 import no.difi.dcat.datastore.domain.DcatSource;
+import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
 
 public class CrawlerJobTest {
 	
@@ -18,9 +19,9 @@ public class CrawlerJobTest {
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
 		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(), Mockito.anyObject());
 
-		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore, null);
+		FusekiResultHandler handler = new FusekiResultHandler(dcatDataStore, null);
 		
-		CrawlerJob job = new CrawlerJob(handler, dcatSource, null);
+		CrawlerJob job = new CrawlerJob(dcatSource, null, handler);
 		
 		job.run();
 	}
@@ -32,7 +33,7 @@ public class CrawlerJobTest {
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
 		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
 
-		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore, adminDataStore);
+		FusekiResultHandler handler = new FusekiResultHandler(dcatDataStore, adminDataStore);
 		
 		handler.process(dcatSource, ModelFactory.createDefaultModel());
 	}
@@ -45,7 +46,7 @@ public class CrawlerJobTest {
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
 		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(), Mockito.anyObject());
 		
-		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore, null);
+		FusekiResultHandler handler = new FusekiResultHandler(dcatDataStore, null);
 		
 		handler.process(dcatSource, ModelFactory.createDefaultModel());
 	}

@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.DcatDataStore;
 import no.difi.dcat.datastore.domain.DcatSource;
+import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
 
 public class CrawlerTest {
 	
@@ -27,9 +28,9 @@ public class CrawlerTest {
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
 		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
 
-		CrawlerResultHandler handler = new CrawlerResultHandler(dcatDataStore, null);
+		FusekiResultHandler handler = new FusekiResultHandler(dcatDataStore, null);
 		
-		List<CrawlerJob> crawlerJobs = dcatSources.stream().map(dcatSource -> new CrawlerJob(handler, dcatSource, adminDataStore)).collect(Collectors.<CrawlerJob>toList());
+		List<CrawlerJob> crawlerJobs = dcatSources.stream().map(dcatSource -> new CrawlerJob(dcatSource, adminDataStore, handler)).collect(Collectors.<CrawlerJob>toList());
 		
 		Crawler crawler = new Crawler();
 		crawler.initialize();

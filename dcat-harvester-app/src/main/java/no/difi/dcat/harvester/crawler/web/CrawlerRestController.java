@@ -1,4 +1,4 @@
-package no.difi.dcat.harvester.crawler;
+package no.difi.dcat.harvester.crawler.web;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.Fuseki;
 import no.difi.dcat.datastore.domain.DcatSource;
+import no.difi.dcat.harvester.crawler.Crawler;
+import no.difi.dcat.harvester.crawler.CrawlerJob;
+import no.difi.dcat.harvester.crawler.CrawlerJobFactory;
 import no.difi.dcat.harvester.settings.FusekiSettings;
 
 @RestController
@@ -31,6 +34,9 @@ public class CrawlerRestController {
 	@Autowired
 	private Crawler crawler;
 	
+	@Autowired
+	private CrawlerJobFactory crawlerJobFactory;
+	
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
@@ -41,8 +47,7 @@ public class CrawlerRestController {
 		logger.debug("Received request to harvest {}", dcatSourceId);
 		Optional<DcatSource> dcatSource = adminDataStore.getDcatSourceById(dcatSourceId);
 		if (dcatSource.isPresent()) {
-			CrawlerResultHandler handler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
-			CrawlerJob job = new CrawlerJob(handler, dcatSource.get(), adminDataStore);
+			CrawlerJob job = crawlerJobFactory.createCrawlerJob(dcatSource.get());
 			crawler.execute(job);
 		} else {
 			logger.warn("No stored dcat source {}", dcatSource.toString());
@@ -53,10 +58,9 @@ public class CrawlerRestController {
 	public void harvestDataSoure() {
 		logger.debug("Received request to harvest all dcat sources");
 		
-		CrawlerResultHandler handler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
 		List<DcatSource> dcatSources = adminDataStore.getDcatSources();
 		for (DcatSource dcatSource : dcatSources) {
-			CrawlerJob job = new CrawlerJob(handler, dcatSource, adminDataStore);
+			CrawlerJob job = crawlerJobFactory.createCrawlerJob(dcatSource);
 			crawler.execute(job);
 		}
 		logger.debug("Finished all crawler jobs");

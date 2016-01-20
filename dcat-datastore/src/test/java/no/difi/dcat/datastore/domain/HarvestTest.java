@@ -1,9 +1,8 @@
 package no.difi.dcat.datastore.domain;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-import static no.difi.dcat.datastore.domain.DcatSource.*;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * Created by havardottestad on 18/01/16.

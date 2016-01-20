@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.Fuseki;
-import no.difi.dcat.harvester.crawler.CrawlerResultHandler;
+import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
 import no.difi.dcat.harvester.settings.FusekiSettings;
 
 @Component
@@ -19,14 +19,14 @@ public class ScheduledTasks {
 	private FusekiSettings fusekiSettings;
 	
 	private AdminDataStore adminDataStore;
-	private CrawlerResultHandler crawlerResultHandler;
+	private FusekiResultHandler crawlerResultHandler;
 	
 	private final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 	
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
-		crawlerResultHandler = new CrawlerResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
+		crawlerResultHandler = new FusekiResultHandler(fusekiSettings.getDcatServiceUri(), fusekiSettings.getAdminServiceUri());
 	}
 	
 //	@Scheduled(cron = "0 0 */1 * * *") //run hourly

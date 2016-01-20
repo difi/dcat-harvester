@@ -4,13 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-import no.difi.dcat.datastore.domain.DcatSource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.junit.Test;
 
+import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.DcatSource.Harvest;
 
 public class HarvestTest {
