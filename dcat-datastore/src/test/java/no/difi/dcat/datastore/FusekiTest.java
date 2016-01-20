@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -29,18 +31,44 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.tdb.StoreConnection;
 import org.apache.jena.tdb.base.file.Location;
 import org.apache.jena.vocabulary.RDFS;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
 import org.junit.Test;
 
+import main.java.no.difi.dcat.datastore.AdminDataStore;
+import main.java.no.difi.dcat.datastore.Logger;
+import no.difi.dcat.datastore.Elasticsearch;
+import no.difi.dcat.datastore.UserAlreadyExistsException;
+import no.difi.dcat.datastore.UserNotFoundException;
 import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.DifiMeta;
 import no.difi.dcat.datastore.domain.User;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by havardottestad on 05/01/16.
  */
 public class FusekiTest {
 
+	private final jdk.internal.instrumentation.Logger logger = LoggerFactory.getLogger(FusekiTest.class);
+	
 	JettyFuseki server;
+	Node node;
+	Elasticsearch elasticsearch;
+	Client client;
+	
+	private String clusterName = "elasticsearch";
+	private Path dataDir = Files.createTempDirectory("elasticsearch_data");
+	private Settings settings = ImmutableSettings.settingsBuilder
+		    .put("path.data", dataDir.toString())
+		    .put("cluster.name", clusterName)
+		    .build;
 
 	@org.junit.Before
 	public void setUp() throws Exception {
@@ -58,7 +86,9 @@ public class FusekiTest {
 		FileUtils.cleanDirectory(adminDB);
 
 		fuseki();
-
+		this.node = NodeBuilder.nodeBuilder().local(true).settings(settings).build();
+		this.client = node.client();
+		node.start();
 	}
 
 	@org.junit.After
@@ -67,13 +97,22 @@ public class FusekiTest {
 		if (server != null) {
 			server.stop();
 		}
-
+		
+		if(client != null) {
+			client.close();
+		}
+		
+		if(node != null) {
+			node.close();
+		}
+		
+		Files.delete(dataDir);
 
 		StoreConnection.reset();
 
-
 		Thread.sleep(1000);
 		server = null;
+		node = null;
 		// Clear out the registry.
 		Collection<String> keys = Iter.toList(DataAccessPointRegistry.get().keys().iterator());
 		for (String k : keys) {
@@ -86,7 +125,18 @@ public class FusekiTest {
 		Thread.sleep(1000);
 	}
 
-
+	@Test
+	public void testThatEmbeddedElasticsearchWorks() {
+		
+		try {
+			ClusterHealthResponse healthResponse = client.admin().cluster().prepareHealth().setTimeout("10").execute().actionGet();
+			logger.info("Connected to Elasticsearch: " + healthResponse.getStatus().toString());
+		} catch (NoNodeAvailableException e) {
+			logger.error("Failed to connect to Elasticsearch: " + e);
+		}
+		
+	}
+	
 	@Test
 	public void testThatEmbeddedFusekiWorks() {
 
@@ -105,7 +155,6 @@ public class FusekiTest {
 
 	}
 
-
 	@Test
 	public void testThatEmbeddedFusekiWorks2() {
 
@@ -123,7 +172,6 @@ public class FusekiTest {
 
 	}
 
-
 	@Test
 	public void testFusekiEndpointSlash() {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
@@ -134,7 +182,6 @@ public class FusekiTest {
 
 
 	}
-
 
 	@Test
 	public void testAddUser() throws UserAlreadyExistsException, UserNotFoundException {
@@ -201,7 +248,6 @@ public class FusekiTest {
 
 	}
 
-
 	@Test
 	public void testUpdateUserMultipleUsers() throws UserAlreadyExistsException {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
@@ -220,7 +266,6 @@ public class FusekiTest {
 
 
 	}
-
 
 	@Test
 	public void testAddDcatSource() throws UserAlreadyExistsException, Exception {
