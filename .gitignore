@@ -3,6 +3,7 @@
 
 .settings/
 target/
+bin/
 
 node
 node_modules

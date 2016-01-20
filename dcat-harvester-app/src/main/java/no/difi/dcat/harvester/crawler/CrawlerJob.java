@@ -55,7 +55,6 @@ public class CrawlerJob implements Runnable {
 			logger.error(String.format("[crawler_operations] [fail] Error running crawler job: %1$s, error=%2$s", dcatSource.toString(), e.toString()));
 		}
 		
-
 	}
 	
 	public static void main(String[] args) {

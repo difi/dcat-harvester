@@ -18,6 +18,7 @@ RUN apt-get update -qq \
 		elasticsearch \
 		openjdk-7-jdk \
     vim
+    # Temporarily skip installation of NPM
     #npm
 
 ### install elasticsearch plugins
@@ -84,6 +85,7 @@ ADD build/difi_template.json /etc/logstash/conf.d/difi_template.json
 
 ADD build/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
+# Require NPM installed, see line 20
 #RUN elasticdump --input=/opt/kibana/config/kibana-exported.json --output=http://localhost:9200/.kibana --type=data
 
 EXPOSE 5601 9200 9300 5000 5044

@@ -25,6 +25,7 @@ import no.difi.dcat.datastore.domain.User;
 public class AdminDataStore {
 
 	protected final Fuseki fuseki;
+	private Kibana kibana;
 	private final Logger logger = LoggerFactory.getLogger(AdminDataStore.class);
 
 	public AdminDataStore(Fuseki fuseki) {
@@ -206,8 +207,14 @@ public class AdminDataStore {
 
 		map.put("url", dcatSource.getUrl());
 
-
+		// Create data source grap
 		fuseki.sparqlUpdate(query, map);
+		// Create data source dashboard
+		if (dcatSource.getId() != null) {
+			System.out.println("\n\n\n\n wat \n\n\n\n");
+			// TODO: should prolly check if elasticsearch is actually up and running?
+			kibana.doStuff(dcatSource.getId());
+		}
 		
 		if(!update) {
 			if (fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) {
