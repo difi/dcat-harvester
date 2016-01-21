@@ -89,11 +89,15 @@ public class ElasticsearchResultHandler implements CrawlerResultHandler {
 				"construct {",
 				"	?a dct:description ?desc .",
 				"	?a dcat:inDataset ?inDataset .",
-
+				"	?a dct:issued ?issued .",
+				"	?a dcat:inCatalog ?inCatalog.",
 				"}",
 				"where {",
 				"	OPTIONAL{?a dct:description ?desc .}",
-				"	?a dcat:inDataset ?inDataset .",
+				"	OPTIONAL{?a dct:issued ?issued .}",
+
+				"	OPTIONAL{?a dcat:inDataset ?inDataset}",
+				"	OPTIONAL{?a dcat:inCatalog ?inCatalog}",
 
 				"}"
 		);
@@ -137,6 +141,7 @@ public class ElasticsearchResultHandler implements CrawlerResultHandler {
 		defaultModel.setNsPrefix("dct", "http://purl.org/dc/terms/");
 
 
+
 		StringWriter stringWriter = new StringWriter();
 
 		defaultModel.write(stringWriter, Lang.JSONLD.getLabel());
@@ -145,40 +150,45 @@ public class ElasticsearchResultHandler implements CrawlerResultHandler {
 		Object o = JsonUtils.fromInputStream(new ByteArrayInputStream(stringWriter.toString().getBytes()));
 
 
+		String jsonString = String.join("\n", "{",
 
-		Map<String, Object> frame = JsonLdProcessor.frame(o, JsonUtils.fromString("{\n" +
-
-				" \"@context\": {\n" +
-				"  \"foaf\": \"http://xmlns.com/foaf/0.1/\",\n" +
-				"  \"dct\": \"http://purl.org/dc/terms/\",\n" +
-				"  \"dcat\": \"" + "http://www.w3.org/ns/dcat#" + "\",\n" +
-				"\"issued\" : {\n" +
-				"      \"@id\" : \"http://purl.org/dc/terms/issued\",\n" +
-				"      \"@type\" : \"http://www.w3.org/2001/XMLSchema#date\"\n" +
-				"    }," +
-				"\"description\" : {\n" +
-				"      \"@id\" : \"http://purl.org/dc/terms/description\"\n" +
-//				"      \"@language\" : \"en\"\n" +
-				"    }," +
-				"\"modified\" : {\n" +
-				"      \"@id\" : \"http://purl.org/dc/terms/modified\",\n" +
-				"      \"@type\" : \"http://www.w3.org/2001/XMLSchema#date\"\n" +
-				"    }" +
-				"}" +
-				"," +
-
-				"\"" + nestedPropertyName + "\": {\n" +
-				"  \"@embed\": true \n" +
-				"}" +
+				" '@context': {" ,
+				"  	'foaf': 'http://xmlns.com/foaf/0.1/'," ,
+				"  	'dct': 'http://purl.org/dc/terms/'," ,
+				"  	'dcat': 'http://www.w3.org/ns/dcat#'," ,
+				"	'issued' : {" ,
+				"      	'@id' : 'http://purl.org/dc/terms/issued'," ,
+				"      	'@type' : 'http://www.w3.org/2001/XMLSchema#date'" ,
+				" 	}," ,
+				"	'description' : {" ,
+				"		'@container':'@set', " ,
+				"      	'@id' : 'http://purl.org/dc/terms/description'" ,
+				"	}," ,
+				"	'modified' : {" ,
+				"      	'@id' : 'http://purl.org/dc/terms/modified'," ,
+				"      	'@type' : 'http://www.w3.org/2001/XMLSchema#date'" ,
+				"    	}" ,
+				"}" ,
+				",",
+				"'" + nestedPropertyName + "': {" ,
+				"  '@embed': true " ,
+				"}" ,
 
 
-				"}"), new JsonLdOptions());
+				"}");
+
+		jsonString = jsonString.replaceAll("'", "\"");
+		JsonLdOptions jsonLdOptions = new JsonLdOptions();
+
+		Map<String, Object> frame = JsonLdProcessor.frame(o, JsonUtils.fromString(jsonString), jsonLdOptions);
 
 
 		System.out.println("------------");
 
 		System.out.println();
 
+		System.out.println(JsonUtils.toPrettyString(frame));
+		System.out.println("------------");
 
 		JsonObject jsonObject = new Gson().fromJson(JsonUtils.toPrettyString(frame), JsonObject.class);
 
