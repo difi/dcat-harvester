@@ -1,7 +1,9 @@
-package no.difi.dcat.datastore.domain.dcat;
+package no.difi.dcat.datastore.domain.dcat.builders;
 
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.DCTerms;
+
+import no.difi.dcat.datastore.domain.dcat.Catalog;
 
 public class CatalogBuilder extends AbstractBuilder {
 	

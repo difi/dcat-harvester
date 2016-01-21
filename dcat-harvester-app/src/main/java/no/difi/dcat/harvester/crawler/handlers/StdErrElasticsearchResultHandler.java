@@ -11,9 +11,9 @@ import com.google.gson.GsonBuilder;
 
 import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.dcat.Dataset;
-import no.difi.dcat.datastore.domain.dcat.DatasetBuilder;
 import no.difi.dcat.datastore.domain.dcat.Distribution;
-import no.difi.dcat.datastore.domain.dcat.DistributionBuilder;
+import no.difi.dcat.datastore.domain.dcat.builders.DatasetBuilder;
+import no.difi.dcat.datastore.domain.dcat.builders.DistributionBuilder;
 import no.difi.dcat.harvester.crawler.CrawlerResultHandler;
 
 public class StdErrElasticsearchResultHandler implements CrawlerResultHandler {
@@ -24,7 +24,7 @@ public class StdErrElasticsearchResultHandler implements CrawlerResultHandler {
 	public void process(DcatSource dcatSource, Model model) {
 		logger.trace("Processing results");
 		
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Gson gson = new GsonBuilder().setPrettyPrinting().setDateFormat("yyyy-MM-dd'T'HH:mm:ssX").create();
 		
 		List<Distribution> distributions = new DistributionBuilder(model).build();
 		for (Distribution distribution : distributions) {

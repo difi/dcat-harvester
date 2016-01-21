@@ -1,4 +1,4 @@
-package no.difi.dcat.datastore.domain.dcat;
+package no.difi.dcat.datastore.domain.dcat.builders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,10 @@ import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
+
+import no.difi.dcat.datastore.domain.dcat.Dataset;
+import no.difi.dcat.datastore.domain.dcat.Distribution;
+import no.difi.dcat.datastore.domain.dcat.vocabulary.DCAT;
 
 public class DatasetBuilder extends AbstractBuilder {
 

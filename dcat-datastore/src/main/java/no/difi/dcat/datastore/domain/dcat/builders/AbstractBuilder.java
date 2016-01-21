@@ -1,4 +1,4 @@
-package no.difi.dcat.datastore.domain.dcat;
+package no.difi.dcat.datastore.domain.dcat.builders;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,6 +18,10 @@ import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import no.difi.dcat.datastore.domain.dcat.Contact;
+import no.difi.dcat.datastore.domain.dcat.Publisher;
+import no.difi.dcat.datastore.domain.dcat.vocabulary.DCAT;
 
 public abstract class AbstractBuilder {
 	
