@@ -48,11 +48,11 @@ import no.difi.dcat.datastore.domain.DifiMeta;
 import no.difi.dcat.datastore.domain.User;
 
 /**
- * Created by havardottestad on 05/01/16.
+ * @author havardottestad, sebnmuller
  */
-public class FusekiTest {
+public class DataStoreTest {
 
-	private final Logger logger = LoggerFactory.getLogger(FusekiTest.class);
+	private final Logger logger = LoggerFactory.getLogger(DataStoreTest.class);
 
 	JettyFuseki server;
 	Node node;
