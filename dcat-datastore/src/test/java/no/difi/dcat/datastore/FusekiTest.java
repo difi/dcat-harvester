@@ -57,6 +57,7 @@ public class FusekiTest {
 	JettyFuseki server;
 	Node node;
 	Client client;
+	Elasticsearch elasticsearch;
 
 	private File homeDir = null;
 	private Settings settings = null;
@@ -87,6 +88,7 @@ public class FusekiTest {
 		client = node.client();
 		client.admin().indices().prepareCreate(".kibana").execute().actionGet();
 		client.admin().cluster().prepareHealth(".kibana").setWaitForYellowStatus().execute().actionGet();
+		elasticsearch = new Elasticsearch();
 		Assert.assertNotNull(node);
 		Assert.assertFalse(node.isClosed());
 	}
@@ -288,6 +290,10 @@ public class FusekiTest {
 		assertEquals("Description should be equal", dcatSource.getDescription(), fromFuseki.getDescription());
 		assertEquals("Graph should be equal", dcatSource.getGraph(), fromFuseki.getGraph());
 		assertEquals("Id should be equal", dcatSource.getId(), fromFuseki.getId());
+		
+		assertTrue("Crawler search document exists", elasticsearch.documentExists(".kibana", "search", dcatSource.getId(), this.client));
+		// TODO: assertTrue(visualizations exist)
+		// TODO: assertTrue(dashboard exist)
 
 	}
 
@@ -318,8 +324,12 @@ public class FusekiTest {
 		adminDcatDataService.deleteDcatSource(dcatSource.getId(), testAdmin);
 
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
+		
 
 		assertFalse("", dcatSourceById.isPresent());
+		assertFalse("Crawler search document exists", elasticsearch.documentExists(".kibana", "search", dcatSource.getId(), this.client));
+		// TODO: assertFalse(visualizations exist)
+		// TODO: assertFalse(dashboard exist)
 
 	}
 
