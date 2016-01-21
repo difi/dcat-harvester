@@ -190,7 +190,7 @@ public class AdminDataStore {
 			elasticsearch = new Elasticsearch();
 			Client client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
 			kibana = new Kibana(client);
-			if (kibana.addCrawlerSearch(dcatSource)) {
+			if (kibana.addSearchDocument(dcatSource)) {
 				// TODO: log successful .kibana search add
 				// Crawler created, can continue with dashboard and
 				// visualisations

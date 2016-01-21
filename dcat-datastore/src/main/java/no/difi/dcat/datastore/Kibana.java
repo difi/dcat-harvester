@@ -1,5 +1,6 @@
 package no.difi.dcat.datastore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +65,7 @@ public class Kibana {
 	}
 
 	// TODO: Could potentially use jsonBuilder instead of maps?
-	private Map<String, Object> createCrawlerSearchDocument(DcatSource dcatSource) {
+	private Map<String, Object> createSearchDocument(DcatSource dcatSource) {
 		Map<String, Object> document = new HashMap<String, Object>();
 		document.put(TITLE, dcatSource.getDescription());
 		// Create query section
@@ -82,12 +83,44 @@ public class Kibana {
 		document.put(KIBANA_SAVED_OBJECT_META, kibanaSavedObjectMeta);
 		return document;
 	}
+	
+	private Map<String, Object> createDashboardDocument(DcatSource dcatSource) {
+		Map<String, Object> document = new HashMap<String, Object>();
+		
+		document.put(TITLE, dcatSource.getDescription());
+		document.put("hits", 0);
+		document.put("description", "");
+		document.put("panelsJSON", "");
+		
+		
+		Map<String, Object> kibanaSavedObjectMeta = new HashMap<String, Object>();
+		Map<String, Object> searchSourceJson = new HashMap<String, Object>();
+		ArrayList<Map<String, Object>> filter = new ArrayList<Map<String, Object>>();
+		Map<String, Object> query = new HashMap<String, Object>();
+		Map<String, Object> queryString = new HashMap<String, Object>();
+		queryString.put(QUERY, "crawler_id:\"" + dcatSource.getId() + "\"");
+		queryString.put(ANALYZE_WILDCARD, true);
+		query.put(QUERY_STRING, queryString);
+		filter.add(query);
+		searchSourceJson.put("filter", filter);
+		kibanaSavedObjectMeta.put(SEARCH_SOURCE_JSON, searchSourceJson);
+		document.put(KIBANA_SAVED_OBJECT_META, kibanaSavedObjectMeta);
+		return document;
+	}
+	
+	public boolean addDashboardDocument(DcatSource dcatSource) {
+		if(!elasticsearch.documentExists(KIBANA_INDEX, "dashboard", dcatSource.getId(), client)) {
+			Map<String, Object> dashboardDocument = createDashboardDocument(dcatSource);
+			return elasticsearch.indexDocument(KIBANA_INDEX, "dashboard", dcatSource.getId(), dashboardDocument, client);
+		}
+		return true;
+	}
 
-	public boolean addCrawlerSearch(DcatSource dcatSource) {
+	public boolean addSearchDocument(DcatSource dcatSource) {
 		// Check saved search exists for new crawler, create it if not
 		if (!elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), client)) {
-			Map<String, Object> document = createCrawlerSearchDocument(dcatSource);
-			return elasticsearch.indexDocument(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), document, client);
+			Map<String, Object> searchDocument = createSearchDocument(dcatSource);
+			return elasticsearch.indexDocument(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), searchDocument, client);
 		}
 		return true;
 	}

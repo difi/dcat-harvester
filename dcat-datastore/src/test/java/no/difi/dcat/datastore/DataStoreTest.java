@@ -108,7 +108,9 @@ public class DataStoreTest {
 			node.close();
 		}
 
-		FileUtils.forceDelete(homeDir);
+		if (homeDir != null) {
+			FileUtils.forceDelete(homeDir);
+		}
 
 		StoreConnection.reset();
 
