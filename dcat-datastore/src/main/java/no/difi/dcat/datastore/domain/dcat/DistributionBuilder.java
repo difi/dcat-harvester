@@ -50,7 +50,7 @@ public class DistributionBuilder extends AbstractBuilder {
 			created.setFormat(extractAsString(distribution, DCTerms.format));
 		}
 		if (dataset != null && dataset != null) {
-			created.setDataset(DatasetBuilder.create(null, dataset, catalog));
+			created.setDataset(DatasetBuilder.create(dataset, catalog));
 		}
 		
 		return created;

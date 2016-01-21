@@ -11,8 +11,11 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.sparql.vocabulary.FOAF;
+import org.apache.jena.vocabulary.DCTerms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +76,40 @@ public abstract class AbstractBuilder {
 				logger.warn("Error when extracting property {} from resource {}", property, resource.getURI(), e);
 			}
 		}
+		return null;
+	}
+	
+	public static Contact extractContact(Resource resource) {
+		try {
+			Contact contact = new Contact();
+			Statement property = resource.getProperty(DCAT.contactPoint);
+			Resource object = resource.getModel().getResource(property.getObject().asResource().getURI());
+			contact.setId(object.getURI());
+			//TODO: use correct vcard
+			contact.setFullname(extractAsString(object, ResourceFactory.createProperty("http://www.w3.org/2006/vcard/ns#fn")));
+			contact.setEmail(extractAsString(object, ResourceFactory.createProperty("http://www.w3.org/2006/vcard/ns#hasEmail")).replace("mailto:", ""));
+			
+			return contact;
+		} catch (Exception e) {
+			logger.warn("Error when extracting property {} from resource {}", DCTerms.publisher, resource.getURI(), e);
+		}
+		
+		return null;
+	}
+	
+	public static Publisher extractPublisher(Resource resource) {
+		try {
+			Publisher publisher = new Publisher();
+			Statement property = resource.getProperty(DCTerms.publisher);
+			Resource object = resource.getModel().getResource(property.getObject().asResource().getURI());
+			publisher.setId(object.getURI());
+			publisher.setName(extractAsString(object, FOAF.name));
+			
+			return publisher;
+		} catch (Exception e) {
+			logger.warn("Error when extracting property {} from resource {}", DCTerms.publisher, resource.getURI(), e);
+		}
+		
 		return null;
 	}
 }

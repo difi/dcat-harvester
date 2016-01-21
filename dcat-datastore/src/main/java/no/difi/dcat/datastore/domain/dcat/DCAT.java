@@ -29,4 +29,6 @@ public class DCAT {
 
 	public static final Property keyword = model.createProperty(NS, "keyword");
 
+	public static final Property contactPoint = model.createProperty(NS, "contactPoint");
+
 }

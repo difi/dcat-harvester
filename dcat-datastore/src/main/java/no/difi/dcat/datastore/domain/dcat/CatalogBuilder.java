@@ -15,6 +15,7 @@ public class CatalogBuilder extends AbstractBuilder {
 			created.setIssued(extractDate(catalog, DCTerms.issued));
 			created.setModified(extractDate(catalog, DCTerms.modified));
 			created.setLanguage(extractAsString(catalog, DCTerms.language));
+			created.setPublisher(extractPublisher(catalog));
 		}
 		
 		return created;
