@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.DcatDataStore;
 import no.difi.dcat.datastore.domain.DcatSource;
+import no.difi.dcat.harvester.crawler.handlers.ElasticsearchResultHandler;
 import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
 
 public class CrawlerTest {
@@ -18,19 +19,20 @@ public class CrawlerTest {
 	@Test
 	public void testCrawlerThreadPool() throws Exception {
 		
-		DcatSource dcatSource1 = new DcatSource("http//dcat.difi.no/test1", "Test1", "src/test/resources/npolar.jsonld", "tester", "123456789");
-		DcatSource dcatSource2 = new DcatSource("http//dcat.difi.no/test2", "Test2", "src/test/resources/npolar.jsonld", "tester", "");
-		DcatSource dcatSource3 = new DcatSource("http//dcat.difi.no/test3", "Test3", "src/test/resources/npolar.jsonld", "tester", null);
-		DcatSource dcatSource4 = new DcatSource("http//dcat.difi.no/test4", "Test4", "src/test/resources/npolar.jsonld", "tester", null);
+		DcatSource dcatSource1 = new DcatSource("http//dcat.difi.no/test1", "Test1", "src/test/resources/test-perfect.rdf", "tester", "123456789");
+		DcatSource dcatSource2 = new DcatSource("http//dcat.difi.no/test2", "Test2", "src/test/resources/test-perfect.rdf", "tester", "");
+		DcatSource dcatSource3 = new DcatSource("http//dcat.difi.no/test3", "Test3", "src/test/resources/test-perfect.rdf", "tester", null);
+		DcatSource dcatSource4 = new DcatSource("http//dcat.difi.no/test4", "Test4", "src/test/resources/test-perfect.rdf", "tester", null);
 		
 		List<DcatSource> dcatSources = Arrays.asList(dcatSource1, dcatSource2, dcatSource3, dcatSource4);
 		
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
 		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
 
-		FusekiResultHandler handler = new FusekiResultHandler(dcatDataStore, null);
+		FusekiResultHandler fHandler = new FusekiResultHandler(dcatDataStore, null);
+		ElasticsearchResultHandler eHandler = new ElasticsearchResultHandler(); 
 		
-		List<CrawlerJob> crawlerJobs = dcatSources.stream().map(dcatSource -> new CrawlerJob(dcatSource, adminDataStore, null, handler)).collect(Collectors.<CrawlerJob>toList());
+		List<CrawlerJob> crawlerJobs = dcatSources.stream().map(dcatSource -> new CrawlerJob(dcatSource, adminDataStore, null, fHandler, eHandler)).collect(Collectors.<CrawlerJob>toList());
 		
 		Crawler crawler = new Crawler();
 		crawler.initialize();

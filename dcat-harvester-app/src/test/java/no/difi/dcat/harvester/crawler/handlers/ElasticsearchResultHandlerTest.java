@@ -1,15 +1,14 @@
 package no.difi.dcat.harvester.crawler.handlers;
 
-import no.difi.dcat.datastore.domain.DcatSource;
+import java.io.File;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.util.FileManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-
-import static org.junit.Assert.*;
+import no.difi.dcat.datastore.domain.DcatSource;
 
 /**
  * Created by havardottestad on 20/01/16.
