@@ -26,6 +26,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<elasticsearch.version>2.1.1</elasticsearch.version>
 	</properties>
 
 	<repositories>
@@ -33,6 +34,10 @@
 			<id>spring-releases</id>
 			<url>https://repo.spring.io/libs-release</url>
 		</repository>
+		<repository>
+	       <id>my-local-repo</id>
+	       <url>file://${basedir}/lib/repo</url>
+	    </repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>

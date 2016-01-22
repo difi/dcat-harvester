@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.DifiMeta;
+import no.difi.dcat.harvester.crawler.converters.BrregAgentConverter;
 import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
 import no.difi.dcat.harvester.validation.DcatValidation;
 import no.difi.dcat.harvester.validation.ValidationError;
@@ -28,7 +29,7 @@ public class CrawlerJob implements Runnable {
 	private DcatSource dcatSource;
 	private AdminDataStore adminDataStore;
 	
-	private final Logger logger = LoggerFactory.getLogger("no.difi.dcat");
+	private final Logger logger = LoggerFactory.getLogger(CrawlerJob.class);
 	
 	protected CrawlerJob(DcatSource dcatSource, AdminDataStore adminDataStore, CrawlerResultHandler... handlers) {
 		this.handlers = Arrays.asList(handlers);
@@ -67,6 +68,8 @@ public class CrawlerJob implements Runnable {
 				throw e;
 			}
 			
+			BrregAgentConverter brregAgentConverter = new BrregAgentConverter();
+			brregAgentConverter.collectFromModel(union);
 			
 			if (isValid(union)) {
 				for (CrawlerResultHandler handler : handlers) {
