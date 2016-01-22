@@ -82,7 +82,7 @@ public class DcatFeed {
 		
 		// Dataset
 		
-		dcatFeed.setGuid(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.identifier));
+		dcatFeed.setGuid(dataset.getURI());
 		dcatFeed.setTitle(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.title));
 		dcatFeed.setDescription(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.description));
 
