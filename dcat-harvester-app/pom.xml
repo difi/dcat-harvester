@@ -59,10 +59,25 @@
 			<groupId>com.fluffyelephant</groupId>
 		    <artifactId>xmlToRdf</artifactId>
 		    <version>1.0-SNAPSHOT</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/libs/xmlToRdf-1.0-SNAPSHOT.jar</systemPath>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-log4j12</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+	       <id>dcat-harvester-app-local-repo</id>
+	       <url>file://${basedir}/libs</url>
+	    </repository>
+	</repositories>
 
 	<properties>
 		<java.version>1.8</java.version>

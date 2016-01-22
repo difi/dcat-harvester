@@ -29,7 +29,7 @@ public class CrawlerJob implements Runnable {
 	private DcatSource dcatSource;
 	private AdminDataStore adminDataStore;
 	
-	private final Logger logger = LoggerFactory.getLogger("no.difi.dcat");
+	private final Logger logger = LoggerFactory.getLogger(CrawlerJob.class);
 	
 	protected CrawlerJob(DcatSource dcatSource, AdminDataStore adminDataStore, CrawlerResultHandler... handlers) {
 		this.handlers = Arrays.asList(handlers);

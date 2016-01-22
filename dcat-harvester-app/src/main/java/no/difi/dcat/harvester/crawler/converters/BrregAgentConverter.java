@@ -9,6 +9,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.NodeIterator;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.sparql.vocabulary.FOAF;
+import org.apache.jena.util.FileUtils;
 import org.apache.jena.vocabulary.DCTerms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +46,11 @@ public class BrregAgentConverter {
 		Model extractedModel = ModelFactory.createDefaultModel();
 		try {
 			extractedModel = postProcessing.outputIntermediaryModels(new File("brreg/intermediate"))
-					.sparqlTransform(new File("brreg/transforms"))
-					.extractConstruct(new File("brreg/construct")).getExtractedModel();
+					.sparqlTransform(new File("src/main/resources/brreg/transforms"))
+					.extractConstruct(new File("src/main/resources/brreg/construct")).getExtractedModel();
 
 			applyNamespaces(extractedModel);
-
+			
 			return extractedModel;
 		} catch (Exception e) {
 			logger.error("Error converting PostProcessing", e);
@@ -66,6 +67,8 @@ public class BrregAgentConverter {
 			if (next.isResource() && next.asResource().getURI().contains("data.brreg.no")) {
 				String uri = next.asResource().getURI();
 				collectFromUri(uri, model);
+			} else {
+				logger.trace("{} either is not a resource or does not contain \"data.brreg.no\"", next);
 			}
 		}
 		
@@ -93,8 +96,16 @@ public class BrregAgentConverter {
 		Model model = ModelFactory.createDefaultModel();
 		
 		BrregAgentConverter converter = new BrregAgentConverter();
-		converter.collectFromUri("http://data.brreg.no/enhetsregisteret/underenhet/814716902", model);
-
-		model.getWriter("TTL").write(model, System.out, null);
+//		converter.collectFromUri("http://data.brreg.no/enhetsregisteret/underenhet/814716902", model);
+//
+//		model.getWriter("TTL").write(model, System.out, null);
+		
+		Model model2 = ModelFactory.createDefaultModel();
+		
+		model2.getReader("JSONLD").read(model2, "src/test/resources/brreg-link.jsonld");
+		
+		converter.collectFromModel(model2);
+		
+		model.getWriter("TTL").write(model2, System.out, null);
 	}
 }

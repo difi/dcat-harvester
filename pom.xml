@@ -34,6 +34,10 @@
 			<id>spring-releases</id>
 			<url>https://repo.spring.io/libs-release</url>
 		</repository>
+		<repository>
+	       <id>my-local-repo</id>
+	       <url>file://${basedir}/lib/repo</url>
+	    </repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>

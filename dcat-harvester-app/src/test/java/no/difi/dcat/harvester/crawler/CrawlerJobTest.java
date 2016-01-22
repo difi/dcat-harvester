@@ -38,17 +38,19 @@ public class CrawlerJobTest {
 		handler.process(dcatSource, ModelFactory.createDefaultModel());
 	}
 	
-	@Test(expected=Exception.class)
-	@Ignore //TODO: finne testfil som er gyldig
-	public void testCrawlerResultHandlerWithExpectedException() {
-		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/npolar.jsonld", "tester", "");
+	@Test
+	public void testCrawlerJobWithBrregLink() {
+		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/brreg-link.jsonld", "tester", "");
 		
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
-		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(), Mockito.anyObject());
+		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
 		
 		FusekiResultHandler handler = new FusekiResultHandler(dcatDataStore, null);
 		
 		handler.process(dcatSource, ModelFactory.createDefaultModel());
+		
+		CrawlerJob job = new CrawlerJob(dcatSource, adminDataStore, handler);
+		job.run();
 	}
 
 }
