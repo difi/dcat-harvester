@@ -1,0 +1,9 @@
+construct{
+
+	?a ?b ?c.
+
+}where {
+
+	?a ?b ?c.
+
+}
