@@ -17,6 +17,7 @@
 		<module>dcat-api-app</module>
 		<module>dcat-datastore</module>
 		<module>dcat-admin-webapp</module>
+		<module>generate-dummy-data</module>
 	</modules>
 	<packaging>pom</packaging>
 
