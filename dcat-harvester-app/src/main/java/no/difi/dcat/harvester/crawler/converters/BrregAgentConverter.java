@@ -6,7 +6,10 @@ import java.net.URL;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.sparql.vocabulary.FOAF;
+import org.apache.jena.vocabulary.DCTerms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +32,7 @@ public class BrregAgentConverter {
 				.addTransformForClass("http://data.brreg.no/meta/enhet", FOAF.Agent.getURI()).build();
 	}
 
-	public Model convert(InputStream inputStream) {
+	private Model convert(InputStream inputStream) {
 		try {
 			return convert(xmlToRdfObject.convertForPostProcessing(inputStream));
 		} catch (Exception e) {
@@ -54,19 +57,43 @@ public class BrregAgentConverter {
 
 		return extractedModel;
 	}
+	
+	public void collectFromModel(Model model) {
+		NodeIterator iterator = model.listObjectsOfProperty(DCTerms.publisher);
+		
+		while (iterator.hasNext()) {
+			RDFNode next = iterator.next();
+			if (next.isResource() && next.asResource().getURI().contains("data.brreg.no")) {
+				String uri = next.asResource().getURI();
+				collectFromUri(uri, model);
+			}
+		}
+		
+		
+	}
+	
+	private void collectFromUri(String uri, Model model) {
+		if (!uri.endsWith(".xml")) {
+			uri = uri + ".xml";
+		}
+			
+		try {
+			URL url = new URL(uri);
+			model.add(convert(url.openStream()));
+		} catch (Exception e) {
+			logger.warn("Failed to look up publisher: {}", uri, e);
+		}	
+	}
 
 	private static void applyNamespaces(Model extractedModel) {
-		// extractedModel.setNsPrefix("meta", "http://data.brreg.no/meta/");
 		extractedModel.setNsPrefix("foaf", FOAF.getURI());
 	}
 
 	public static void main(String[] args) throws Exception {
-		URL url = new URL("http://data.brreg.no/enhetsregisteret/underenhet/814716902.xml");
-
-		InputStream inputStream = url.openConnection().getInputStream();
-
+		Model model = ModelFactory.createDefaultModel();
+		
 		BrregAgentConverter converter = new BrregAgentConverter();
-		Model model = converter.convert(inputStream);
+		converter.collectFromUri("http://data.brreg.no/enhetsregisteret/underenhet/814716902", model);
 
 		model.getWriter("TTL").write(model, System.out, null);
 	}
