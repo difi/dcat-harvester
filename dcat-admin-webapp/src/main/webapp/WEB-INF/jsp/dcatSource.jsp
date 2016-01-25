@@ -14,48 +14,57 @@
 </head>
 
 <body>
-<div class="col-md-12">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
 
 
-    <h1>DCAT Source</h1>
-    <c:if test="${dcatSource != null}">
+            <h1>DCAT Source</h1>
+            <c:if test="${dcatSource != null}">
 
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Id</th>
-                <th>Description</th>
-                <th>URL</th>
-            </tr>
-            </thead>
-            <tbody>
-            <td>${dcatSource.id}</td>
-            <td>${dcatSource.description}</td>
-            <td>${dcatSource.url}</td>
-            </tbody>
-        </table>
-
-        <h3>Harvest History (100 last harvests)</h3>
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Message</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="harvest" items="${dcatSource.getHarvestedLast100()}">
+            <table class="table table-striped">
+                <thead>
                 <tr>
-                    <td style="min-width: 120px">${harvest.getCreatedDateFormatted()}</td>
-                    <td>${harvest.status.getLocalName()}</td>
-                    <td>${harvest.getMessageOrEmpty()}</td>
+                    <th>Id</th>
+                    <th>Description</th>
+                    <th>URL</th>
                 </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </c:if>
+                </thead>
+                <tbody>
+                <td>${dcatSource.id}</td>
+                <td>${dcatSource.description}</td>
+                <td>${dcatSource.url}</td>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <h3>Harvest History (100 last harvests)</h3>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Message</th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach var="harvest" items="${dcatSource.getHarvestedLast100()}">
+                    <tr>
+                        <td style="min-width: 120px">${harvest.getCreatedDateFormatted()}</td>
+                        <td>${harvest.status.getLocalName()}</td>
+                        <td>${harvest.getMessageOrEmpty()}</td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+            </c:if>
+        </div>
+    </div>
 </div>
+
 
 <script src="${pageContext.request.contextPath}/js/scripts.js" type="text/javascript"></script>
 <script type="text/javascript">
