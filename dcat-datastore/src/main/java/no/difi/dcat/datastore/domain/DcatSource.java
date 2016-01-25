@@ -177,9 +177,9 @@ public class DcatSource {
 		return harvested;
 	}
 
-	public List<Harvest> getHarvestedSorted() {
+	public List<Harvest> getHarvestedLast100() {
 
-		return harvested.stream().sorted().collect(Collectors.toList());
+		return harvested.stream().sorted().limit(100).collect(Collectors.toList());
 	}
 
 	public Optional<Harvest> getLastHarvest() {
