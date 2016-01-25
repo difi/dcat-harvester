@@ -35,7 +35,7 @@
             </tbody>
         </table>
 
-        <h3>Harvest History</h3>
+        <h3>Harvest History (100 last harvests)</h3>
         <table class="table table-striped">
             <thead>
             <tr>
@@ -45,7 +45,7 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="harvest" items="${dcatSource.getHarvestedSorted()}">
+            <c:forEach var="harvest" items="${dcatSource.getHarvestedLast100()}">
                 <tr>
                     <td style="min-width: 120px">${harvest.getCreatedDateFormatted()}</td>
                     <td>${harvest.status.getLocalName()}</td>

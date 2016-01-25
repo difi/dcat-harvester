@@ -7,7 +7,7 @@ RUN mkdir /etc/fuseki/databases/
 RUN mkdir /etc/fuseki/databases/dcat/
 RUN mkdir /etc/fuseki/databases/admin/
 
-ADD http://apache.uib.no/jena/binaries/apache-jena-fuseki-2.3.1.zip /usr/local/tomcat/fusekiDownloadTemp
+ADD apache-jena-fuseki-2.3.1.zip /usr/local/tomcat/fusekiDownloadTemp
 
 ADD tomcat-users.xml /usr/local/tomcat/conf/
 
