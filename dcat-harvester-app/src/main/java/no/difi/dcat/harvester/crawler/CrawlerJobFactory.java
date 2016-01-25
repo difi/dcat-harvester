@@ -1,9 +1,13 @@
 package no.difi.dcat.harvester.crawler;
 
+import java.net.URL;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.common.cache.LoadingCache;
 
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.DcatDataStore;
@@ -18,6 +22,9 @@ public class CrawlerJobFactory {
 	
 	@Autowired
 	private FusekiSettings fusekiSettings;
+	
+	@Autowired
+	private LoadingCache<URL, String> brregCache;
 	
 	private AdminDataStore adminDataStore;
 	private DcatDataStore dcatDataStore;
@@ -34,7 +41,7 @@ public class CrawlerJobFactory {
 	}
 	
 	public CrawlerJob createCrawlerJob(DcatSource dcatSource) {
-		return new CrawlerJob(dcatSource, adminDataStore, fusekiResultHandler, elasticsearchResultHandler);
+		return new CrawlerJob(dcatSource, adminDataStore, brregCache,fusekiResultHandler, elasticsearchResultHandler);
 	}
 
 }

@@ -1,19 +1,19 @@
 package no.difi.dcat.harvester.crawler;
 
-import static org.springframework.test.util.AssertionErrors.*;
 
-import no.difi.dcat.datastore.AdminDataStore;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import no.difi.dcat.datastore.DcatDataStore;
-import no.difi.dcat.datastore.domain.DcatSource;
-import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.jena.rdf.model.ModelFactory;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import no.difi.dcat.datastore.AdminDataStore;
+import no.difi.dcat.datastore.DcatDataStore;
+import no.difi.dcat.datastore.domain.DcatSource;
+import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
 
 public class CrawlerJobTest {
 
@@ -26,8 +26,8 @@ public class CrawlerJobTest {
 
 		FusekiResultHandler handler = new FusekiResultHandler(dcatDataStore, null);
 
-		CrawlerJob job = new CrawlerJob(dcatSource, null, handler);
-
+		CrawlerJob job = new CrawlerJob(dcatSource, null, null, handler);
+		
 		job.run();
 	}
 
@@ -54,7 +54,7 @@ public class CrawlerJobTest {
 
 		handler.process(dcatSource, ModelFactory.createDefaultModel());
 
-		CrawlerJob job = new CrawlerJob(dcatSource, adminDataStore, handler);
+		CrawlerJob job = new CrawlerJob(dcatSource, adminDataStore, null, handler);
 		job.run();
 	}
 
@@ -80,7 +80,7 @@ public class CrawlerJobTest {
 
 
 
-		CrawlerJob job = new CrawlerJob(dcatSource, adminDataStore, handler);
+		CrawlerJob job = new CrawlerJob(dcatSource, adminDataStore, null, handler);
 		job.run();
 
 		assertTrue("The entryscape file was invalid. Should have been enriched and validated, so that the handler would run.", didRun[0]);

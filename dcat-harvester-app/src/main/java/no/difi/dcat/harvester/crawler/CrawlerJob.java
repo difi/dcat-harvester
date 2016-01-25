@@ -1,5 +1,6 @@
 package no.difi.dcat.harvester.crawler;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,12 +8,19 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.jena.atlas.web.HttpException;
-import org.apache.jena.base.Sys;
-import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
-import org.apache.jena.ext.com.google.common.util.concurrent.Service;
 import org.apache.jena.query.Dataset;
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.ResIterator;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.SimpleSelector;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.jena.vocabulary.DCTerms;
@@ -20,11 +28,12 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.cache.LoadingCache;
+
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.DifiMeta;
 import no.difi.dcat.harvester.crawler.converters.BrregAgentConverter;
-import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
 import no.difi.dcat.harvester.validation.DcatValidation;
 import no.difi.dcat.harvester.validation.ValidationError;
 
@@ -33,15 +42,17 @@ public class CrawlerJob implements Runnable {
 	private List<CrawlerResultHandler> handlers;
 	private DcatSource dcatSource;
 	private AdminDataStore adminDataStore;
+	private LoadingCache<URL, String> brregCache;
 	
 	private final Logger logger = LoggerFactory.getLogger(CrawlerJob.class);
 	
-	protected CrawlerJob(DcatSource dcatSource, AdminDataStore adminDataStore, CrawlerResultHandler... handlers) {
+	protected CrawlerJob(DcatSource dcatSource, AdminDataStore adminDataStore, LoadingCache<URL, String> brregCaache, CrawlerResultHandler... handlers) {
 		this.handlers = Arrays.asList(handlers);
 		this.dcatSource = dcatSource;
 		this.adminDataStore = adminDataStore;
+		this.brregCache = brregCaache;
 	}
-	
+
 	public String getDcatSourceId() {
 		return dcatSource.getId();
 	}
@@ -77,7 +88,7 @@ public class CrawlerJob implements Runnable {
 				enrichForEntryscape(union);
 			}
 			
-			BrregAgentConverter brregAgentConverter = new BrregAgentConverter();
+			BrregAgentConverter brregAgentConverter = new BrregAgentConverter(brregCache);
 			brregAgentConverter.collectFromModel(union);
 
 
@@ -204,11 +215,6 @@ public class CrawlerJob implements Runnable {
 		adminDataStore.addCrawlResults(dcatSource, rdfStatus, message[0]);
 		
 		return validated;
-	}
-	
-	public static void main(String[] args) {
-		CrawlerJob crawler = new CrawlerJob(DcatSource.getDefault(), null, new FusekiResultHandler("http://localhost:8080/fuseki/dcat", "http://localhost:8080/fuseki/admin"));
-		crawler.run();
 	}
 	
 	private String returnCrawlDuration(LocalDateTime start, LocalDateTime stop) {

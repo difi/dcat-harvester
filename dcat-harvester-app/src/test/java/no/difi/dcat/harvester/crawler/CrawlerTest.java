@@ -30,7 +30,7 @@ public class CrawlerTest {
 
 		FusekiResultHandler handler = new FusekiResultHandler(dcatDataStore, null);
 		
-		List<CrawlerJob> crawlerJobs = dcatSources.stream().map(dcatSource -> new CrawlerJob(dcatSource, adminDataStore, handler)).collect(Collectors.<CrawlerJob>toList());
+		List<CrawlerJob> crawlerJobs = dcatSources.stream().map(dcatSource -> new CrawlerJob(dcatSource, adminDataStore, null, handler)).collect(Collectors.<CrawlerJob>toList());
 		
 		Crawler crawler = new Crawler();
 		crawler.initialize();
