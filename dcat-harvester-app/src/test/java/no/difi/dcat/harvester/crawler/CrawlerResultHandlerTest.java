@@ -1,7 +1,6 @@
 package no.difi.dcat.harvester.crawler;
 
-import static org.springframework.test.util.AssertionErrors.assertEquals;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.springframework.test.util.AssertionErrors.*;
 
 import java.io.File;
 import java.io.IOException;
