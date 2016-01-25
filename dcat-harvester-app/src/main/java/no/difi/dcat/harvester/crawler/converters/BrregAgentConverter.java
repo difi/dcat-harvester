@@ -1,5 +1,6 @@
 package no.difi.dcat.harvester.crawler.converters;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
@@ -9,10 +10,11 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.NodeIterator;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.sparql.vocabulary.FOAF;
-import org.apache.jena.util.FileUtils;
 import org.apache.jena.vocabulary.DCTerms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.cache.LoadingCache;
 
 import no.acando.semtech.xmltordf.Builder;
 import no.acando.semtech.xmltordf.PostProcessing;
@@ -21,10 +23,13 @@ import no.acando.semtech.xmltordf.XmlToRdfObject;
 public class BrregAgentConverter {
 
 	private XmlToRdfObject xmlToRdfObject;
-
+	private LoadingCache<URL, String> brregCache;
+	
 	private static Logger logger = LoggerFactory.getLogger(BrregAgentConverter.class);
 
-	public BrregAgentConverter() {
+	public BrregAgentConverter(LoadingCache<URL, String> brregCache) {
+		this.brregCache = brregCache;
+		
 		xmlToRdfObject = Builder.getObjectBasedBuilder()
 				.setBaseNamespace("http://data.brreg.no/meta/", Builder.AppliesTo.bothElementsAndAttributes)
 				.autoConvertShallowChildrenToProperties(true)
@@ -45,9 +50,16 @@ public class BrregAgentConverter {
 	private Model convert(PostProcessing postProcessing) {
 		Model extractedModel = ModelFactory.createDefaultModel();
 		try {
-			extractedModel = postProcessing.outputIntermediaryModels(new File("brreg/intermediate"))
-					.sparqlTransform(new File("src/main/resources/brreg/transforms"))
-					.extractConstruct(new File("src/main/resources/brreg/construct")).getExtractedModel();
+			File intermediary = new File("/tmp/brreg");
+			intermediary.mkdirs();
+			
+			ClassLoader classLoader = BrregAgentConverter.class.getClassLoader();
+			File transforms = new File(classLoader.getResource("brreg/transforms").getFile());
+			File constructs = new File(classLoader.getResource("brreg/constructs").getFile());
+			
+			extractedModel = postProcessing.outputIntermediaryModels(intermediary)
+					.sparqlTransform(transforms)
+					.extractConstruct(constructs).getExtractedModel();
 
 			applyNamespaces(extractedModel);
 			
@@ -75,14 +87,17 @@ public class BrregAgentConverter {
 		
 	}
 	
-	private void collectFromUri(String uri, Model model) {
+	protected void collectFromUri(String uri, Model model) {
 		if (!uri.endsWith(".xml")) {
 			uri = uri + ".xml";
 		}
 			
 		try {
 			URL url = new URL(uri);
-			model.add(convert(url.openStream()));
+			String content = brregCache.get(url);
+			InputStream inputStream = new ByteArrayInputStream(content.getBytes());
+			model.add(convert(inputStream));
+			
 		} catch (Exception e) {
 			logger.warn("Failed to look up publisher: {}", uri, e);
 		}	
@@ -90,22 +105,5 @@ public class BrregAgentConverter {
 
 	private static void applyNamespaces(Model extractedModel) {
 		extractedModel.setNsPrefix("foaf", FOAF.getURI());
-	}
-
-	public static void main(String[] args) throws Exception {
-		Model model = ModelFactory.createDefaultModel();
-		
-		BrregAgentConverter converter = new BrregAgentConverter();
-//		converter.collectFromUri("http://data.brreg.no/enhetsregisteret/underenhet/814716902", model);
-//
-//		model.getWriter("TTL").write(model, System.out, null);
-		
-		Model model2 = ModelFactory.createDefaultModel();
-		
-		model2.getReader("JSONLD").read(model2, "src/test/resources/brreg-link.jsonld");
-		
-		converter.collectFromModel(model2);
-		
-		model.getWriter("TTL").write(model2, System.out, null);
 	}
 }
