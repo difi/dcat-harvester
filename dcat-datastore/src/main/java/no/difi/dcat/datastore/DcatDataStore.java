@@ -26,6 +26,18 @@ public class DcatDataStore {
 	 * @param dcatModel
 	 */
 	public void saveDataCatalogue(DcatSource dcatSource, Model dcatModel) {
+		dcatModel.setNsPrefix("adms", "http://www.w3.org/ns/adms#");
+		dcatModel.setNsPrefix("dcat", "http://www.w3.org/ns/dcat#");
+		dcatModel.setNsPrefix("dct", "http://purl.org/dc/terms/");
+		dcatModel.setNsPrefix("foaf", "http://xmlns.com/foaf/0.1/");
+		dcatModel.setNsPrefix("owl", "http://www.w3.org/2002/07/owl#");
+		dcatModel.setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		dcatModel.setNsPrefix("schema", "http://schema.org/");
+		dcatModel.setNsPrefix("skos", "http://www.w3.org/2004/02/skos/core#");
+		dcatModel.setNsPrefix("spdx", "http://spdx.org/rdf/terms#");
+		dcatModel.setNsPrefix("xsd", "http://www.w3.org/2001/XMLSchema#");
+		dcatModel.setNsPrefix("vcard", "http://www.w3.org/2006/vcard/ns#");
+
 		logger.info("Adding data catalogue {}", dcatSource.getGraph());
 		fuseki.drop(dcatSource.getGraph());
 		fuseki.update(dcatSource.getGraph(), dcatModel);
