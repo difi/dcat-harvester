@@ -89,7 +89,9 @@ public class DataStoreTest {
 		homeDir = new File("src/test/resources/elasticsearch");
 //		dataDir = new File("src/test/resources/elasticearch/data");
 
-		settings = Settings.settingsBuilder().put("path.home", homeDir.toString()).build();
+		settings = Settings.settingsBuilder().put("path.home", homeDir.toString())
+				.put("network.host", "0.0.0.0")
+				.build();
 		node = NodeBuilder.nodeBuilder().settings(settings).build();
 		node.start();
 		client = node.client();
@@ -486,6 +488,8 @@ public class DataStoreTest {
 
 		dcatSource = adminDataStore.addDcatSource(dcatSource);
 		assertNotNull("There should exist a dcat source", dcatSource);
+		assertTrue("Crawler search document exists",
+				elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), this.client));
 
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
 
