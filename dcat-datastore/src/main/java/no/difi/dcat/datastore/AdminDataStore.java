@@ -55,6 +55,7 @@ public class AdminDataStore {
 		while (resIterator.hasNext()) {
 			String uri = resIterator.nextResource().getURI();
 			ret.add(new DcatSource(dcatModel, uri));
+
 		}
 
 		return ret;
@@ -113,10 +114,12 @@ public class AdminDataStore {
 			System.out.println("EMPTY");
 			return Optional.empty();
 		}
-		
+
+		System.out.println(new DcatSource(dcatModel, dcatSourceId));
+
 		return Optional.of(new DcatSource(dcatModel, dcatSourceId));
 	}
-	
+
 	/**
 	 * @param dcatSourceId
 	 * @return
@@ -179,7 +182,7 @@ public class AdminDataStore {
 		if (dcatSource.getGraph() == null) {
 			dcatSource.setGraph("http://dcat.difi.no/dcatSource_" + UUID.randomUUID().toString());
 		}
-		
+
 		String insertOrgnumber = "";
 		if (dcatSource.getOrgnumber() != null) {
 			insertOrgnumber = "                             difiMeta:orgnumber ?orgnumber;";
@@ -222,7 +225,7 @@ public class AdminDataStore {
 		map.put("dcatSourceUri", dcatSource.getId());
 		map.put("dcatGraphUri", dcatSource.getGraph());
 		map.put("description", dcatSource.getDescription());
-		
+
 		if (dcatSource.getOrgnumber() != null) {
 			map.put("orgnumber", dcatSource.getOrgnumber());
 		}

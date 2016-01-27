@@ -1,7 +1,6 @@
 package no.difi.dcat.harvester.crawler;
 
-import static org.springframework.test.util.AssertionErrors.assertEquals;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
+import static org.springframework.test.util.AssertionErrors.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +19,7 @@ import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.DcatDataStore;
 import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.DifiMeta;
+import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
 import no.difi.dcat.harvester.validation.DcatValidation;
 
 /**
@@ -72,7 +72,7 @@ public class CrawlerResultHandlerTest {
 			return null;
 		}).when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any(), Mockito.any());
 
-		CrawlerResultHandler crawlerResultHandler = new CrawlerResultHandler(dcatDataStore, adminDataStore);
+		FusekiResultHandler crawlerResultHandler = new FusekiResultHandler(dcatDataStore, adminDataStore);
 
 		crawlerResultHandler.process(new DcatSource("", "", "", "", ""), ModelFactory.createDefaultModel());
 
@@ -96,7 +96,7 @@ public class CrawlerResultHandlerTest {
 			return null;
 		}).when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any(), Mockito.any());
 
-		CrawlerResultHandler crawlerResultHandler = new CrawlerResultHandler(dcatDataStore, adminDataStore);
+		FusekiResultHandler crawlerResultHandler = new FusekiResultHandler(dcatDataStore, adminDataStore);
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource("validation-test-data/test-perfect.rdf").getFile());
 		Model model = FileManager.get().loadModel(file.getCanonicalPath());
@@ -124,11 +124,11 @@ public class CrawlerResultHandlerTest {
 			return null;
 		}).when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any(), Mockito.any());
 
-		CrawlerResultHandler crawlerResultHandler = new CrawlerResultHandler(dcatDataStore, adminDataStore);
+		FusekiResultHandler crawlerResultHandler = new FusekiResultHandler(dcatDataStore, adminDataStore);
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource("syntax-error.jsonld").getFile());
 
-		CrawlerJob crawlerJob = new CrawlerJob(null, new DcatSource("", "", file.getCanonicalPath(), "", ""), adminDataStore);
+		CrawlerJob crawlerJob = new CrawlerJob(new DcatSource("", "", file.getCanonicalPath(), "", ""), adminDataStore, null);
 
 		crawlerJob.run();
 
@@ -156,13 +156,13 @@ public class CrawlerResultHandlerTest {
 			return null;
 		}).when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any(), Mockito.any());
 
-		CrawlerResultHandler crawlerResultHandler = new CrawlerResultHandler(dcatDataStore, adminDataStore);
+		FusekiResultHandler crawlerResultHandler = new FusekiResultHandler(dcatDataStore, adminDataStore);
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource("syntax-error.jsonld").getFile());
 
-		new CrawlerJob(null, new DcatSource("", "", "http://example.com/nothing.jsonld", "", ""), adminDataStore).run();
-		new CrawlerJob(null, new DcatSource("", "", "http://fje389403wlkfklewfl.local/nothing.jsonld", "", ""), adminDataStore).run();
-		new CrawlerJob(null, new DcatSource("", "", "http://localhost:9452/nothing.jsonld", "", ""), adminDataStore).run();
+		new CrawlerJob(new DcatSource("", "", "http://example.com/nothing.jsonld", "", ""), adminDataStore, null).run();
+		new CrawlerJob(new DcatSource("", "", "http://fje389403wlkfklewfl.local/nothing.jsonld", "", ""), adminDataStore, null).run();
+		new CrawlerJob(new DcatSource("", "", "http://localhost:9452/nothing.jsonld", "", ""),  adminDataStore, null).run();
 
 		assertTrue("The addCrawlResults was not called", addCrawlResultsDidRun[0]);
 	}

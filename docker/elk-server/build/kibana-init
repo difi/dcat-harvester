@@ -104,7 +104,6 @@ force_stop() {
   fi
 }
 
-
 case "$1" in
   force-start|start|stop|force-stop|restart)
     trace "Attempting '$1' on kibana"
