@@ -75,12 +75,17 @@ public class AdminDcatDataService {
 		dcatDataStore.deleteDataCatalogue(dcatSource);
 		elasticsearch = new Elasticsearch();
 		Client client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
-		elasticsearch.deleteDocument(".kibana", "search", dcatSourceId, client);
+		
+		if(elasticsearch.deleteDocument(".kibana", "search", dcatSourceId, client)) {
+			logger.info("[crawler_admin] [success] Deleted DCAT source from Elasticsearch: {}", dcatSource.toString());
+		} else {
+			logger.error("[crawler_admin] [fail] DCAT source was not deleted from Elasticsearch: {}", dcatSource.toString());
+		}
 		
 		if (adminDataStore.fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) { 
-			logger.error("[crawler_admin] [fail] DCAT source was not deleted: {}", dcatSource.toString());
+			logger.error("[crawler_admin] [fail] DCAT source was not deleted from Fuseki: {}", dcatSource.toString());
 		} else {
-			logger.info("[crawler_admin] [success] Deleted DCAT source: {}", dcatSource.toString());
+			logger.info("[crawler_admin] [success] Deleted DCAT source from Fuseki: {}", dcatSource.toString());
 		}
 		
 	}
@@ -109,8 +114,8 @@ public class AdminDcatDataService {
 					logger.error("[user_admin] [fail] User was not deleted: {}", user.toString());
 				} else {
 					logger.info("[user_admin] [success] Deleted user: {}", user.toString());
-				}
-				
+			}
+
 		} else {
 			logger.warn("ADMIN role is required to delete users");
 		}

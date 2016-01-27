@@ -52,6 +52,10 @@ import no.difi.dcat.datastore.domain.User;
  */
 public class DataStoreTest {
 
+	private static final String SEARCH_TYPE = "search";
+
+	private static final String KIBANA_INDEX = ".kibana";
+
 	private final Logger logger = LoggerFactory.getLogger(DataStoreTest.class);
 
 	JettyFuseki server;
@@ -90,10 +94,10 @@ public class DataStoreTest {
 		node.start();
 		client = node.client();
 		elasticsearch = new Elasticsearch();
-		if (!elasticsearch.indexExists(".kibana", client)) {
-			client.admin().indices().prepareCreate(".kibana").execute().actionGet();
+		if (!elasticsearch.indexExists(KIBANA_INDEX, client)) {
+			client.admin().indices().prepareCreate(KIBANA_INDEX).execute().actionGet();
 		}
-		client.admin().cluster().prepareHealth(".kibana").setWaitForYellowStatus().execute().actionGet();
+		client.admin().cluster().prepareHealth(KIBANA_INDEX).setWaitForYellowStatus().execute().actionGet();
 		Assert.assertNotNull(node);
 		Assert.assertFalse(node.isClosed());
 		Assert.assertNotNull(client);
@@ -298,7 +302,7 @@ public class DataStoreTest {
 		assertEquals("Id should be equal", dcatSource.getId(), fromFuseki.getId());
 
 		assertTrue("Crawler search document exists",
-				elasticsearch.documentExists(".kibana", "search", dcatSource.getId(), this.client));
+				elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), this.client));
 		// TODO: assertTrue(visualizations exist)
 		// TODO: assertTrue(dashboard exist)
 
@@ -334,7 +338,7 @@ public class DataStoreTest {
 
 		assertFalse("", dcatSourceById.isPresent());
 		assertFalse("Crawler search document exists",
-				elasticsearch.documentExists(".kibana", "search", dcatSource.getId(), this.client));
+				elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), this.client));
 		// TODO: assertFalse(visualizations exist)
 		// TODO: assertFalse(dashboard exist)
 

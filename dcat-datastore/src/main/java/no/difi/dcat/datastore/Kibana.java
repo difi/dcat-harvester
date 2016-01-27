@@ -122,7 +122,7 @@ public class Kibana {
 		// Check saved search exists for new crawler, create it if not
 		if (!elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), client)) {
 			Map<String, Object> searchDocument = createSearchDocument(dcatSource);
-			return elasticsearch.indexDocument(KIBANA_INDEX, SEARCH_TYPE, "search_crawler_operations", searchDocument, client);
+			return elasticsearch.indexDocument(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), searchDocument, client);
 		}
 		return true;
 	}

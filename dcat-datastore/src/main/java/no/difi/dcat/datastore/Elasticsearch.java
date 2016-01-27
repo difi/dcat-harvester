@@ -77,7 +77,7 @@ public class Elasticsearch {
 
 	public boolean deleteDocument(String index, String type, String id, Client client) {
 		DeleteResponse rsp = client.prepareDelete(index, type, id).execute().actionGet();
-		return rsp.isFound();
+		return !rsp.isFound();
 	}
 
 }
