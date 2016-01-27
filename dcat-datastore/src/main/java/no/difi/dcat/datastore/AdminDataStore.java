@@ -185,8 +185,6 @@ public class AdminDataStore {
 		fuseki.sparqlUpdate(query, map);
 		// Create data source dashboard
 		if (dcatSource.getId() != null) {
-			// TODO: should prolly check if elasticsearch is actually up and
-			// running?
 			elasticsearch = new Elasticsearch();
 			Client client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
 			kibana = new Kibana(client);

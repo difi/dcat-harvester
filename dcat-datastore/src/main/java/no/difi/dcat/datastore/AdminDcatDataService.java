@@ -12,7 +12,7 @@ import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.User;
 
 /**
- * Created by havardottestad on 07/01/16.
+ * @author by havardottestad, sebnmuller
  */
 public class AdminDcatDataService {
 

@@ -31,7 +31,7 @@ public class Elasticsearch {
 			logger.error(e.toString());
 		}
 		
-		if(elasticsearchRunning(client)) {
+		if(isElasticsearchRunning(client)) {
 			return client;
 		}
 		return null;
@@ -46,13 +46,13 @@ public class Elasticsearch {
 			logger.error(e.toString());
 		}
 		
-		if(elasticsearchRunning(client)) {
+		if(isElasticsearchRunning(client)) {
 			return client;
 		}
 		return null;
 	}
 
-	public boolean elasticsearchRunning(Client client) {
+	public boolean isElasticsearchRunning(Client client) {
 		return client.admin().cluster().prepareHealth().execute().actionGet().getStatus() != null;
 	}
 	

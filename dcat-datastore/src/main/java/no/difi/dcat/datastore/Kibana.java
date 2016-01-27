@@ -4,20 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import no.difi.dcat.datastore.Elasticsearch;
 import no.difi.dcat.datastore.domain.DcatSource;
 
 public class Kibana {
@@ -36,11 +24,9 @@ public class Kibana {
 	private Elasticsearch elasticsearch = new Elasticsearch();
 	private Client client;
 
-	private final Logger logger = LoggerFactory.getLogger(Kibana.class);
-
 	public Kibana(Client client) {
 		this.client = client;
-		if (elasticsearch.elasticsearchRunning(client)) {
+		if (elasticsearch.isElasticsearchRunning(client)) {
 			// Check .kibana index exists, create it if not
 			if (!elasticsearch.indexExists(KIBANA_INDEX, client)) {
 				elasticsearch.createIndex(KIBANA_INDEX, client);
@@ -66,21 +52,37 @@ public class Kibana {
 
 	// TODO: Could potentially use jsonBuilder instead of maps?
 	private Map<String, Object> createSearchDocument(DcatSource dcatSource) {
-		Map<String, Object> document = new HashMap<String, Object>();
-		document.put(TITLE, dcatSource.getDescription());
+		Map<String, Object> source = new HashMap<String, Object>();
+		source.put(TITLE, "search_crawler_operations");
+		ArrayList<String> columns = new ArrayList<String>(1);
+		columns.add("_source");
+		source.put("columns", columns);
+		ArrayList<String> sort = new ArrayList<String>(2);
+		sort.add("@timestamp");
+		sort.add("desc");
+		source.put("sort", sort);
 		// Create query section
+		source.put("version", 1);
 		Map<String, Object> kibanaSavedObjectMeta = new HashMap<String, Object>();
-		Map<String, Object> searchSourceJson = new HashMap<String, Object>();
-		Map<String, Object> query = new HashMap<String, Object>();
-		Map<String, Object> queryString = new HashMap<String, Object>();
-		queryString.put(QUERY, "crawler_id:\"" + dcatSource.getId() + "\"");
-		queryString.put(ANALYZE_WILDCARD, true);
-		query.put(QUERY_STRING, queryString);
-		searchSourceJson.put(INDEX, INDEX_PATTERN_ID);
-		searchSourceJson.put(QUERY, query);
-		kibanaSavedObjectMeta.put(SEARCH_SOURCE_JSON, searchSourceJson);
+		String searchSourceJsonString = "{\"index\":\"difi-*\",\"query\":{\"query_string\":{\"query\":\"logger:crawler_operations\",\"analyze_wildcard\":true}},\"filter\":[],\"highlight\":{\"pre_tags\":[\"@kibana-highlighted-field@\"],\"post_tags\":[\"@/kibana-highlighted-field@\"],\"fields\":{\"*\":{}},\"require_field_match\":false,\"fragment_size\":2147483647}}";
+		kibanaSavedObjectMeta.put(SEARCH_SOURCE_JSON, searchSourceJsonString);
 		// End create query section
-		document.put(KIBANA_SAVED_OBJECT_META, kibanaSavedObjectMeta);
+		source.put(KIBANA_SAVED_OBJECT_META, kibanaSavedObjectMeta);
+		return source;
+	}
+	
+	private Map<String, Object> createTablePanelDocument(DcatSource dcatSource) {
+		Map<String, Object> document = new HashMap<String, Object>();
+		
+		
+		String json = "{\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"event.raw\",\"size\":5,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}";
+		return null;
+		
+	}
+	
+	private Map<String, Object> createPiePanelDocument(DcatSource dcatSource) {
+		Map<String, Object> document = new HashMap<String, Object>();
+		document.put(TITLE, "");
 		return document;
 	}
 	
@@ -120,7 +122,7 @@ public class Kibana {
 		// Check saved search exists for new crawler, create it if not
 		if (!elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), client)) {
 			Map<String, Object> searchDocument = createSearchDocument(dcatSource);
-			return elasticsearch.indexDocument(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), searchDocument, client);
+			return elasticsearch.indexDocument(KIBANA_INDEX, SEARCH_TYPE, "search_crawler_operations", searchDocument, client);
 		}
 		return true;
 	}

@@ -60,6 +60,7 @@ public class DataStoreTest {
 	Elasticsearch elasticsearch;
 
 	private File homeDir = null;
+//	private File dataDir = null;
 	private Settings settings = null;
 
 	@Before
@@ -79,18 +80,23 @@ public class DataStoreTest {
 
 		fuseki();
 
+		// TODO: this should only run for the tests that actually require it
+
 		homeDir = new File("src/test/resources/elasticsearch");
-		settings = Settings.settingsBuilder().put("path.home", homeDir.toString())
-				.build();
-		node = NodeBuilder.nodeBuilder()
-				.settings(settings).build();
+//		dataDir = new File("src/test/resources/elasticearch/data");
+
+		settings = Settings.settingsBuilder().put("path.home", homeDir.toString()).build();
+		node = NodeBuilder.nodeBuilder().settings(settings).build();
 		node.start();
 		client = node.client();
-		client.admin().indices().prepareCreate(".kibana").execute().actionGet();
-		client.admin().cluster().prepareHealth(".kibana").setWaitForYellowStatus().execute().actionGet();
 		elasticsearch = new Elasticsearch();
+		if (!elasticsearch.indexExists(".kibana", client)) {
+			client.admin().indices().prepareCreate(".kibana").execute().actionGet();
+		}
+		client.admin().cluster().prepareHealth(".kibana").setWaitForYellowStatus().execute().actionGet();
 		Assert.assertNotNull(node);
 		Assert.assertFalse(node.isClosed());
+		Assert.assertNotNull(client);
 	}
 
 	@After
@@ -99,15 +105,13 @@ public class DataStoreTest {
 		if (server != null) {
 			server.stop();
 		}
-
 		if (client != null) {
 			client.close();
 		}
-
 		if (node != null) {
 			node.close();
 		}
-
+		
 		if (homeDir != null) {
 			FileUtils.forceDelete(homeDir);
 		}
@@ -292,8 +296,9 @@ public class DataStoreTest {
 		assertEquals("Description should be equal", dcatSource.getDescription(), fromFuseki.getDescription());
 		assertEquals("Graph should be equal", dcatSource.getGraph(), fromFuseki.getGraph());
 		assertEquals("Id should be equal", dcatSource.getId(), fromFuseki.getId());
-		
-		assertTrue("Crawler search document exists", elasticsearch.documentExists(".kibana", "search", dcatSource.getId(), this.client));
+
+		assertTrue("Crawler search document exists",
+				elasticsearch.documentExists(".kibana", "search", dcatSource.getId(), this.client));
 		// TODO: assertTrue(visualizations exist)
 		// TODO: assertTrue(dashboard exist)
 
@@ -326,10 +331,10 @@ public class DataStoreTest {
 		adminDcatDataService.deleteDcatSource(dcatSource.getId(), testAdmin);
 
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
-		
 
 		assertFalse("", dcatSourceById.isPresent());
-		assertFalse("Crawler search document exists", elasticsearch.documentExists(".kibana", "search", dcatSource.getId(), this.client));
+		assertFalse("Crawler search document exists",
+				elasticsearch.documentExists(".kibana", "search", dcatSource.getId(), this.client));
 		// TODO: assertFalse(visualizations exist)
 		// TODO: assertFalse(dashboard exist)
 

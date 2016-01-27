@@ -22,7 +22,6 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>2.1.1</version>
 		</dependency>
 
 		<dependency>
