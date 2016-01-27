@@ -1,5 +1,10 @@
 package no.difi.dcat.datastore;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,5 +40,31 @@ public class DcatDataStore {
 	public void deleteDataCatalogue(DcatSource dcatSource) {
 		if(dcatSource == null || dcatSource.getGraph() == null || dcatSource.getGraph().trim().equals("")) return;
 		fuseki.drop(dcatSource.getGraph());
+	}
+
+	public Model getDataCatalogue(String graphName) {
+		logger.trace("Getting all catalogue in graph {}", graphName);
+		Model model = fuseki.graph(graphName);
+		return model;
+	}
+	
+	public List<String> listGraphs() {
+		logger.trace("Listing all graphs");
+		String query = String.join("",
+			"select distinct ?g where {",
+				"graph ?g  {",
+				"?a ?b ?c.",
+				"}",
+			"}"	);
+		
+		List<String> graphs = new ArrayList<>();
+		
+		ResultSet results = fuseki.select(query);
+		while (results.hasNext()) {
+			QuerySolution next = results.next();
+			graphs.add(next.get("g").asResource().getURI());
+		}
+		return graphs;
+		
 	}
 }

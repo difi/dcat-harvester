@@ -20,16 +20,20 @@ public class DcatSourceDto {
 	@NotEmpty
 	private final String user;
 	
+	private final String orgnumber;
+	
 	@JsonCreator
 	public DcatSourceDto(
 			@JsonProperty("id") String id, 
 			@JsonProperty("description") String description,
 			@JsonProperty("url)") String url, 
-			@JsonProperty("user") String user) {
+			@JsonProperty("user") String user,
+			@JsonProperty("orgnumber") String orgnumber) {
 		this.id = id;
 		this.description = description;
 		this.url = url;
 		this.user = user;
+		this.orgnumber = orgnumber;
 	}
 	
 	public String getId() {
@@ -46,5 +50,9 @@ public class DcatSourceDto {
 
 	public String getUser() {
 		return user;
+	}
+
+	public String getOrgnumber() {
+		return orgnumber;
 	}
 }

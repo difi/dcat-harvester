@@ -5,6 +5,8 @@
 target/
 bin/
 
+logs/
+
 node
 node_modules
 

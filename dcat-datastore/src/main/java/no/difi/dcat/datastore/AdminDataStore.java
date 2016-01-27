@@ -55,7 +55,6 @@ public class AdminDataStore {
 		while (resIterator.hasNext()) {
 			String uri = resIterator.nextResource().getURI();
 			ret.add(new DcatSource(dcatModel, uri));
-
 		}
 
 		return ret;
@@ -114,11 +113,36 @@ public class AdminDataStore {
 			System.out.println("EMPTY");
 			return Optional.empty();
 		}
-
-		System.out.println(new DcatSource(dcatModel, dcatSourceId));
-
+		
 		return Optional.of(new DcatSource(dcatModel, dcatSourceId));
+	}
+	
+	/**
+	 * @param dcatSourceId
+	 * @return
+	 */
+	public Optional<DcatSource> getDcatSourceByGraph(String graphName) {
 
+		logger.trace("Getting dcat source by graph {}", graphName);
+
+		Map<String, String> map = new HashMap<>();
+		map.put("graphName", graphName);
+
+		String query = String.join("\n",
+				"describe ?a ?user where {",
+				"?user difiMeta:dcatSource ?a . ",
+				"?a difiMeta:graph ?graphName . ",
+				"}"
+		);
+		Model dcatModel = fuseki.describe(query, map);
+
+		if (!dcatModel.listResourcesWithProperty(RDF.type, DifiMeta.DcatSource).hasNext()) {
+			return Optional.empty();
+		}
+
+		String id = dcatModel.listResourcesWithProperty(RDF.type, DifiMeta.DcatSource).nextResource().getURI();
+
+		return Optional.of(new DcatSource(dcatModel, id));
 	}
 
 	/**
@@ -155,22 +179,42 @@ public class AdminDataStore {
 		if (dcatSource.getGraph() == null) {
 			dcatSource.setGraph("http://dcat.difi.no/dcatSource_" + UUID.randomUUID().toString());
 		}
+		
+		String insertOrgnumber = "";
+		if (dcatSource.getOrgnumber() != null) {
+			insertOrgnumber = "                             difiMeta:orgnumber ?orgnumber;";
+		}
 
-		String query = String.join("\n", "delete {", "	graph <http://dcat.difi.no/usersGraph/> {",
+		String query = String.join("\n",
+				"delete {",
+				"	graph <http://dcat.difi.no/usersGraph/> {",
 				"		?dcatSource difiMeta:graph  ?originalDcatGraphUri. ",
 				"		?dcatSource difiMeta:url  ?originalUrl.",
-				"		?dcatSource rdfs:comment  ?originalDescription. ", "	}", "}", "insert {",
-				"     graph <http://dcat.difi.no/usersGraph/> {", "          ?user difiMeta:dcatSource ?dcatSource .",
+				"		?dcatSource difiMeta:orgnumber  ?originalOrgnumber. ",
+				"		?dcatSource rdfs:comment  ?originalDescription. ",
+				"	}",
+				"}",
+				"insert {",
+				"     graph <http://dcat.difi.no/usersGraph/> {",
+				"          ?user difiMeta:dcatSource ?dcatSource .",
 				"          ?dcatSource a difiMeta:DcatSource ; ",
 				"                             difiMeta:graph ?dcatGraphUri; ",
-				"                             difiMeta:url ?url;", "					rdfs:comment ?description", "",
-				"", " . ", "     }", "} where {", "           BIND(IRI(?dcatSourceUri) as ?dcatSource)",
+				"                             difiMeta:url ?url;",
+				insertOrgnumber,
+				"					rdfs:comment ?description",
+				"",
+				"",
+				" . ",
+				"     }",
+				"} where {",
+				"           BIND(IRI(?dcatSourceUri) as ?dcatSource)",
 				"           ?user foaf:accountName ?username",
 				"		OPTIONAL{ ?dcatSource difiMeta:graph  ?originalDcatGraphUri} ",
 				"		OPTIONAL{ ?dcatSource difiMeta:url  ?originalUrl} ",
+				"		OPTIONAL{ ?dcatSource difiMeta:orgnumber  ?originalOrgnumber} ",
 				"		OPTIONAL{ ?dcatSource rdfs:comment  ?originalDescription} ",
-
 				"}");
+
 
 		Map<String, String> map = new HashMap<>();
 
@@ -178,6 +222,10 @@ public class AdminDataStore {
 		map.put("dcatSourceUri", dcatSource.getId());
 		map.put("dcatGraphUri", dcatSource.getGraph());
 		map.put("description", dcatSource.getDescription());
+		
+		if (dcatSource.getOrgnumber() != null) {
+			map.put("orgnumber", dcatSource.getOrgnumber());
+		}
 
 		map.put("url", dcatSource.getUrl());
 

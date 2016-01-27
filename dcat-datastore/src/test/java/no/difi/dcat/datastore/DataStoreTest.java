@@ -398,14 +398,14 @@ public class DataStoreTest {
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
 		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName"));
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName"));
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName","1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName","1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName","1234567890"));
 
 		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName2", "", "", ""));
 
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2"));
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc22", "http:22", "testUserName2"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2","1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc22", "http:22", "testUserName2","1234567890"));
 
 		List<DcatSource> testUserNameDcatSources = adminDataStore.getDcatSourcesForUser("testUserName");
 		List<DcatSource> testUserName2DcatSources = adminDataStore.getDcatSourcesForUser("testUserName2");
@@ -423,8 +423,8 @@ public class DataStoreTest {
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
 		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName"));
-		DcatSource dcatSource = adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName","1234567890"));
+		DcatSource dcatSource = adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName","1234567890"));
 
 		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(fuseki));
 		adminDcatDataService.deleteDcatSource(dcatSource.getId(), adminDataStore.getUserObject("testUserName"));
@@ -443,14 +443,14 @@ public class DataStoreTest {
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
 		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName"));
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName"));
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName","1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName","1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName","1234567890"));
 
 		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName2", "", "", ""));
 
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2"));
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc22", "http:22", "testUserName2"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2","1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc22", "http:22", "testUserName2","1234567890"));
 
 		List<DcatSource> allSources = adminDataStore.getDcatSources();
 
@@ -485,6 +485,7 @@ public class DataStoreTest {
 		dcatSource.setDescription("desc");
 		dcatSource.setUser("testUserName");
 		dcatSource.setUrl("http://url");
+		dcatSource.setOrgnumber("123456789");
 
 		dcatSource = adminDataStore.addDcatSource(dcatSource);
 		assertNotNull("There should exist a dcat source", dcatSource);

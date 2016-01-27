@@ -1,6 +1,11 @@
 package no.difi.dcat.datastore.domain;
 
 import org.apache.jena.query.QuerySolution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import no.difi.dcat.datastore.AdminDataStore;
+import no.difi.dcat.datastore.UserNotFoundException;
 
 public class User {
 
@@ -9,6 +14,8 @@ public class User {
 	private String password;
 	private String email;
 	private String role;
+	
+	private static Logger logger = LoggerFactory.getLogger(User.class);
 	
 	public User() {
 		// TODO Auto-generated constructor stub
@@ -89,5 +96,13 @@ public class User {
 		);
 	}
 
-	
+	public static boolean isAdmin(String username, AdminDataStore adminDataStore) {
+		try {
+			User user = adminDataStore.getUserObject(username);
+			return user.isAdmin();
+		} catch (UserNotFoundException e) {
+			logger.warn("Logged in as {} but user does not exist in database", username);
+		}
+		return false;
+	}
 }
