@@ -6,7 +6,6 @@ import org.apache.jena.rdf.model.Model;
 import org.elasticsearch.action.index.IndexResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,12 +18,15 @@ import no.difi.dcat.datastore.domain.dcat.builders.DistributionBuilder;
 import no.difi.dcat.harvester.ElasticSearchClient;
 import no.difi.dcat.harvester.crawler.CrawlerResultHandler;
 
-public class StdErrElasticsearchResultHandler implements CrawlerResultHandler {
+public class ElasticSearchResultHandler implements CrawlerResultHandler {
 
-	private final Logger logger = LoggerFactory.getLogger(StdErrElasticsearchResultHandler.class);
+	private final Logger logger = LoggerFactory.getLogger(ElasticSearchResultHandler.class);
 
-	@Autowired
 	private ElasticSearchClient elasticSearchClient;
+
+	public ElasticSearchResultHandler(ElasticSearchClient elasticSearchClient) {
+		this.elasticSearchClient = elasticSearchClient;;
+	}
 	
 	@Override
 	public void process(DcatSource dcatSource, Model model) {
@@ -37,7 +39,7 @@ public class StdErrElasticsearchResultHandler implements CrawlerResultHandler {
 			String json = gson.toJson(distribution);
 			System.err.println(json);
 			
-			IndexResponse response = elasticSearchClient.getClient().prepareIndex().setSource(json).get();
+			IndexResponse response = elasticSearchClient.getClient().prepareIndex("dcat", "distribution").setSource(json).get();
 		}
 		
 		List<Dataset> datasets = new DatasetBuilder(model).build();
@@ -45,7 +47,7 @@ public class StdErrElasticsearchResultHandler implements CrawlerResultHandler {
 			String json = gson.toJson(dataset);
 			System.err.println(json);
 			
-			IndexResponse response = elasticSearchClient.getClient().prepareIndex().setSource(json).get();
+			IndexResponse response = elasticSearchClient.getClient().prepareIndex("dcat", "dataset").setSource(json).get();
 		}
 	}	
 }

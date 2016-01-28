@@ -11,7 +11,8 @@ import org.mockito.Mockito;
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.DcatDataStore;
 import no.difi.dcat.datastore.domain.DcatSource;
-import no.difi.dcat.harvester.crawler.handlers.ElasticsearchResultHandler;
+import no.difi.dcat.harvester.ElasticSearchClient;
+import no.difi.dcat.harvester.crawler.handlers.ElasticSearchResultHandler;
 import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
 
 public class CrawlerTest {
@@ -30,7 +31,7 @@ public class CrawlerTest {
 		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
 
 		FusekiResultHandler fHandler = new FusekiResultHandler(dcatDataStore, null);
-		ElasticsearchResultHandler eHandler = new ElasticsearchResultHandler(); 
+		ElasticSearchResultHandler eHandler = new ElasticSearchResultHandler(Mockito.mock(ElasticSearchClient.class)); 
 		
 		List<CrawlerJob> crawlerJobs = dcatSources.stream().map(dcatSource -> new CrawlerJob(dcatSource, adminDataStore, null, fHandler, eHandler)).collect(Collectors.<CrawlerJob>toList());
 		
