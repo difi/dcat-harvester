@@ -184,16 +184,16 @@ public class CrawlerJob implements Runnable {
 				status[0] = error.getRuleSeverity();
 				message[0] = error.toString();
 
-				logger.error(error.toString());
+				logger.error(error.toString() + " " + this.dcatSource.toString());
 			}
 			if (error.isWarning()) {
 				if (status[0] != ValidationError.RuleSeverity.error) {
 					status[0] = error.getRuleSeverity();
 				}
-				logger.warn(error.toString());
+				logger.warn(error.toString() + " " + this.dcatSource.toString());
 			} else {
 				status[0] = error.getRuleSeverity();
-				logger.info(error.toString());
+				logger.info(error.toString() + " " + this.dcatSource.toString());
 			}
 		});
 

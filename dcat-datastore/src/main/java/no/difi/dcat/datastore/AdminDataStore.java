@@ -235,20 +235,20 @@ public class AdminDataStore {
 		// Create data source grap
 		fuseki.sparqlUpdate(query, map);
 		// Create data source dashboard
-		if (dcatSource.getId() != null) {
-			elasticsearch = new Elasticsearch();
-			Client client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
-			kibana = new Kibana(client);
-			// TODO: should assume that everything already exists?
-			if (kibana.addSearchDocument(dcatSource)) {
-				// TODO: log successful .kibana search add
-				// Crawler created, can continue with dashboard and
-				// visualisations
-			} else {
-				// TODO: log failed .kibana search add
-			}
-			client.close();
-		}
+//		if (dcatSource.getId() != null) {
+//			elasticsearch = new Elasticsearch();
+//			Client client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
+//			kibana = new Kibana(client);
+//			// TODO: should assume that everything already exists?
+//			if (kibana.addSearchDocument(dcatSource)) {
+//				// TODO: log successful .kibana search add
+//				// Crawler created, can continue with dashboard and
+//				// visualisations
+//			} else {
+//				// TODO: log failed .kibana search add
+//			}
+//			client.close();
+//		}
 
 		if (!update) {
 			if (fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) {
