@@ -114,7 +114,7 @@ public class DcatModule extends ModuleImpl {
 			}
 		}
 		
-		dcatModule.setSubject(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.title));
+		dcatModule.setSubject(PropertyExtractor.extractExactlyOneStringOrNull(dataset, ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "theme")));
 		
 		String modified = PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.modified);
 		if (modified != null) {
@@ -132,12 +132,6 @@ public class DcatModule extends ModuleImpl {
 					dcatModule.getFormats().add(format);
 				}
 				
-			}
-			String mediaType = PropertyExtractor.extractExactlyOneStringOrNull(distribution, ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "mediaType"));
-			if (mediaType != null) {
-				if (!dcatModule.getFormats().contains(mediaType)) {
-					dcatModule.getFormats().add(mediaType);
-				}
 			}
 		}
 
