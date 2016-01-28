@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import no.difi.dcat.datastore.Elasticsearch;
 import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.dcat.Dataset;
 import no.difi.dcat.datastore.domain.dcat.Distribution;
@@ -25,29 +26,39 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
 	private ElasticSearchClient elasticSearchClient;
 
 	public ElasticSearchResultHandler(ElasticSearchClient elasticSearchClient) {
-		this.elasticSearchClient = elasticSearchClient;;
+		this.elasticSearchClient = elasticSearchClient;
 	}
-	
+
 	@Override
 	public void process(DcatSource dcatSource, Model model) {
 		logger.trace("Processing results");
-		
+
 		Gson gson = new GsonBuilder().setPrettyPrinting().setDateFormat("yyyy-MM-dd'T'HH:mm:ssX").create();
-		
-		List<Distribution> distributions = new DistributionBuilder(model).build();
-		for (Distribution distribution : distributions) {
-			String json = gson.toJson(distribution);
-			System.err.println(json);
-			
-			IndexResponse response = elasticSearchClient.getClient().prepareIndex("dcat", "distribution").setSource(json).get();
+		Elasticsearch elasticsearch = new Elasticsearch();
+		// TODO: turn this into a try, catch Elasticsearch errors
+		if (elasticsearch.isElasticsearchRunning(elasticSearchClient.getClient())) {
+
+			List<Distribution> distributions = new DistributionBuilder(model).build();
+			for (Distribution distribution : distributions) {
+				String json = gson.toJson(distribution);
+				System.err.println(json);
+
+				IndexResponse response = elasticSearchClient.getClient().prepareIndex("dcat", "distribution")
+						.setSource(json).get();
+
+			}
+
+			List<Dataset> datasets = new DatasetBuilder(model).build();
+			for (Dataset dataset : datasets) {
+				String json = gson.toJson(dataset);
+				System.err.println(json);
+				IndexResponse response = elasticSearchClient.getClient().prepareIndex("dcat", "dataset").setSource(json)
+						.get();
+
+			}
+		} else {
+			logger.error("Unable to reach Elasticsearch");
 		}
-		
-		List<Dataset> datasets = new DatasetBuilder(model).build();
-		for (Dataset dataset : datasets) {
-			String json = gson.toJson(dataset);
-			System.err.println(json);
-			
-			IndexResponse response = elasticSearchClient.getClient().prepareIndex("dcat", "dataset").setSource(json).get();
-		}
-	}	
+
+	}
 }
