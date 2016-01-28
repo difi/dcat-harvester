@@ -8,7 +8,11 @@ import java.net.URL;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.ResIterator;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.slf4j.Logger;
@@ -96,11 +100,24 @@ public class BrregAgentConverter {
 			URL url = new URL(uri);
 			String content = brregCache.get(url);
 			InputStream inputStream = new ByteArrayInputStream(content.getBytes());
-			model.add(convert(inputStream));
+			Model incomingModel = convert(inputStream);
+			
+			removeDuplicateProperties(model, incomingModel, FOAF.name); //TODO: remove all duplicate properties?
+			
+			model.add(incomingModel);
 			
 		} catch (Exception e) {
 			logger.warn("Failed to look up publisher: {}", uri, e);
 		}	
+	}
+
+	private void removeDuplicateProperties(Model existingModel, Model incomingModel, Property property) {
+		ResIterator incomingModelIterator = incomingModel.listResourcesWithProperty(property);
+		
+		while (incomingModelIterator.hasNext()) {
+			Resource existingResource = existingModel.getResource(incomingModelIterator.next().getURI());
+			existingResource.removeAll(property);
+		}
 	}
 
 	private static void applyNamespaces(Model extractedModel) {
