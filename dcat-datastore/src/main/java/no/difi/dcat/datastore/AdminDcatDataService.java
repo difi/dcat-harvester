@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.elasticsearch.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,13 +12,14 @@ import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.User;
 
 /**
- * Created by havardottestad on 07/01/16.
+ * @author by havardottestad, sebnmuller
  */
 public class AdminDcatDataService {
 
 
 	private final AdminDataStore adminDataStore;
 	private final DcatDataStore dcatDataStore;
+	private Elasticsearch elasticsearch;
 
 
 	private final Logger logger = LoggerFactory.getLogger(AdminDcatDataService.class);
@@ -71,11 +73,19 @@ public class AdminDcatDataService {
 		adminDataStore.fuseki.sparqlUpdate(query, map);
 
 		dcatDataStore.deleteDataCatalogue(dcatSource);
+//		elasticsearch = new Elasticsearch();
+//		Client client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
+//		
+//		if(elasticsearch.deleteDocument(".kibana", "search", dcatSourceId, client)) {
+//			logger.info("[crawler_admin] [success] Deleted DCAT source from Elasticsearch: {}", dcatSource.toString());
+//		} else {
+//			logger.error("[crawler_admin] [fail] DCAT source was not deleted from Elasticsearch: {}", dcatSource.toString());
+//		}
 		
 		if (adminDataStore.fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) { 
-			logger.error("[user_admin] [fail] DCAT source was not deleted: {}", dcatSource.toString());
+			logger.error("[crawler_admin] [fail] DCAT source was not deleted from Fuseki: {}", dcatSource.toString());
 		} else {
-			logger.info("[user_admin] [success] Deleted DCAT source: {}", dcatSource.toString());
+			logger.info("[crawler_admin] [success] Deleted DCAT source from Fuseki: {}", dcatSource.toString());
 		}
 		
 	}
@@ -104,8 +114,8 @@ public class AdminDcatDataService {
 					logger.error("[user_admin] [fail] User was not deleted: {}", user.toString());
 				} else {
 					logger.info("[user_admin] [success] Deleted user: {}", user.toString());
-				}
-				
+			}
+
 		} else {
 			logger.warn("ADMIN role is required to delete users");
 		}

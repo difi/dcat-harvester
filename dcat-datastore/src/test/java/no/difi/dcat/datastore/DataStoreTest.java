@@ -29,20 +29,45 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.tdb.StoreConnection;
 import org.apache.jena.tdb.base.file.Location;
 import org.apache.jena.vocabulary.RDFS;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.NoNodeAvailableException;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.DifiMeta;
 import no.difi.dcat.datastore.domain.User;
 
 /**
- * Created by havardottestad on 05/01/16.
+ * @author havardottestad, sebnmuller
  */
-public class FusekiTest {
+public class DataStoreTest {
+
+	private static final String SEARCH_TYPE = "search";
+
+	private static final String KIBANA_INDEX = ".kibana";
+
+	private final Logger logger = LoggerFactory.getLogger(DataStoreTest.class);
 
 	JettyFuseki server;
+	Node node;
+	Client client;
+	Elasticsearch elasticsearch;
 
-	@org.junit.Before
+	private File homeDir = null;
+//	private File dataDir = null;
+	private Settings settings = null;
+
+	@Before
 	public void setUp() throws Exception {
 
 		SystemState.location = Location.mem();
@@ -59,21 +84,49 @@ public class FusekiTest {
 
 		fuseki();
 
+		// TODO: this should only run for the tests that actually require it
+
+		homeDir = new File("src/test/resources/elasticsearch");
+//		dataDir = new File("src/test/resources/elasticearch/data");
+
+		settings = Settings.settingsBuilder().put("path.home", homeDir.toString())
+				.put("network.host", "0.0.0.0")
+				.build();
+		node = NodeBuilder.nodeBuilder().settings(settings).build();
+		node.start();
+		client = node.client();
+		elasticsearch = new Elasticsearch();
+		if (!elasticsearch.indexExists(KIBANA_INDEX, client)) {
+			client.admin().indices().prepareCreate(KIBANA_INDEX).execute().actionGet();
+		}
+		client.admin().cluster().prepareHealth(KIBANA_INDEX).setWaitForYellowStatus().execute().actionGet();
+		Assert.assertNotNull(node);
+		Assert.assertFalse(node.isClosed());
+		Assert.assertNotNull(client);
 	}
 
-	@org.junit.After
+	@After
 	public void tearDown() throws Exception {
 
 		if (server != null) {
 			server.stop();
 		}
-
+		if (client != null) {
+			client.close();
+		}
+		if (node != null) {
+			node.close();
+		}
+		
+		if (homeDir != null) {
+			FileUtils.forceDelete(homeDir);
+		}
 
 		StoreConnection.reset();
 
-
 		Thread.sleep(1000);
 		server = null;
+		node = null;
 		// Clear out the registry.
 		Collection<String> keys = Iter.toList(DataAccessPointRegistry.get().keys().iterator());
 		for (String k : keys) {
@@ -86,6 +139,18 @@ public class FusekiTest {
 		Thread.sleep(1000);
 	}
 
+	@Test
+	public void testThatEmbeddedElasticsearchWorks() {
+		ClusterHealthResponse healthResponse = null;
+		try {
+			healthResponse = client.admin().cluster().prepareHealth().setTimeout(new TimeValue(5000)).execute()
+					.actionGet();
+			logger.info("Connected to Elasticsearch: " + healthResponse.getStatus().toString());
+		} catch (NoNodeAvailableException e) {
+			logger.error("Failed to connect to Elasticsearch: " + e);
+		}
+		assertTrue(healthResponse.getStatus() != null);
+	}
 
 	@Test
 	public void testThatEmbeddedFusekiWorks() {
@@ -105,7 +170,6 @@ public class FusekiTest {
 
 	}
 
-
 	@Test
 	public void testThatEmbeddedFusekiWorks2() {
 
@@ -123,7 +187,6 @@ public class FusekiTest {
 
 	}
 
-
 	@Test
 	public void testFusekiEndpointSlash() {
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
@@ -132,9 +195,7 @@ public class FusekiTest {
 		fuseki.drop("");
 		fuseki2.drop("");
 
-
 	}
-
 
 	@Test
 	public void testAddUser() throws UserAlreadyExistsException, UserNotFoundException {
@@ -153,7 +214,6 @@ public class FusekiTest {
 			count++;
 			select.next();
 		}
-
 
 		assertEquals("Should be exactly 1 user with this username", 1, count);
 	}
@@ -186,8 +246,8 @@ public class FusekiTest {
 
 		testUser.setPassword(null);
 		adminDataStore.addUser(testUser);
-		assertEquals("Password shouldn't change if it is not present", "hello", adminDataStore.getUsers().get(0).getPassword());
-
+		assertEquals("Password shouldn't change if it is not present", "hello",
+				adminDataStore.getUsers().get(0).getPassword());
 
 		testUser.setUsername("hurra");
 		adminDataStore.addUser(testUser);
@@ -197,10 +257,7 @@ public class FusekiTest {
 		adminDataStore.addUser(testUser);
 		assertEquals("", testUser.getRole(), adminDataStore.getUsers().get(0).getRole());
 
-
-
 	}
-
 
 	@Test
 	public void testUpdateUserMultipleUsers() throws UserAlreadyExistsException {
@@ -214,13 +271,12 @@ public class FusekiTest {
 		adminDataStore.addUser(testUser);
 
 		List<User> users = adminDataStore.getUsers();
-		boolean atLeast1UserWithOldEmail = users.stream().filter(user -> !user.getEmail().equals(testUser.getEmail())).findAny().isPresent();
+		boolean atLeast1UserWithOldEmail = users.stream().filter(user -> !user.getEmail().equals(testUser.getEmail()))
+				.findAny().isPresent();
 
 		assertTrue("", atLeast1UserWithOldEmail);
 
-
 	}
-
 
 	@Test
 	public void testAddDcatSource() throws UserAlreadyExistsException, Exception {
@@ -247,13 +303,20 @@ public class FusekiTest {
 		assertEquals("Graph should be equal", dcatSource.getGraph(), fromFuseki.getGraph());
 		assertEquals("Id should be equal", dcatSource.getId(), fromFuseki.getId());
 
+		assertTrue("Crawler search document exists",
+				elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), this.client));
+		// TODO: assertTrue(visualizations exist)
+		// TODO: assertTrue(dashboard exist)
+
 	}
 
 	@Test
 	public void testDeleteDcatSource() throws UserAlreadyExistsException, Exception {
 
-		no.difi.dcat.datastore.domain.User testAdmin = new no.difi.dcat.datastore.domain.User("", "testAdmin", "", "", "ADMIN");
-		no.difi.dcat.datastore.domain.User testUser = new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", "");
+		no.difi.dcat.datastore.domain.User testAdmin = new no.difi.dcat.datastore.domain.User("", "testAdmin", "", "",
+				"ADMIN");
+		no.difi.dcat.datastore.domain.User testUser = new no.difi.dcat.datastore.domain.User("", "testUserName", "", "",
+				"");
 
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
@@ -268,22 +331,28 @@ public class FusekiTest {
 		dcatSource = adminDataStore.addDcatSource(dcatSource);
 		assertNotNull("There should exist a dcat source", dcatSource);
 
-		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")));
+		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore,
+				new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")));
 
 		adminDcatDataService.deleteDcatSource(dcatSource.getId(), testAdmin);
 
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
 
 		assertFalse("", dcatSourceById.isPresent());
-
+		assertFalse("Crawler search document exists",
+				elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), this.client));
+		// TODO: assertFalse(visualizations exist)
+		// TODO: assertFalse(dashboard exist)
 
 	}
 
 	@Test
 	public void testDeleteOneofTwoDcatSources() throws UserAlreadyExistsException, Exception {
 
-		no.difi.dcat.datastore.domain.User testAdmin = new no.difi.dcat.datastore.domain.User("", "testAdmin", "", "", "ADMIN");
-		no.difi.dcat.datastore.domain.User testUser = new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", "");
+		no.difi.dcat.datastore.domain.User testAdmin = new no.difi.dcat.datastore.domain.User("", "testAdmin", "", "",
+				"ADMIN");
+		no.difi.dcat.datastore.domain.User testUser = new no.difi.dcat.datastore.domain.User("", "testUserName", "", "",
+				"");
 
 		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
 
@@ -306,7 +375,8 @@ public class FusekiTest {
 		dcatSource2 = adminDataStore.addDcatSource(dcatSource2);
 		assertNotNull("There should exist a second dcat source", dcatSource2);
 
-		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")));
+		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore,
+				new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")));
 
 		adminDcatDataService.deleteDcatSource(dcatSource.getId(), testAdmin);
 
@@ -317,7 +387,6 @@ public class FusekiTest {
 		Optional<DcatSource> dcatSourceById2 = adminDataStore.getDcatSourceById(dcatSource2.getId());
 
 		assertTrue("", dcatSourceById2.isPresent());
-
 
 	}
 
@@ -333,7 +402,6 @@ public class FusekiTest {
 		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName","1234567890"));
 		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName","1234567890"));
 
-
 		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName2", "", "", ""));
 
 		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2","1234567890"));
@@ -346,7 +414,6 @@ public class FusekiTest {
 		assertEquals("", 2, testUserName2DcatSources.size());
 
 	}
-
 
 	@Test
 	public void testGetAllDcatSourcesForUserWithDelete() throws UserAlreadyExistsException, Exception {
@@ -380,7 +447,6 @@ public class FusekiTest {
 		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName","1234567890"));
 		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName","1234567890"));
 
-
 		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName2", "", "", ""));
 
 		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2","1234567890"));
@@ -391,9 +457,6 @@ public class FusekiTest {
 		assertEquals("", 5, allSources.size());
 
 	}
-
-
-
 
 	@Test
 	public void testWhenNoSourcesForUse() throws UserAlreadyExistsException, Exception {
@@ -426,6 +489,8 @@ public class FusekiTest {
 
 		dcatSource = adminDataStore.addDcatSource(dcatSource);
 		assertNotNull("There should exist a dcat source", dcatSource);
+		assertTrue("Crawler search document exists",
+				elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), this.client));
 
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
 
@@ -442,8 +507,6 @@ public class FusekiTest {
 		assertTrue("The dcat source should exist in the database", dcatSourceById2.isPresent());
 		DcatSource fromFuseki2 = dcatSourceById2.get();
 
-
-
 		assertEquals("Url should be equal", fromFuseki.getUrl(), fromFuseki2.getUrl());
 		assertEquals("User should be equal", fromFuseki.getUser(), fromFuseki2.getUser());
 		assertEquals("Description should be equal", fromFuseki.getDescription(), fromFuseki2.getDescription());
@@ -451,7 +514,6 @@ public class FusekiTest {
 		assertEquals("Id should be equal", fromFuseki.getId(), fromFuseki2.getId());
 
 	}
-
 
 	@Test
 	public void testCrawlDcatSourceLogging() throws UserAlreadyExistsException, Exception {
@@ -476,11 +538,10 @@ public class FusekiTest {
 		DcatSource dcatSource1 = dcatSourceById.get();
 		List<DcatSource.Harvest> harvested = dcatSource1.getHarvested();
 
-
 		assertEquals("", 1, harvested.size());
 		assertEquals("", DifiMeta.warning, harvested.get(0).getStatus());
 		assertEquals("", "some warning", harvested.get(0).getMessage());
-		
+
 		adminDataStore.addCrawlResults(dcatSource, DifiMeta.warning, "another warning");
 
 		Optional<DcatSource> dcatSourceById2 = adminDataStore.getDcatSourceById(dcatSource.getId());
@@ -491,9 +552,7 @@ public class FusekiTest {
 
 		assertEquals("", 2, harvested2.size());
 
-
 	}
-
 
 	@Test
 	public void testMultipleDcatFiles() throws UserAlreadyExistsException, Exception {
@@ -507,7 +566,6 @@ public class FusekiTest {
 		defaultModel.createResource().addLiteral(RDFS.label, "hello");
 
 		dcatDataStore.saveDataCatalogue(dcatSource, defaultModel);
-
 
 		DcatSource dcatSource2 = new DcatSource();
 		dcatSource2.setGraph("http://example.com/2");
@@ -525,12 +583,6 @@ public class FusekiTest {
 
 	}
 
-
-
-
-
-
-
 	public void fuseki() throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource("fuseki-embedded.ttl").getFile());
@@ -547,7 +599,6 @@ public class FusekiTest {
 		server = instance;
 	}
 
-
 	public static JettyServerConfig make(int port, boolean allowUpdate, boolean listenLocal) {
 		JettyServerConfig config = new JettyServerConfig();
 		// Avoid any persistent record.
@@ -560,6 +611,5 @@ public class FusekiTest {
 		config.verboseLogging = false;
 		return config;
 	}
-
 
 }

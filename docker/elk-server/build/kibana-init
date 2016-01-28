@@ -48,11 +48,7 @@ start() {
 
   # Run the program!
 
-  chroot --userspec "$user":"$group" "$chroot" sh -c "
-
-    cd \"$chdir\"
-    exec \"$program\" $args
-  " >> /var/log/kibana/kibana.stdout 2>> /var/log/kibana/kibana.stderr &
+    exec $program $args >> /var/log/kibana/kibana.stdout 2>> /var/log/kibana/kibana.stderr &
 
   # Generate the pidfile from here. If we instead made the forked process
   # generate it there will be a race condition between the pidfile writing
@@ -107,7 +103,6 @@ force_stop() {
     status && kill -KILL $(cat "$pidfile")
   fi
 }
-
 
 case "$1" in
   force-start|start|stop|force-stop|restart)
