@@ -16,6 +16,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class Elasticsearch {
@@ -33,8 +34,8 @@ public class Elasticsearch {
 		} catch (UnknownHostException e) {
 			logger.error(e.toString());
 		}
-		
-		if(isElasticsearchRunning(client)) {
+
+		if (isElasticsearchRunning(client)) {
 			return client;
 		}
 		return null;
@@ -48,8 +49,8 @@ public class Elasticsearch {
 		} catch (UnknownHostException e) {
 			logger.error(e.toString());
 		}
-		
-		if(isElasticsearchRunning(client)) {
+
+		if (isElasticsearchRunning(client)) {
 			return client;
 		}
 		return null;
@@ -58,27 +59,36 @@ public class Elasticsearch {
 	public boolean isElasticsearchRunning(Client client) {
 		return client.admin().cluster().prepareHealth().execute().actionGet().getStatus() != null;
 	}
-	
+
 	public ClusterHealthStatus elasticsearchStatus(Client client) {
 		return client.admin().cluster().prepareHealth().execute().actionGet().getStatus();
 	}
-	
+
 	public boolean documentExists(String index, String type, String id, Client client) {
 		return client.prepareGet(index, type, id).execute().actionGet().isExists();
 	}
-	
+
 	public boolean indexExists(String index, Client client) {
 		return client.admin().indices().prepareExists(index).execute().actionGet().isExists();
 	}
-	
+
 	public void createIndex(String index, Client client) {
-		CreateIndexRequestBuilder createIndexRequestBuilder = client.admin().indices().prepareCreate(index);
-		CreateIndexResponse response = createIndexRequestBuilder.execute().actionGet();
-		logger.info("Index " + index + " created: " + String.valueOf(response.isAcknowledged()));
+		client.admin().indices().prepareCreate(index).execute().actionGet();
+		client.admin().cluster().prepareHealth(index).setWaitForYellowStatus().execute().actionGet();
 	}
-	
+
 	public boolean indexDocument(String index, String type, String id, JsonObject jsonObject, Client client) {
 		IndexResponse rsp = client.prepareIndex(index, type, id).setSource(jsonObject).execute().actionGet();
+		return rsp.isCreated();
+	}
+	
+	public boolean indexDocument(String index, String type, String id, JsonArray jsonArray, Client client) {
+		IndexResponse rsp = client.prepareIndex(index, type, id).setSource(jsonArray).execute().actionGet();
+		return rsp.isCreated();
+	}
+	
+	public boolean indexDocument(String index, String type, String id, String string, Client client) {
+		IndexResponse rsp = client.prepareIndex(index, type, id).setSource(string).execute().actionGet();
 		return rsp.isCreated();
 	}
 
