@@ -176,7 +176,7 @@ public class AdminDataStore {
 
 		}
 
-		if (dcatSource.getId() == null) {
+		if (dcatSource.getId() == null || dcatSource.getId().isEmpty()) {
 			dcatSource.setId("http://dcat.difi.no/dcatSource_" + UUID.randomUUID().toString());
 		}
 		if (dcatSource.getGraph() == null) {
