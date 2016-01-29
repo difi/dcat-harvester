@@ -340,8 +340,8 @@ public class DataStoreTest {
 
 		assertFalse("", dcatSourceById.isPresent());
 
-		assertFalse("Crawler search document exists",
-				elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), this.client));
+//		assertFalse("Crawler search document exists",
+//				elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), this.client));
 		// TODO: assertFalse(visualizations exist)
 		// TODO: assertFalse(dashboard exist)
 
