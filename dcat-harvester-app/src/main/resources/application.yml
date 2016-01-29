@@ -3,13 +3,16 @@ fuseki:
   adminServiceUri: http://localhost:8080/fuseki/admin
 application:
   crawlerThreadPoolSize: 2
-  test: test
+  elasticSearchHost: localhost
+  elasticSearchPort: 9300
 ---
 spring:
     profiles: docker
 fuseki:
   dcatServiceUri: http://fuseki:8080/fuseki/dcat
   adminServiceUri: http://fuseki:8080/fuseki/admin
+application:
+  elasticSearchHost: elk
 ---
 spring:
     profiles: development
