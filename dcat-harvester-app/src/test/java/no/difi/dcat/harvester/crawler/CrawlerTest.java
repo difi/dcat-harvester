@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.DcatDataStore;
+import no.difi.dcat.datastore.Elasticsearch;
 import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.harvester.crawler.handlers.ElasticSearchResultHandler;
 import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;

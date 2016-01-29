@@ -39,12 +39,21 @@ public class CrawlerJobFactory {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
 		dcatDataStore = new DcatDataStore(new Fuseki(fusekiSettings.getDcatServiceUri()));
 		fusekiResultHandler = new FusekiResultHandler(dcatDataStore, adminDataStore);
-		elasticSearchResultHandler = new ElasticSearchResultHandler(client);
+		
 	}
 	
 	public CrawlerJob createCrawlerJob(DcatSource dcatSource, Client client) {
-		this.client = client;
+		this.setClient(client);
+		elasticSearchResultHandler = new ElasticSearchResultHandler(client);
 		return new CrawlerJob(dcatSource, adminDataStore, brregCache,fusekiResultHandler, elasticSearchResultHandler);
+	}
+
+	public Client getClient() {
+		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
 	}
 
 }
