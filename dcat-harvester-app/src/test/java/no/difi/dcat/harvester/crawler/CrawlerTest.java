@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import org.elasticsearch.client.Client;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.DcatDataStore;
 import no.difi.dcat.datastore.domain.DcatSource;
-import no.difi.dcat.harvester.ElasticSearchClient;
 import no.difi.dcat.harvester.crawler.handlers.ElasticSearchResultHandler;
 import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
 
@@ -31,7 +31,7 @@ public class CrawlerTest {
 		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
 
 		FusekiResultHandler fHandler = new FusekiResultHandler(dcatDataStore, null);
-		ElasticSearchResultHandler eHandler = new ElasticSearchResultHandler(Mockito.mock(ElasticSearchClient.class)); 
+		ElasticSearchResultHandler eHandler = new ElasticSearchResultHandler(Mockito.mock(Client.class)); 
 		
 		List<CrawlerJob> crawlerJobs = dcatSources.stream().map(dcatSource -> new CrawlerJob(dcatSource, adminDataStore, null, fHandler, eHandler)).collect(Collectors.<CrawlerJob>toList());
 		
