@@ -1,5 +1,10 @@
 package no.difi.dcat.datastore;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
@@ -24,15 +29,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.tdb.StoreConnection;
 import org.apache.jena.tdb.base.file.Location;
 import org.apache.jena.vocabulary.RDFS;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.NoNodeAvailableException;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -42,27 +39,14 @@ import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.DifiMeta;
 import no.difi.dcat.datastore.domain.User;
 
-import static org.junit.Assert.*;
-
 /**
  * @author havardottestad, sebnmuller
  */
 public class DataStoreTest {
 
-	private static final String SEARCH_TYPE = "search";
-
-	private static final String KIBANA_INDEX = ".kibana";
-
 	private final Logger logger = LoggerFactory.getLogger(DataStoreTest.class);
 
 	JettyFuseki server;
-	Node node;
-	Client client;
-	Elasticsearch elasticsearch;
-
-	private File homeDir = null;
-//	private File dataDir = null;
-	private Settings settings = null;
 
 	@Before
 	public void setUp() throws Exception {
@@ -80,26 +64,6 @@ public class DataStoreTest {
 		FileUtils.cleanDirectory(adminDB);
 
 		fuseki();
-
-		// TODO: this should only run for the tests that actually require it
-
-		homeDir = new File("src/test/resources/elasticsearch");
-//		dataDir = new File("src/test/resources/elasticearch/data");
-
-		settings = Settings.settingsBuilder().put("path.home", homeDir.toString())
-				.put("network.host", "0.0.0.0")
-				.build();
-		node = NodeBuilder.nodeBuilder().settings(settings).build();
-		node.start();
-		client = node.client();
-		elasticsearch = new Elasticsearch();
-		if (!elasticsearch.indexExists(KIBANA_INDEX, client)) {
-			client.admin().indices().prepareCreate(KIBANA_INDEX).execute().actionGet();
-		}
-		client.admin().cluster().prepareHealth(KIBANA_INDEX).setWaitForYellowStatus().execute().actionGet();
-		Assert.assertNotNull(node);
-		Assert.assertFalse(node.isClosed());
-		Assert.assertNotNull(client);
 	}
 
 	@After
@@ -108,22 +72,11 @@ public class DataStoreTest {
 		if (server != null) {
 			server.stop();
 		}
-		if (client != null) {
-			client.close();
-		}
-		if (node != null) {
-			node.close();
-		}
-		
-		if (homeDir != null) {
-			FileUtils.forceDelete(homeDir);
-		}
 
 		StoreConnection.reset();
 
 		Thread.sleep(1000);
 		server = null;
-		node = null;
 		// Clear out the registry.
 		Collection<String> keys = Iter.toList(DataAccessPointRegistry.get().keys().iterator());
 		for (String k : keys) {
@@ -134,19 +87,6 @@ public class DataStoreTest {
 		FileOps.clearAll(FusekiServer.dirConfiguration.toFile());
 
 		Thread.sleep(1000);
-	}
-
-	@Test
-	public void testThatEmbeddedElasticsearchWorks() {
-		ClusterHealthResponse healthResponse = null;
-		try {
-			healthResponse = client.admin().cluster().prepareHealth().setTimeout(new TimeValue(5000)).execute()
-					.actionGet();
-			logger.info("Connected to Elasticsearch: " + healthResponse.getStatus().toString());
-		} catch (NoNodeAvailableException e) {
-			logger.error("Failed to connect to Elasticsearch: " + e);
-		}
-		assertTrue(healthResponse.getStatus() != null);
 	}
 
 	@Test
@@ -300,12 +240,6 @@ public class DataStoreTest {
 		assertEquals("Graph should be equal", dcatSource.getGraph(), fromFuseki.getGraph());
 		assertEquals("Id should be equal", dcatSource.getId(), fromFuseki.getId());
 
-//		TODO: fix :)
-//		assertTrue("Crawler search document exists",
-//				elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), this.client));
-		// TODO: assertTrue(visualizations exist)
-		// TODO: assertTrue(dashboard exist)
-
 	}
 
 	@Test
@@ -329,23 +263,14 @@ public class DataStoreTest {
 		dcatSource = adminDataStore.addDcatSource(dcatSource);
 		assertNotNull("There should exist a dcat source", dcatSource);
 
-
 		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore,
 				new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")));
-
 
 		adminDcatDataService.deleteDcatSource(dcatSource.getId(), testAdmin);
 
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
 
 		assertFalse("", dcatSourceById.isPresent());
-
-//		assertFalse("Crawler search document exists",
-//				elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), this.client));
-		// TODO: assertFalse(visualizations exist)
-		// TODO: assertFalse(dashboard exist)
-
-
 	}
 
 	@Test
@@ -400,14 +325,14 @@ public class DataStoreTest {
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
 		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName","1234567890"));
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName","1234567890"));
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName","1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName", "1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName", "1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName", "1234567890"));
 
 		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName2", "", "", ""));
 
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2","1234567890"));
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc22", "http:22", "testUserName2","1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2", "1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc22", "http:22", "testUserName2", "1234567890"));
 
 		List<DcatSource> testUserNameDcatSources = adminDataStore.getDcatSourcesForUser("testUserName");
 		List<DcatSource> testUserName2DcatSources = adminDataStore.getDcatSourcesForUser("testUserName2");
@@ -425,8 +350,9 @@ public class DataStoreTest {
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
 		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName","1234567890"));
-		DcatSource dcatSource = adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName","1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName", "1234567890"));
+		DcatSource dcatSource = adminDataStore
+				.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName", "1234567890"));
 
 		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(fuseki));
 		adminDcatDataService.deleteDcatSource(dcatSource.getId(), adminDataStore.getUserObject("testUserName"));
@@ -445,14 +371,14 @@ public class DataStoreTest {
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
 		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName", "", "", ""));
 
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName","1234567890"));
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName","1234567890"));
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName","1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc1", "http:1", "testUserName", "1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName", "1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc3", "http:3", "testUserName", "1234567890"));
 
 		adminDataStore.addUser(new no.difi.dcat.datastore.domain.User("", "testUserName2", "", "", ""));
 
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2","1234567890"));
-		adminDataStore.addDcatSource(new DcatSource(null, "sourc22", "http:22", "testUserName2","1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc21", "http:21", "testUserName2", "1234567890"));
+		adminDataStore.addDcatSource(new DcatSource(null, "sourc22", "http:22", "testUserName2", "1234567890"));
 
 		List<DcatSource> allSources = adminDataStore.getDcatSources();
 
@@ -491,9 +417,10 @@ public class DataStoreTest {
 
 		dcatSource = adminDataStore.addDcatSource(dcatSource);
 		assertNotNull("There should exist a dcat source", dcatSource);
-//		TODO: fix this :)
-//		assertTrue("Crawler search document exists",
-//				elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), this.client));
+		// TODO: fix this :)
+		// assertTrue("Crawler search document exists",
+		// elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE,
+		// dcatSource.getId(), this.client));
 
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
 

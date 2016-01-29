@@ -24,9 +24,10 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
 	private final Logger logger = LoggerFactory.getLogger(ElasticSearchResultHandler.class);
 
 	private Client elasticSearchClient;
+	private Elasticsearch elasticsearch;
 
 	public ElasticSearchResultHandler(Client elasticSearchClient) {
-		this.elasticSearchClient = elasticSearchClient;;
+		this.elasticSearchClient = elasticSearchClient;
 	}
 
 	@Override
