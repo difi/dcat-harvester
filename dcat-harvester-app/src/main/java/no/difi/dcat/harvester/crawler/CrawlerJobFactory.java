@@ -42,11 +42,13 @@ public class CrawlerJobFactory {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
 		dcatDataStore = new DcatDataStore(new Fuseki(fusekiSettings.getDcatServiceUri()));
 		fusekiResultHandler = new FusekiResultHandler(dcatDataStore, adminDataStore);
-		elasticSearchResultHandler = new ElasticSearchResultHandler(new Elasticsearch().returnElasticsearchTransportClient(applicationSettings.getElasticSearchHost(), applicationSettings.getElasticSearchPort()));
+		//elasticSearchResultHandler = new ElasticSearchResultHandler(new Elasticsearch().returnElasticsearchTransportClient(applicationSettings.getElasticSearchHost(), applicationSettings.getElasticSearchPort()));
 	}
 	
 	public CrawlerJob createCrawlerJob(DcatSource dcatSource) {
-		return new CrawlerJob(dcatSource, adminDataStore, brregCache,fusekiResultHandler, elasticSearchResultHandler);
+		return new CrawlerJob(dcatSource, adminDataStore, brregCache,fusekiResultHandler);
+
+		//return new CrawlerJob(dcatSource, adminDataStore, brregCache,fusekiResultHandler, elasticSearchResultHandler);
 	}
 
 }
