@@ -11,10 +11,12 @@ import com.google.common.cache.LoadingCache;
 
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.DcatDataStore;
+import no.difi.dcat.datastore.Elasticsearch;
 import no.difi.dcat.datastore.Fuseki;
 import no.difi.dcat.datastore.domain.DcatSource;
-import no.difi.dcat.harvester.crawler.handlers.ElasticsearchResultHandler;
+import no.difi.dcat.harvester.crawler.handlers.ElasticSearchResultHandler;
 import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
+import no.difi.dcat.harvester.settings.ApplicationSettings;
 import no.difi.dcat.harvester.settings.FusekiSettings;
 
 @Component
@@ -24,24 +26,27 @@ public class CrawlerJobFactory {
 	private FusekiSettings fusekiSettings;
 	
 	@Autowired
+	private ApplicationSettings applicationSettings;
+	
+	@Autowired
 	private LoadingCache<URL, String> brregCache;
 	
 	private AdminDataStore adminDataStore;
 	private DcatDataStore dcatDataStore;
 	
 	private FusekiResultHandler fusekiResultHandler;
-	private ElasticsearchResultHandler elasticsearchResultHandler;
+	private ElasticSearchResultHandler elasticSearchResultHandler;
 	
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
 		dcatDataStore = new DcatDataStore(new Fuseki(fusekiSettings.getDcatServiceUri()));
 		fusekiResultHandler = new FusekiResultHandler(dcatDataStore, adminDataStore);
-		elasticsearchResultHandler = new ElasticsearchResultHandler();
+		elasticSearchResultHandler = new ElasticSearchResultHandler(new Elasticsearch().returnElasticsearchTransportClient(applicationSettings.getElasticSearchHost(), applicationSettings.getElasticSearchPort()));
 	}
 	
 	public CrawlerJob createCrawlerJob(DcatSource dcatSource) {
-		return new CrawlerJob(dcatSource, adminDataStore, brregCache,fusekiResultHandler, elasticsearchResultHandler);
+		return new CrawlerJob(dcatSource, adminDataStore, brregCache,fusekiResultHandler, elasticSearchResultHandler);
 	}
 
 }

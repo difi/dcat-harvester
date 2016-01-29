@@ -5,7 +5,6 @@
 	<artifactId>dcat-datastore</artifactId>
 	<packaging>jar</packaging>
 
-
 	<parent>
 		<artifactId>dcat-harvester</artifactId>
 		<groupId>no.difi</groupId>
@@ -21,11 +20,17 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>apache-jena-libs</artifactId>
 			<version>3.0.1</version>
 			<type>pom</type>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

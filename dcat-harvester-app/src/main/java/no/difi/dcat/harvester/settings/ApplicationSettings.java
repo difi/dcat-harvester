@@ -11,6 +11,25 @@ public class ApplicationSettings {
 	
 	private int crawlerThreadPoolSize;
 	
+	private String elasticSearchHost;
+	private int elasticSearchPort;
+	
+	public String getElasticSearchHost() {
+		return elasticSearchHost;
+	}
+
+	public void setElasticSearchHost(String elasticSearchHost) {
+		this.elasticSearchHost = elasticSearchHost;
+	}
+
+	public int getElasticSearchPort() {
+		return elasticSearchPort;
+	}
+
+	public void setElasticSearchPort(int elasticSearchPort) {
+		this.elasticSearchPort = elasticSearchPort;
+	}
+
 	public int getCrawlerThreadPoolSize() {
 		return crawlerThreadPoolSize;
 	}
@@ -18,5 +37,4 @@ public class ApplicationSettings {
 	public void setCrawlerThreadPoolSize(int crawlerThreadPoolSize) {
 		this.crawlerThreadPoolSize = crawlerThreadPoolSize;
 	}
-	
 }

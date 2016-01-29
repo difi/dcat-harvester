@@ -30,6 +30,10 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
+        <dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>no.difi</groupId>
 			<artifactId>dcat-datastore</artifactId>
@@ -71,6 +75,10 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>19.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
 		</dependency>
 	</dependencies>
 

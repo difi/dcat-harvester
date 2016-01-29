@@ -98,12 +98,11 @@ public class CrawlerJob implements Runnable {
 			}
 			
 			LocalDateTime stop = LocalDateTime.now();
-			logger.info("[crawler_operations] [success] Finished crawler job: {}", dcatSource.toString() + ", Duration: " + returnCrawlDuration(start, stop));
+			logger.info("[crawler_operations] [success] Finished crawler job: {}", dcatSource.toString() + ", Duration=" + returnCrawlDuration(start, stop));
 		} catch (Exception e) {
 			logger.error(String.format("[crawler_operations] [fail] Error running crawler job: %1$s, error=%2$s", dcatSource.toString(), e.toString()));
 		}
 		
-
 	}
 
 	private boolean isEntryscape(Model union) {
@@ -183,16 +182,16 @@ public class CrawlerJob implements Runnable {
 				status[0] = error.getRuleSeverity();
 				message[0] = error.toString();
 
-				logger.error(error.toString());
+				logger.error("[validation_" + status[0] + "] " + message[0] + " " + this.dcatSource.toString());
 			}
 			if (error.isWarning()) {
 				if (status[0] != ValidationError.RuleSeverity.error) {
 					status[0] = error.getRuleSeverity();
 				}
-				logger.warn(error.toString());
+				logger.warn("[validation_" + status[0] + "] " + message[0] + " " + this.dcatSource.toString());
 			} else {
 				status[0] = error.getRuleSeverity();
-				logger.info(error.toString());
+				logger.info("[validation_" + status[0] + "] "  + message[0] + " " + this.dcatSource.toString());
 			}
 		});
 

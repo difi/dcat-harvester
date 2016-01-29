@@ -13,13 +13,13 @@ server:
    - ./logs:/usr/local/tomcat/logs:rw
   links:
    - fuseki
+   - elk
 
 elk:
   build: elk-server
   ports:
     - "5601:5601"
     - "9200:9200"
+    - "9300:9300"
   volumes:
     - ./logs:/usr/local/tomcat/logs:rw
-  links:
-    - server
