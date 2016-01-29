@@ -303,8 +303,8 @@ public class DataStoreTest {
 		assertEquals("Graph should be equal", dcatSource.getGraph(), fromFuseki.getGraph());
 		assertEquals("Id should be equal", dcatSource.getId(), fromFuseki.getId());
 
-		assertTrue("Crawler search document exists",
-				elasticsearch.documentExists(KIBANA_INDEX, SEARCH_TYPE, dcatSource.getId(), this.client));
+		assertTrue(".kibana index exists", elasticsearch.indexExists(KIBANA_INDEX, this.client));
+		assertTrue("difi-* index-pattern exists", elasticsearch.documentExists(KIBANA_INDEX, "index-pattern", "difi-*", this.client));
 		// TODO: assertTrue(visualizations exist)
 		// TODO: assertTrue(dashboard exist)
 

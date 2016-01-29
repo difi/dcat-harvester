@@ -37,6 +37,8 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
 		Elasticsearch elasticsearch = new Elasticsearch();
 		// TODO: turn this into a try, catch Elasticsearch errors
 		if (elasticsearch.isElasticsearchRunning(elasticSearchClient.getClient())) {
+			
+			logger.info("\n\n\n\n" + elasticsearch.elasticsearchStatus(elasticSearchClient.getClient()) + "\n\n\n\n");
 
 			List<Distribution> distributions = new DistributionBuilder(model).build();
 			for (Distribution distribution : distributions) {

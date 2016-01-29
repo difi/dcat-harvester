@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -14,6 +15,8 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.JsonObject;
 
 public class Elasticsearch {
 
@@ -56,6 +59,10 @@ public class Elasticsearch {
 		return client.admin().cluster().prepareHealth().execute().actionGet().getStatus() != null;
 	}
 	
+	public ClusterHealthStatus elasticsearchStatus(Client client) {
+		return client.admin().cluster().prepareHealth().execute().actionGet().getStatus();
+	}
+	
 	public boolean documentExists(String index, String type, String id, Client client) {
 		return client.prepareGet(index, type, id).execute().actionGet().isExists();
 	}
@@ -70,8 +77,13 @@ public class Elasticsearch {
 		logger.info("Index " + index + " created: " + String.valueOf(response.isAcknowledged()));
 	}
 	
-	public boolean indexDocument(String index, String type, String id, Map<String, Object> document, Client client) {
-		IndexResponse rsp = client.prepareIndex(index, type, id).setSource(document).execute().actionGet();
+	public boolean indexDocument(String index, String type, String id, JsonObject jsonObject, Client client) {
+		IndexResponse rsp = client.prepareIndex(index, type, id).setSource(jsonObject).execute().actionGet();
+		return rsp.isCreated();
+	}
+
+	public boolean indexDocument(String index, String type, String id, Map<String, Object> map, Client client) {
+		IndexResponse rsp = client.prepareIndex(index, type, id).setSource(map).execute().actionGet();
 		return rsp.isCreated();
 	}
 
