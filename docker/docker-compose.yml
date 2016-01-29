@@ -13,7 +13,6 @@ server:
    - ./logs:/usr/local/tomcat/logs:rw
   links:
    - fuseki
-   - elk
 
 elk:
   build: elk-server
@@ -22,3 +21,5 @@ elk:
     - "9200:9200"
   volumes:
     - ./logs:/usr/local/tomcat/logs:rw
+  links:
+    - server
