@@ -101,7 +101,7 @@ public class Fuseki {
 
 
 	public void drop(String name) {
-		logger.info("Dropping graph {}", name);
+		logger.info("Dropping graph <{}> from "+updateServiceUri, name);
 		UpdateRequest request = UpdateFactory.create();
 		request.add("DROP GRAPH <" + name + ">");
 

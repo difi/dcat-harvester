@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import no.difi.dcat.datastore.*;
 import no.difi.dcat.datastore.domain.DcatSource;
 
+import no.difi.dcat.datastore.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class DcatAdminRestController {
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
-		adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki(fusekiSettings.getAdminServiceUri())));
+		adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki(fusekiSettings.getDcatServiceUri())));
 	}
 
 	@RequestMapping("/api/admin/dcat-sources")
@@ -52,10 +53,21 @@ public class DcatAdminRestController {
 	}
 
 	@RequestMapping(value = "/api/admin/dcat-source", method = RequestMethod.POST)
-	public ResponseEntity<String> addDataSource(@Valid @RequestBody DcatSourceDto dcatSourceDto) {
+	public ResponseEntity<String> addDataSource(@Valid @RequestBody DcatSourceDto dcatSourceDto, Principal principal) {
+		if (principal == null) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
 		DcatSource dcatSource = convertToDomain(dcatSourceDto);
-		if (dcatSource.getId() == null || dcatSource.getId().isEmpty()) {
-			dcatSource.setId(String.format("http://dcat.difi.no/%s", UUID.randomUUID().toString()));
+
+		try {
+			User userObject = adminDataStore.getUserObject(principal.getName());
+			// if you are not admin, you can only add dcat source to yourself
+			if(!userObject.isAdmin() && !userObject.getUsername().equals(dcatSource.getUser())){
+				return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+			}
+		} catch (UserNotFoundException e) {
+			return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 		}
 		
 		adminDataStore.addDcatSource(dcatSource);

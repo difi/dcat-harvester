@@ -91,8 +91,6 @@ public class CrawlerJob implements Runnable {
 			BrregAgentConverter brregAgentConverter = new BrregAgentConverter(brregCache);
 			brregAgentConverter.collectFromModel(union);
 
-
-
 			if (isValid(union)) {
 				for (CrawlerResultHandler handler : handlers) {
 					handler.process(dcatSource,union);

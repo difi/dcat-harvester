@@ -65,6 +65,10 @@
                                                                value="${editDcatSource.orgnumber}"></input>
             </div>
 
+            <input type="text"
+                    id="inputUsername"
+                   value="${editDcatSource.user}" hidden>
+
             <button class="btn btn-default" type="button" onclick="saveDcatSource();">
 			<span class="glyphicon glyphicon-floppy-save" aria-hidden="true">
 				Save</span>
@@ -78,6 +82,9 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
+                        <c:if test="${isAdmin}">
+                            <th>Username</th>
+                        </c:if>
                         <th>Description</th>
                         <th>URL</th>
                         <th>Orgnumber</th>
@@ -91,6 +98,9 @@
                     <tbody>
                     <c:forEach var="dcatSource" items="${dcatSources}">
                         <tr>
+                            <c:if test="${isAdmin}">
+                                <td>${dcatSource.user}</td>
+                            </c:if>
                             <td>${dcatSource.description}</td>
                             <td>${dcatSource.url}</td>
                             <td>${dcatSource.orgnumber}</td>
@@ -136,12 +146,17 @@
         var description = document.getElementById('inputDescription').value;
         var url = document.getElementById('inputUrl').value;
         var orgnumber = document.getElementById('inputOrgnumber').value;
+        var username = document.getElementById('inputUsername').value;
+
+        if(username == null || username == ""){
+            username = '${username}';
+        }
 
         var data = {
             'id': id,
             'description': description,
             'url': url,
-            'user': '${username}',
+            'user': username,
             'orgnumber': orgnumber
         };
 

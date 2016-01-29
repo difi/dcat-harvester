@@ -40,8 +40,16 @@ public class DcatSource {
 		url = extractExactlyOneString(resource, DifiMeta.url);
 		graph = extractExactlyOneString(resource, DifiMeta.graph);
 		description = extractExactlyOneString(resource, RDFS.comment);
-		user = dcatModel.listResourcesWithProperty(DifiMeta.dcatSource).nextResource().listProperties(FOAF.accountName)
-				.next().getString();
+
+		user = dcatModel
+				.listStatements(null, DifiMeta.dcatSource, resource) //list statements that are the user object for this dcat source
+				.next()
+				.getSubject()
+				.listProperties(FOAF.accountName)
+				.next()
+				.getString();
+
+
 		orgnumber = extractExactlyOneStringOrNull(resource, DifiMeta.orgnumber);
 
 		StmtIterator harvestedIterator = resource.listProperties(DifiMeta.harvested);

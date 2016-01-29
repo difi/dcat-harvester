@@ -14,7 +14,7 @@ import no.difi.dcat.datastore.domain.DcatSource;
 public class DcatDataStore {
 
 	private final Fuseki fuseki;
-	private final Logger logger = LoggerFactory.getLogger(AdminDataStore.class);
+	private final Logger logger = LoggerFactory.getLogger(DcatDataStore.class);
 
 	public DcatDataStore(Fuseki fuseki) {
 		this.fuseki = fuseki;
