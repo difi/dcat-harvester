@@ -82,7 +82,7 @@ public class AdminDcatDataService {
 	
 	public void deleteUser(String username, User user) {
 		
-		if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+		if (user.isAdmin()) {
 				
 				String query = String.join("\n",
 						"delete {",

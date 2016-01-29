@@ -1,10 +1,5 @@
 package no.difi.dcat.datastore;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
@@ -34,6 +29,8 @@ import org.junit.Test;
 import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.DifiMeta;
 import no.difi.dcat.datastore.domain.User;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by havardottestad on 05/01/16.
@@ -268,13 +265,19 @@ public class FusekiTest {
 		dcatSource = adminDataStore.addDcatSource(dcatSource);
 		assertNotNull("There should exist a dcat source", dcatSource);
 
-		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")));
+		DcatDataStore dcatDataStore = new DcatDataStore(new Fuseki("http://localhost:3131/dcat/"));
+		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, dcatDataStore);
 
 		adminDcatDataService.deleteDcatSource(dcatSource.getId(), testAdmin);
 
 		Optional<DcatSource> dcatSourceById = adminDataStore.getDcatSourceById(dcatSource.getId());
 
 		assertFalse("", dcatSourceById.isPresent());
+
+		Model dataCatalogue = dcatDataStore.getDataCatalogue(dcatSource.getGraph());
+
+
+		assertNull("", dataCatalogue);
 
 
 	}

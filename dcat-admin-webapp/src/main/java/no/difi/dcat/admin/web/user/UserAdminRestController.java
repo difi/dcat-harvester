@@ -44,12 +44,26 @@ public class UserAdminRestController {
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
-		adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki(fusekiSettings.getAdminServiceUri())));
+		adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki(fusekiSettings.getDcatServiceUri())));
 		
 	}
 	
 	@RequestMapping(value = "/api/admin/user", method = RequestMethod.POST)
-	public ResponseEntity<String> addUser(@Valid @RequestBody UserDto userDto) {
+	public ResponseEntity<String> addUser(@Valid @RequestBody UserDto userDto, Principal principal) {
+		if (principal == null) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		try {
+			User userObject = adminDataStore.getUserObject(principal.getName());
+			// only admin can create a user
+			if(!userObject.isAdmin()){
+				return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+			}
+		} catch (UserNotFoundException e) {
+			return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+		}
+
 		try {
 			User user = convertToDomain(userDto);
 			if (user.getPassword() != null && !user.getPassword().isEmpty()) {
