@@ -3,7 +3,7 @@ fuseki:
   adminServiceUri: http://localhost:8080/fuseki/admin
 application:
   crawlerThreadPoolSize: 2
-  elasticSearchHost: localhost
+  elasticSearchHost: test-elasticsearch.dmz.local
   elasticSearchPort: 9300
 ---
 spring:
@@ -19,3 +19,5 @@ spring:
 fuseki:
   dcatServiceUri: http://localhost:3030/fuseki/dcat
   adminServiceUri: http://localhost:3030/fuseki/admin
+application:
+  elasticSearchHost: localhost
