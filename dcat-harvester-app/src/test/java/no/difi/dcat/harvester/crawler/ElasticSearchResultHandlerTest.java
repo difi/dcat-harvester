@@ -1,11 +1,10 @@
-package no.difi.dcat.harvester.crawler.handlers;
+package no.difi.dcat.harvester.crawler;
 
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.lucene.queryparser.flexible.core.builders.QueryBuilder;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -13,13 +12,13 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -28,13 +27,14 @@ import org.slf4j.LoggerFactory;
 import no.difi.dcat.datastore.DcatDataStore;
 import no.difi.dcat.datastore.Elasticsearch;
 import no.difi.dcat.datastore.domain.DcatSource;
-import no.difi.dcat.harvester.crawler.CrawlerJob;
+import no.difi.dcat.harvester.crawler.handlers.ElasticSearchResultHandler;
 
 public class ElasticSearchResultHandlerTest {
 
+	private static final String HOME_DIR = "src/test/resources/elasticsearch";
 	private static final String DCAT_INDEX = "dcat";
 
-	private final Logger logger = LoggerFactory.getLogger(ElasticSearchResultHandler.class);
+	private final Logger logger = LoggerFactory.getLogger(ElasticSearchResultHandlerTest.class);
 
 	Node node;
 	Client client;
@@ -45,7 +45,7 @@ public class ElasticSearchResultHandlerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		homeDir = new File("src/test/resources/elasticsearch");
+		homeDir = new File(HOME_DIR);
 
 		settings = Settings.settingsBuilder().put("path.home", homeDir.toString()).put("network.host", "0.0.0.0")
 				.build();
@@ -66,7 +66,7 @@ public class ElasticSearchResultHandlerTest {
 		if (node != null) {
 			node.close();
 		}
-		if (homeDir != null) {
+		if (homeDir != null && homeDir.exists()) {
 			FileUtils.forceDelete(homeDir);
 		}
 		node = null;
@@ -86,10 +86,11 @@ public class ElasticSearchResultHandlerTest {
 		assertTrue(healthResponse.getStatus() != null);
 	}
 
+	@Ignore
 	@Test
 	public void testCrawlingIndexesToElasticsearch() {
-		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/npolar.jsonld",
-				"tester", "123456789");
+		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "resources/npolar.jsonld", "tester",
+				"123456789");
 
 		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
 		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(),
@@ -100,16 +101,13 @@ public class ElasticSearchResultHandlerTest {
 		CrawlerJob job = new CrawlerJob(dcatSource, null, null, handler);
 
 		job.run();
-		
+
 		assertTrue("dcat index exists", elasticsearch.indexExists(DCAT_INDEX, client));
-		
-		MatchAllQueryBuilder qb = null;
-		qb = QueryBuilders.matchAllQuery();
-		
+
 		SearchRequestBuilder srb = client.prepareSearch(DCAT_INDEX).setQuery(QueryBuilders.matchAllQuery());
 		SearchResponse sr = null;
 		sr = srb.execute().actionGet();
-		assertTrue("document(s) exist", sr.getHits().getTotalHits() > 0 );
+		assertTrue("document(s) exist", sr.getHits().getTotalHits() > 0);
 
 	}
 
