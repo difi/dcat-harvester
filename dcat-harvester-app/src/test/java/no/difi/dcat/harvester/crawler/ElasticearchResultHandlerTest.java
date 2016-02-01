@@ -29,12 +29,12 @@ import no.difi.dcat.datastore.Elasticsearch;
 import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.harvester.crawler.handlers.ElasticSearchResultHandler;
 
-public class ElasticSearchResultHandlerTest {
+public class ElasticearchResultHandlerTest {
 
 	private static final String HOME_DIR = "src/test/resources/elasticsearch";
 	private static final String DCAT_INDEX = "dcat";
 
-	private final Logger logger = LoggerFactory.getLogger(ElasticSearchResultHandlerTest.class);
+	private final Logger logger = LoggerFactory.getLogger(ElasticearchResultHandlerTest.class);
 
 	Node node;
 	Client client;
