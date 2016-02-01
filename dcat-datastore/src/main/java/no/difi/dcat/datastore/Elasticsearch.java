@@ -1,12 +1,8 @@
 package no.difi.dcat.datastore;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Map;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
@@ -16,8 +12,9 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Map;
 
 public class Elasticsearch {
 
@@ -72,10 +69,10 @@ public class Elasticsearch {
 		return client.admin().indices().prepareExists(index).execute().actionGet().isExists();
 	}
 
-	public void createIndex(String index, Client client) {
-		client.admin().indices().prepareCreate(index).execute().actionGet();
-		client.admin().cluster().prepareHealth(index).setWaitForYellowStatus().execute().actionGet();
-	}
+    public void createIndex(String index, Client client) {
+        client.admin().indices().prepareCreate(index).execute().actionGet();
+        client.admin().cluster().prepareHealth(index).setWaitForYellowStatus().execute().actionGet();
+    }
 
 	public boolean indexDocument(String index, String type, String id, JsonObject jsonObject, Client client) {
 		IndexResponse rsp = client.prepareIndex(index, type, id).setSource(jsonObject).execute().actionGet();
