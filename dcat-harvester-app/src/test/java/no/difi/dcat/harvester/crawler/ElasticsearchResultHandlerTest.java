@@ -30,96 +30,95 @@ import static org.junit.Assert.assertTrue;
 public class ElasticsearchResultHandlerTest {
 
     private static final String HOME_DIR = "src/test/resources/elasticsearch";
-	private static final String DCAT_INDEX = "dcat";
+    private static final String DCAT_INDEX = "dcat";
     public static final String DATASET_TYPE = "dataset";
     public static final String DISTRIBUTION_TYPE = "distribution";
 
     private final Logger logger = LoggerFactory.getLogger(ElasticsearchResultHandlerTest.class);
 
-	Node node;
-	Client client;
-	Elasticsearch elasticsearch;
+    Node node;
+    Client client;
+    Elasticsearch elasticsearch;
 
-	private File homeDir = null;
-	private Settings settings = null;
+    private File homeDir = null;
+    private Settings settings = null;
 
-	@Before
-	public void setUp() throws Exception {
-		homeDir = new File(HOME_DIR);
+    @Before
+    public void setUp() throws Exception {
+        homeDir = new File(HOME_DIR);
 
-		settings = Settings.settingsBuilder().put("path.home", homeDir.toString()).put("network.host", "0.0.0.0")
-				.build();
-		node = NodeBuilder.nodeBuilder().settings(settings).build();
-		node.start();
-		client = node.client();
-		elasticsearch = new Elasticsearch();
-		Assert.assertNotNull(node);
-		Assert.assertFalse(node.isClosed());
-		Assert.assertNotNull(client);
-	}
+        settings = Settings.settingsBuilder().put("path.home", homeDir.toString()).put("network.host", "0.0.0.0")
+                .build();
+        node = NodeBuilder.nodeBuilder().settings(settings).build();
+        node.start();
+        client = node.client();
+        elasticsearch = new Elasticsearch();
+        Assert.assertNotNull(node);
+        Assert.assertFalse(node.isClosed());
+        Assert.assertNotNull(client);
+    }
 
-	@After
-	public void tearDown() throws Exception {
-		if (client != null) {
-			client.close();
-		}
-		if (node != null) {
-			node.close();
-			Assert.assertTrue(node.isClosed());
-		}
-		if (homeDir != null && homeDir.exists()) {
-			FileUtils.forceDelete(homeDir);
-		}
-		
-		node = null;
-		client = null;
-		
-	}
+    @After
+    public void tearDown() throws Exception {
+        if (client != null) {
+            client.close();
+        }
+        if (node != null) {
+            node.close();
+        }
+        if (homeDir != null && homeDir.exists()) {
+            FileUtils.forceDelete(homeDir);
+        }
 
-	@Test
-	public void testThatEmbeddedElasticsearchWorks() {
-		ClusterHealthResponse healthResponse = null;
-		try {
-			healthResponse = client.admin().cluster().prepareHealth().setTimeout(new TimeValue(5000)).execute()
-					.actionGet();
-			logger.info("Connected to Elasticsearch: " + healthResponse.getStatus().toString());
-		} catch (Exception e) {
-			logger.error("Failed to connect to Elasticsearch: " + e);
-		}
-		assertTrue(healthResponse.getStatus() != null);
-	}
+        node = null;
+        client = null;
 
-	@Test
-	public void testCrawlingIndexesToElasticsearch() {
+    }
+
+    @Test
+    public void testThatEmbeddedElasticsearchWorks() {
+        ClusterHealthResponse healthResponse = null;
+        try {
+            healthResponse = client.admin().cluster().prepareHealth().setTimeout(new TimeValue(5000)).execute()
+                    .actionGet();
+            logger.info("Connected to Elasticsearch: " + healthResponse.getStatus().toString());
+        } catch (Exception e) {
+            logger.error("Failed to connect to Elasticsearch: " + e);
+        }
+        assertTrue(healthResponse.getStatus() != null);
+    }
+
+    @Test
+    public void testCrawlingIndexesToElasticsearch() {
 
         ClassLoader classLoader = getClass().getClassLoader();
 
-		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", classLoader.getResource("npolar.jsonld").getFile(), "tester",
-				"123456789");
+        DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", classLoader.getResource("npolar.jsonld").getFile(), "tester",
+                "123456789");
 
-		DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
-		Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(),
-				Mockito.anyObject());
+        DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
+        Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(),
+                Mockito.anyObject());
 
         AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
 
-		ElasticSearchResultHandler handler = new ElasticSearchResultHandler(client);
+        ElasticSearchResultHandler handler = new ElasticSearchResultHandler(client);
 
 
-		CrawlerJob job = new CrawlerJob(dcatSource, adminDataStore, null, handler);
+        CrawlerJob job = new CrawlerJob(dcatSource, adminDataStore, null, handler);
 
-		job.run();
+        job.run();
 
-		assertTrue("dcat index exists", elasticsearch.indexExists(DCAT_INDEX, client));
+        assertTrue("dcat index exists", elasticsearch.indexExists(DCAT_INDEX, client));
 
-		SearchRequestBuilder srb_distribution = client.prepareSearch(DCAT_INDEX).setTypes(DISTRIBUTION_TYPE).setQuery(QueryBuilders.matchAllQuery());
-		SearchResponse sr_distribution = null;
-		sr_distribution = srb_distribution.execute().actionGet();
-		assertTrue("document(s) exist", sr_distribution.getHits().getTotalHits() > 0);
+        SearchRequestBuilder srb_distribution = client.prepareSearch(DCAT_INDEX).setTypes(DISTRIBUTION_TYPE).setQuery(QueryBuilders.matchAllQuery());
+        SearchResponse sr_distribution = null;
+        sr_distribution = srb_distribution.execute().actionGet();
+        assertTrue("document(s) exist", sr_distribution.getHits().getTotalHits() > 0);
 
         SearchRequestBuilder srb_dataset = client.prepareSearch(DCAT_INDEX).setTypes(DATASET_TYPE).setQuery(QueryBuilders.matchAllQuery());
         SearchResponse sr_dataset = null;
-        sr_dataset = srb_dataset .execute().actionGet();
+        sr_dataset = srb_dataset.execute().actionGet();
         assertTrue("document(s) exist", sr_dataset.getHits().getTotalHits() > 0);
 
     }
