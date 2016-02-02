@@ -4,6 +4,7 @@ import java.net.URL;
 
 import javax.annotation.PostConstruct;
 
+import no.difi.dcat.harvester.settings.ApplicationSettings;
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,9 @@ public class CrawlerJobFactory {
 	
 	@Autowired
 	private FusekiSettings fusekiSettings;
+
+	@Autowired
+	private ApplicationSettings applicationSettings;
 	
 	@Autowired
 	private LoadingCache<URL, String> brregCache;
@@ -32,8 +36,7 @@ public class CrawlerJobFactory {
 	
 	private FusekiResultHandler fusekiResultHandler;
 	private ElasticSearchResultHandler elasticSearchResultHandler;
-	private Client client;
-	
+
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
@@ -42,18 +45,11 @@ public class CrawlerJobFactory {
 		
 	}
 	
-	public CrawlerJob createCrawlerJob(DcatSource dcatSource, Client client) {
-		this.setClient(client);
-		elasticSearchResultHandler = new ElasticSearchResultHandler(client);
+	public CrawlerJob createCrawlerJob(DcatSource dcatSource) {
+		elasticSearchResultHandler = new ElasticSearchResultHandler(applicationSettings.getElasticSearchHost(), applicationSettings.getElasticSearchPort());
 		return new CrawlerJob(dcatSource, adminDataStore, brregCache,fusekiResultHandler, elasticSearchResultHandler);
 	}
 
-	public Client getClient() {
-		return client;
-	}
 
-	public void setClient(Client client) {
-		this.client = client;
-	}
 
 }

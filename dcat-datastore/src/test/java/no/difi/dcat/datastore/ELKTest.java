@@ -25,8 +25,6 @@ public class ELKTest {
 
 	Node node;
 	Client client;
-	Elasticsearch elasticsearch;
-	Kibana kibana;
 
 	private File homeDir = null;
 	private Settings settings = null;
@@ -40,7 +38,6 @@ public class ELKTest {
 		node = NodeBuilder.nodeBuilder().settings(settings).build();
 		node.start();
 		client = node.client();
-		elasticsearch = new Elasticsearch();
 		Assert.assertNotNull(node);
 		Assert.assertFalse(node.isClosed());
 		Assert.assertNotNull(client);
@@ -74,21 +71,4 @@ public class ELKTest {
 		assertTrue(healthResponse.getStatus() != null);
 	}
 
-	@Test
-	public void testKibanaWorks() {
-		kibana = new Kibana(client);
-		assertTrue(".kibana index exists", elasticsearch.indexExists(kibana.KIBANA_INDEX, this.client));
-		assertTrue("difi-* index-pattern exists", elasticsearch.documentExists(kibana.KIBANA_INDEX,
-				kibana.INDEX_PATTERN_TYPE, kibana.INDEX_PATTERN_ID, this.client));
-		assertTrue("crawler_operations search exists", elasticsearch.documentExists(kibana.KIBANA_INDEX,
-				kibana.SEARCH_TYPE, kibana.CRAWLER_OPERATIONS_SEARCH_ID, this.client));
-		assertTrue("dashboard exists", elasticsearch.documentExists(kibana.KIBANA_INDEX, kibana.DASHBOARD_TYPE,
-				kibana.DASHBOARD_ID, this.client));
-		assertTrue("crawler_metadata panel exists", elasticsearch.documentExists(kibana.KIBANA_INDEX,
-				kibana.VISUALIZATION_TYPE, kibana.CRAWLER_METADATA_PANEL_ID, this.client));
-		assertTrue("crawler_results panel exists", elasticsearch.documentExists(kibana.KIBANA_INDEX,
-				kibana.VISUALIZATION_TYPE, kibana.CRAWLER_RESULTS_PANEL_ID, this.client));
-		assertTrue("crawler_operations panel exists", elasticsearch.documentExists(kibana.KIBANA_INDEX,
-				kibana.VISUALIZATION_TYPE, kibana.CRAWLER_OPERATIONS_PANEL_ID, this.client));
-	}
 }

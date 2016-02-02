@@ -38,9 +38,6 @@ public class CrawlerRestController {
     @Autowired
     private CrawlerJobFactory crawlerJobFactory;
 
-    @Autowired
-    private ApplicationSettings applicationSettings;
-
     @PostConstruct
     public void initialize() {
         adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
@@ -49,14 +46,10 @@ public class CrawlerRestController {
     @RequestMapping("/api/admin/harvest")
     public void harvestDataSoure(@RequestParam(value = "id") String dcatSourceId) {
         logger.debug("Received request to harvest {}", dcatSourceId);
-        Client client = null;
         Optional<DcatSource> dcatSource = adminDataStore.getDcatSourceById(dcatSourceId);
         if (dcatSource.isPresent()) {
-            client = new Elasticsearch().returnElasticsearchTransportClient(applicationSettings.getElasticSearchHost(), applicationSettings.getElasticSearchPort());
-            CrawlerJob job = crawlerJobFactory.createCrawlerJob(dcatSource.get(), client);
-            if(crawler.execute(job).isDone()) {
-               client.close();
-            }
+            CrawlerJob job = crawlerJobFactory.createCrawlerJob(dcatSource.get());
+            crawler.execute(job);
         } else {
             logger.warn("No stored dcat source {}", dcatSource.toString());
         }
@@ -66,14 +59,12 @@ public class CrawlerRestController {
     public void harvestDataSoure() {
         logger.debug("Received request to harvest all dcat sources");
 
-        Client client = new Elasticsearch().returnElasticsearchTransportClient(applicationSettings.getElasticSearchHost(), applicationSettings.getElasticSearchPort());
 
         List<DcatSource> dcatSources = adminDataStore.getDcatSources();
         for (DcatSource dcatSource : dcatSources) {
-            CrawlerJob job = crawlerJobFactory.createCrawlerJob(dcatSource, client);
+            CrawlerJob job = crawlerJobFactory.createCrawlerJob(dcatSource);
             crawler.execute(job);
         }
-        client.close();
         logger.debug("Finished all crawler jobs");
     }
 }

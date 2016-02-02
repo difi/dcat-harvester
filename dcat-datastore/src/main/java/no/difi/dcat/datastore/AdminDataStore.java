@@ -26,8 +26,7 @@ import no.difi.dcat.datastore.domain.User;
 public class AdminDataStore {
 
 	protected final Fuseki fuseki;
-	private Kibana kibana;
-	private Elasticsearch elasticsearch;
+
 	private final Logger logger = LoggerFactory.getLogger(AdminDataStore.class);
 
 	public AdminDataStore(Fuseki fuseki) {
@@ -234,13 +233,6 @@ public class AdminDataStore {
 
 		// Create data source graph
 		fuseki.sparqlUpdate(query, map);
-		if (dcatSource.getId() != null) {
-			elasticsearch = new Elasticsearch();
-			Client client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
-			kibana = new Kibana(client);
-			// TODO:
-			client.close();
-		}
 
 		if (!update) {
 			if (fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) {

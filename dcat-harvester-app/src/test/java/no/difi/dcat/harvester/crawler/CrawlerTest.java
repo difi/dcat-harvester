@@ -32,7 +32,7 @@ public class CrawlerTest {
 		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
 
 		FusekiResultHandler fHandler = new FusekiResultHandler(dcatDataStore, null);
-		ElasticSearchResultHandler eHandler = new ElasticSearchResultHandler(Mockito.mock(Client.class)); 
+		ElasticSearchResultHandler eHandler = new ElasticSearchResultHandler("",0);
 		
 		List<CrawlerJob> crawlerJobs = dcatSources.stream().map(dcatSource -> new CrawlerJob(dcatSource, adminDataStore, null, fHandler, eHandler)).collect(Collectors.<CrawlerJob>toList());
 		
