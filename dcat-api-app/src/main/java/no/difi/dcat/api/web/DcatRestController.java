@@ -65,6 +65,25 @@ public class DcatRestController {
 		}
 	}
 
+	@RequestMapping(value = "/api/admin")
+	public ResponseEntity getAdmin(@Valid @RequestParam(value = "format", required = false) String format) {
+
+		SupportedFormat supportedFormat = SupportedFormat.parseFormat(format);
+
+		try {
+
+			Key key = new Key(fusekiSettings.getAdminServiceUri() + "/get?graph=urn:x-arq:UnionGraph", supportedFormat.getMimetype().toString());
+
+			return new ResponseEntity<String>(dcatCache.get(key), HttpStatus.OK);
+
+
+		} catch (ExecutionException e) {
+			logger.error("Error getting DCAT from Fuseki: " + e.getMessage());
+			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+		}
+	}
+
 
 	@RequestMapping(value = "/api/invalidateCache", method = RequestMethod.POST)
 	public ResponseEntity invalidateCache() {
