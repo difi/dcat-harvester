@@ -234,12 +234,13 @@ public class AdminDataStore {
 
 		// Create data source graph
 		fuseki.sparqlUpdate(query, map);
-//		if (dcatSource.getId() != null) {
-//			elasticsearch = new Elasticsearch();
-//			Client client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
-//			kibana = new Kibana(client);
-//			client.close();
-//		}
+		if (dcatSource.getId() != null) {
+			elasticsearch = new Elasticsearch();
+			Client client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
+			kibana = new Kibana(client);
+			// TODO:
+			client.close();
+		}
 
 		if (!update) {
 			if (fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) {
