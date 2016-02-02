@@ -17,7 +17,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <h1>DCAT Harvester Admin+</h1>
+            <h1>DCAT Harvester Admin</h1>
 
             <p>
                 You are logged in as <b>${username}</b>. <a class="btn btn-default"

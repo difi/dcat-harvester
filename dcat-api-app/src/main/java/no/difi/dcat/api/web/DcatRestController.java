@@ -4,26 +4,15 @@ import com.google.common.cache.LoadingCache;
 import no.difi.dcat.api.settings.FusekiSettings;
 import no.difi.dcat.datastore.DcatDataStore;
 import no.difi.dcat.datastore.Fuseki;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -65,44 +54,6 @@ public class DcatRestController {
 		try {
 
 			Key key = new Key(fusekiSettings.getDcatServiceUri() + "/get?graph=urn:x-arq:UnionGraph", supportedFormat.getMimetype().toString());
-
-
-			CloseableHttpClient httpclient = HttpClients.createDefault();
-
-			HttpGet httpGet = new HttpGet(key.getUrl());
-
-			httpGet.setHeader("Accept", key.getContentType());
-
-			CloseableHttpResponse response1 = httpclient.execute(httpGet);
-
-
-			HttpEntity entity = response1.getEntity();
-
-			InputStream content = entity.getContent();
-
-			HttpHeaders httpHeaders = new HttpHeaders();
-
-			InputStreamResource inputStreamResource = new InputStreamResource(content);
-			httpHeaders.setContentLength(entity.getContentLength());
-			return new ResponseEntity(inputStreamResource, httpHeaders, HttpStatus.OK);
-
-
-
-		} catch (Exception e) {
-			logger.error("Error getting DCAT from Fuseki: " + e.getMessage());
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
-
-		}
-	}
-
-	@RequestMapping(value = "/api/admin")
-	public ResponseEntity getAdmin(@Valid @RequestParam(value = "format", required = false) String format) {
-
-		SupportedFormat supportedFormat = SupportedFormat.parseFormat(format);
-
-		try {
-
-			Key key = new Key(fusekiSettings.getAdminServiceUri() + "/get?graph=urn:x-arq:UnionGraph", supportedFormat.getMimetype().toString());
 
 			return new ResponseEntity<String>(dcatCache.get(key), HttpStatus.OK);
 
