@@ -4,7 +4,6 @@
 .settings/
 target/
 bin/
-
 logs/
 
 node
@@ -22,5 +21,6 @@ dcat-admin-webapp/dcat-admin-webapp.iml
 dcat-api-app/dcat-api-app.iml
 dcat-datastore/dcat-datastore.iml
 dcat-harvester-app/dcat-harvester-app.iml
+dcat-generate-dummy-data/dcat-generate-dummy-data.iml
 
 dcat-harvester-app/brreg/intermediate/
