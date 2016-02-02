@@ -6,7 +6,7 @@
 <html lang="en">
 
 <head>
-    <title>DCAT Harvester Admin -</title>
+    <title>DCAT Harvester Admin</title>
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
@@ -17,7 +17,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <h1>DCAT Harvester Admin</h1>
+            <h1>DCAT Harvester Admin -</h1>
 
             <p>
                 You are logged in as <b>${username}</b>. <a class="btn btn-default"
