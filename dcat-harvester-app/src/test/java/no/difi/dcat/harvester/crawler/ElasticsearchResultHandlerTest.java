@@ -114,12 +114,12 @@ public class ElasticsearchResultHandlerTest {
         SearchRequestBuilder srb_distribution = client.prepareSearch(DCAT_INDEX).setTypes(DISTRIBUTION_TYPE).setQuery(QueryBuilders.matchAllQuery());
         SearchResponse sr_distribution = null;
         sr_distribution = srb_distribution.execute().actionGet();
-        assertTrue("document(s) exist", sr_distribution.getHits().getTotalHits() > 0);
+        assertTrue("Distribution document(s) exist", sr_distribution.getHits().getTotalHits() > 0);
 
         SearchRequestBuilder srb_dataset = client.prepareSearch(DCAT_INDEX).setTypes(DATASET_TYPE).setQuery(QueryBuilders.matchAllQuery());
         SearchResponse sr_dataset = null;
         sr_dataset = srb_dataset.execute().actionGet();
-        assertTrue("document(s) exist", sr_dataset.getHits().getTotalHits() > 0);
+        assertTrue("Dataset document(s) exist", sr_dataset.getHits().getTotalHits() > 0);
 
     }
 

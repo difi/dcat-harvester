@@ -1,4 +1,5 @@
 FROM tomcat:8-jre8
+ENV TERM xterm
 
 ADD build/dcat-admin-webapp-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/dcat-admin-webapp.war
 ADD build/dcat-api-app-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/dcat-api-app.war
