@@ -1,29 +1,107 @@
 {
   "template" : "difi-*",
   "settings" : {
-    "index.refresh_interval" : "5s"
+    "index.refresh_interval" : "5s",
+    "index.mapper.dynamic":true
   },
   "mappings" : {
     "_default_" : {
        "_all" : {"enabled" : true},
-       "dynamic_templates" : [ {
-         "string_fields" : {
-           "match" : "*",
-           "match_mapping_type" : "string",
-           "mapping" : {
-             "type" : "string", "index" : "analyzed", "omit_norms" : true,
-               "fields" : {
-                 "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
-               }
-           }
-         }
-       } ],
        "properties" : {
          "@version": { "type": "string", "index": "not_analyzed" },
          "timestamp" : {
           "type" : "date",
-          "format" : "yyyy-MM-dd HH:mm:ss"
-         }
+          "format" : "yyyy-MM-dd HH:mm:ss",
+         },
+         "cause" : {
+            "type" : "string",
+            "index": "analyzed",
+            "fields" : {
+              "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
+            }
+          },
+          "content" : {
+            "type" : "string",
+            "index": "analyzed"
+          },
+          "crawler_id" : {
+            "type" : "string",
+            "index": "analyzed",
+            "fields" : {
+              "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
+            }
+          },
+          "crawler_name" : {
+             "type" : "string",
+             "index": "analyzed",
+             "fields" : {
+               "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
+             }
+          },
+          "crawler_url" : {
+             "type" : "string",
+             "index": "analyzed",
+             "fields" : {
+               "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
+             }
+          },
+          "event" : {
+            "type" : "string",
+            "index": "analyzed",
+            "fields" : {
+              "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
+            }
+          },
+          "host" : {
+            "type" : "string",
+            "index": "analyzed",
+            "fields" : {
+              "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
+            }
+          },
+          "logger" : {
+            "type" : "string",
+            "index": "analyzed",
+            "fields" : {
+              "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "index": "analyzed"
+          },
+          "path" : {
+            "type" : "string",
+            "index": "analyzed",
+            "fields" : {
+              "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
+            }
+          },
+          "rawContent" : {
+            "type" : "string",
+            "index": "analyzed"
+          },
+          "result" : {
+            "type" : "string",
+            "index": "analyzed",
+            "fields" : {
+              "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
+            }
+          },
+          "severity" : {
+            "type" : "string",
+            "index": "analyzed",
+            "fields" : {
+              "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
+            }
+          },
+          "test" : {
+            "type" : "string",
+            "index": "analyzed",
+            "fields" : {
+              "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 256}
+            }
+          }
        }
     }
   }
