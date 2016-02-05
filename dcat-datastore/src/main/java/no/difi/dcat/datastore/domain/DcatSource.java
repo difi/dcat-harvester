@@ -1,25 +1,17 @@
 package no.difi.dcat.datastore.domain;
 
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.sparql.vocabulary.FOAF;
+import org.apache.jena.vocabulary.DCTerms;
+import org.apache.jena.vocabulary.RDFS;
+
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.rdf.model.StmtIterator;
-import org.apache.jena.sparql.vocabulary.FOAF;
-import org.apache.jena.vocabulary.DCTerms;
-import org.apache.jena.vocabulary.RDFS;
 
 public class DcatSource {
 
@@ -170,7 +162,7 @@ public class DcatSource {
 	}
 
 	public String toString() {
-		return String.format("crawler_id=%1$s, crawler_name=%2$s, crawler_url=%3$s", this.getId(), this.getDescription(), this.getUrl());
+		return String.format("crawler_id=%1$s, crawler_name=%2$s, crawler_url=%3$s, crawler_user=%4$s", this.getId(), this.getDescription(), this.getUrl(), this.getUser());
 	}
 	
 	public String getGraph() {
