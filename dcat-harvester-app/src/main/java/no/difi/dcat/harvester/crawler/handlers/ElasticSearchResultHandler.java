@@ -25,11 +25,11 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
     public static String DATASET_TYPE = "dataset";
     private final Logger logger = LoggerFactory.getLogger(ElasticSearchResultHandler.class);
 
-    String hostename;
+    String hostname;
     int port;
 
     public ElasticSearchResultHandler(String hostname, int port) {
-        this.hostename = hostname;
+        this.hostname = hostname;
         this.port = port;
     }
 
@@ -38,7 +38,7 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
     public void process(DcatSource dcatSource, Model model) {
         logger.trace("Processing results");
 
-        try (Elasticsearch elasticsearch = new Elasticsearch(hostename, port)) {
+        try (Elasticsearch elasticsearch = new Elasticsearch(hostname, port)) {
             indexWithElasticsearch(dcatSource, model, elasticsearch);
         } catch (Exception e) {
             throw e;

@@ -1,11 +1,11 @@
 package no.difi.dcat.harvester.crawler;
 
-import static org.springframework.test.util.AssertionErrors.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
+import no.difi.dcat.datastore.AdminDataStore;
+import no.difi.dcat.datastore.DcatDataStore;
+import no.difi.dcat.datastore.domain.DcatSource;
+import no.difi.dcat.datastore.domain.DifiMeta;
+import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
+import no.difi.dcat.harvester.validation.DcatValidation;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -15,12 +15,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import no.difi.dcat.datastore.AdminDataStore;
-import no.difi.dcat.datastore.DcatDataStore;
-import no.difi.dcat.datastore.domain.DcatSource;
-import no.difi.dcat.datastore.domain.DifiMeta;
-import no.difi.dcat.harvester.crawler.handlers.FusekiResultHandler;
-import no.difi.dcat.harvester.validation.DcatValidation;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
+import static org.springframework.test.util.AssertionErrors.assertEquals;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
  * Created by havardottestad on 04/01/16.
@@ -86,7 +86,6 @@ public class CrawlerResultHandlerTest {
 
 
 		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
-//            Mockito.doNothing().when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any());
 		Mockito.doAnswer((invocationOnMock) -> {
 
 			Resource status = (Resource) invocationOnMock.getArguments()[1];
@@ -112,7 +111,6 @@ public class CrawlerResultHandlerTest {
 
 
 		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
-//            Mockito.doNothing().when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any());
 		Mockito.doAnswer((invocationOnMock) -> {
 
 			Resource status = (Resource) invocationOnMock.getArguments()[1];
