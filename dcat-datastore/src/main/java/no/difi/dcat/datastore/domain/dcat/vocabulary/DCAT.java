@@ -17,11 +17,13 @@ public class DCAT {
 	
 	public static final Resource NAMESPACE = model.createResource(NS);
 	
-	public static final Property dataset = model.createProperty(NS, "Dataset");
+	public static final Property Dataset = model.createProperty(NS, "Dataset");
 	
-	public static final Property distribution = model.createProperty(NS, "Distribution");
+	public static final Property Distribution = model.createProperty(NS, "Distribution");
 	
-	public static final Property catalog = model.createProperty(NS, "Catalog");
+	public static final Property distribution = model.createProperty(NS, "distribution");
+	
+	public static final Property Catalog = model.createProperty(NS, "Catalog");
 
 	public static final Property accessUrl = model.createProperty(NS, "accessURL");
 	
@@ -30,5 +32,7 @@ public class DCAT {
 	public static final Property keyword = model.createProperty(NS, "keyword");
 
 	public static final Property contactPoint = model.createProperty(NS, "contactPoint");
+
+	public static final Property theme = model.createProperty(NS, "theme");
 
 }
