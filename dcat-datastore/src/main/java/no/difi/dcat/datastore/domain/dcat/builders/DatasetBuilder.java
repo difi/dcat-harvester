@@ -25,14 +25,14 @@ public class DatasetBuilder extends AbstractBuilder {
 		
 		List<Dataset> datasets = new ArrayList<>();
 		
-		ResIterator catalogIterator = model.listResourcesWithProperty(RDF.type, DCAT.catalog);
+		ResIterator catalogIterator = model.listResourcesWithProperty(RDF.type, DCAT.Catalog);
 		while (catalogIterator.hasNext()) {
 			Resource catalog = catalogIterator.next();
-			ResIterator datasetIterator = catalog.getModel().listResourcesWithProperty(RDF.type, DCAT.dataset);
+			ResIterator datasetIterator = catalog.getModel().listResourcesWithProperty(RDF.type, DCAT.Dataset);
 			while (datasetIterator.hasNext()) {
 				Resource dataset = datasetIterator.next();
 				Dataset datasetObj = create(dataset, catalog);
-				ResIterator distributionIterator = dataset.getModel().listResourcesWithProperty(RDF.type, DCAT.distribution);
+				ResIterator distributionIterator = dataset.getModel().listResourcesWithProperty(RDF.type, DCAT.Distribution);
 				List<Distribution> distributions = new ArrayList<>();
 				while (distributionIterator.hasNext()) {
 					Resource distribution = distributionIterator.next();

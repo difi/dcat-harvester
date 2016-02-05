@@ -6,17 +6,17 @@ import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
-import org.apache.jena.vocabulary.RDF;
 
 import com.rometools.rome.feed.CopyFrom;
 import com.rometools.rome.feed.module.ModuleImpl;
+
+import no.difi.dcat.datastore.domain.dcat.vocabulary.DCAT;
 
 public class DcatModule extends ModuleImpl {
 
@@ -105,7 +105,7 @@ public class DcatModule extends ModuleImpl {
 		dcatModule.setPublisher(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.publisher, FOAF.name));
 		
 		StmtIterator keywordIterator = dataset
-				.listProperties(ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "keyword"));
+				.listProperties(DCAT.keyword);
 		while (keywordIterator.hasNext()) {
 			try {
 				dcatModule.getKeywords().add(keywordIterator.next().getString());
@@ -114,7 +114,7 @@ public class DcatModule extends ModuleImpl {
 			}
 		}
 		
-		dcatModule.setSubject(PropertyExtractor.extractExactlyOneStringOrNull(dataset, ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "theme")));
+		dcatModule.setSubject(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCAT.theme));
 		
 		String modified = PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.modified);
 		if (modified != null) {
@@ -123,15 +123,16 @@ public class DcatModule extends ModuleImpl {
 		
 		// Distribution
 		
-		ResIterator distributions = dataset.getModel().listResourcesWithProperty(RDF.type, ResourceFactory.createProperty(PropertyExtractor.DCAT_NAMESPACE, "Distribution"));
-		while (distributions.hasNext()) {
-			Resource distribution = distributions.next();
-			String format = PropertyExtractor.extractExactlyOneStringOrNull(distribution, DCTerms.format);
-			if (format != null) {
-				if (!dcatModule.getFormats().contains(format)) {
-					dcatModule.getFormats().add(format);
+		StmtIterator stmtIterator = dataset.listProperties(DCAT.distribution);
+		while (stmtIterator.hasNext()) {
+			Statement next = stmtIterator.next();
+			if (next.getObject().isResource()) {
+				String format = PropertyExtractor.extractExactlyOneStringOrNull(next.getResource(), DCTerms.format);
+				if (format != null) {
+					if (!dcatModule.getFormats().contains(format)) {
+						dcatModule.getFormats().add(format);
+					}
 				}
-				
 			}
 		}
 
