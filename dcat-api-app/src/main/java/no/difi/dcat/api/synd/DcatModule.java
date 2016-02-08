@@ -26,7 +26,7 @@ public class DcatModule extends ModuleImpl {
 	private Date modified;
 	private String publisher;
 	private String orgNumber;
-	private String subject;
+	private List<String> subjects;
 	private List<String> keywords;
 	private List<String> formats;
 
@@ -34,13 +34,13 @@ public class DcatModule extends ModuleImpl {
 		super(DcatModule.class, URI);
 	}
 
-	public DcatModule(Date modified, String publisher, String orgNumber, String subject, List<String> keywords,
+	public DcatModule(Date modified, String publisher, String orgNumber, List<String> subjects, List<String> keywords,
 			List<String> formats) {
 		this();
 		this.modified = modified;
 		this.publisher = publisher;
 		this.orgNumber = orgNumber;
-		this.subject = subject;
+		this.subjects = subjects;
 		this.keywords = keywords;
 		this.formats = formats;
 	}
@@ -69,12 +69,12 @@ public class DcatModule extends ModuleImpl {
 		this.orgNumber = orgNumber;
 	}
 
-	public String getSubject() {
-		return subject;
+	public List<String> getSubjects() {
+		return subjects;
 	}
 
-	public void setSubject(String subject) {
-		this.subject = subject;
+	public void setSubjects(List<String> subjects) {
+		this.subjects = subjects;
 	}
 
 	public List<String> getKeywords() {
@@ -97,6 +97,7 @@ public class DcatModule extends ModuleImpl {
 
 		DcatModule dcatModule = new DcatModule();
 
+		dcatModule.subjects = new ArrayList<>();
 		dcatModule.keywords = new ArrayList<>();
 		dcatModule.formats = new ArrayList<>();
 
@@ -114,8 +115,23 @@ public class DcatModule extends ModuleImpl {
 			}
 		}
 		
-		dcatModule.setSubject(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCAT.theme));
-		
+		StmtIterator subjectIterator = dataset
+				.listProperties(DCAT.theme);
+		while (subjectIterator.hasNext()) {
+			try {
+				Statement next = subjectIterator.next();
+				String subject = null;
+				if (next.getObject().isLiteral()) {
+					subject = next.getString();
+				} else {
+					subject = next.getObject().asResource().getURI();
+				}
+				dcatModule.getSubjects().add(subject);
+			} catch (JenaException e) {
+				e.printStackTrace();
+			}
+		}
+
 		String modified = PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.modified);
 		if (modified != null) {
 			dcatModule.setModified(DatatypeConverter.parseDate(modified).getTime());
@@ -150,7 +166,7 @@ public class DcatModule extends ModuleImpl {
 		setModified(module.getModified());
 		setPublisher(module.getPublisher());
 		setOrgNumber(module.getOrgNumber());
-		setSubject(module.getSubject());
+		setSubjects(module.getSubjects());
 		setKeywords(module.getKeywords());
 		setFormats(module.getKeywords());
 	}
