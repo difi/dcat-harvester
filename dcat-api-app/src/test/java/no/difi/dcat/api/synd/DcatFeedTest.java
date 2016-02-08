@@ -24,7 +24,8 @@ public class DcatFeedTest {
 		m.write(System.out, "TTL");
 		DcatFeed instance = DcatFeed.getInstance(m.getResource("http://nobelprize.org/datasets/dcat#ds1"));
 
-		assertEquals("Subject should be 'http://eurovoc.europa.eu/100142'", "http://eurovoc.europa.eu/100142",instance.getDcatModule().getSubject());
+		String expectedSubject = "http://eurovoc.europa.eu/100142";
+		assertTrue("Subject should be 'http://eurovoc.europa.eu/100142'",instance.getDcatModule().getSubjects().contains(expectedSubject));
 		assertEquals("Publuisher should be 'Nobel Media AB'", "Nobel Media AB", instance.getDcatModule().getPublisher());
 
 		List<String> expectedKeywords = Arrays.asList("prize", "science", "Nobel prize");
