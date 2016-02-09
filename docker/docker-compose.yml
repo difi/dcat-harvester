@@ -3,6 +3,7 @@ fuseki:
   ports:
    - "3030:8080"
 
+
 server:
   build: dcat-harvester-server
   ports:
@@ -14,6 +15,7 @@ server:
   links:
    - fuseki
    - elk
+
 
 elk:
   build: elk-server
