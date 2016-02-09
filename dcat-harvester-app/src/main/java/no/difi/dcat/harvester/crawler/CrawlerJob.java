@@ -1,26 +1,16 @@
 package no.difi.dcat.harvester.crawler;
 
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
+import com.google.common.cache.LoadingCache;
+import no.difi.dcat.datastore.AdminDataStore;
+import no.difi.dcat.datastore.domain.DcatSource;
+import no.difi.dcat.datastore.domain.DifiMeta;
+import no.difi.dcat.harvester.crawler.converters.BrregAgentConverter;
+import no.difi.dcat.harvester.validation.DcatValidation;
+import no.difi.dcat.harvester.validation.ValidationError;
 import org.apache.jena.atlas.web.HttpException;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.query.Dataset;
-import org.apache.jena.rdf.model.Literal;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.NodeIterator;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.ResIterator;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.rdf.model.SimpleSelector;
-import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.jena.vocabulary.DCTerms;
@@ -28,14 +18,12 @@ import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.cache.LoadingCache;
-
-import no.difi.dcat.datastore.AdminDataStore;
-import no.difi.dcat.datastore.domain.DcatSource;
-import no.difi.dcat.datastore.domain.DifiMeta;
-import no.difi.dcat.harvester.crawler.converters.BrregAgentConverter;
-import no.difi.dcat.harvester.validation.DcatValidation;
-import no.difi.dcat.harvester.validation.ValidationError;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class CrawlerJob implements Runnable {
 
@@ -181,18 +169,15 @@ public class CrawlerJob implements Runnable {
 			if (error.isError()) {
 				status[0] = error.getRuleSeverity();
 				message[0] = error.toString();
-
-				logger.error("[validation_" + status[0] + "] " + message[0] + " " + this.dcatSource.toString());
 			}
 			if (error.isWarning()) {
 				if (status[0] != ValidationError.RuleSeverity.error) {
 					status[0] = error.getRuleSeverity();
 				}
-				logger.warn("[validation_" + status[0] + "] " + message[0] + " " + this.dcatSource.toString());
 			} else {
 				status[0] = error.getRuleSeverity();
-				logger.info("[validation_" + status[0] + "] "  + message[0] + " " + this.dcatSource.toString());
 			}
+            logger.error("[validation_" + error.getRuleSeverity() + "] " + error.toString() + ", " + this.dcatSource.toString());
 		});
 
 		Resource rdfStatus = null;
