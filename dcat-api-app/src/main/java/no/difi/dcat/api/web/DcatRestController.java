@@ -7,6 +7,7 @@ import no.difi.dcat.datastore.Fuseki;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +56,10 @@ public class DcatRestController {
 
 			Key key = new Key(fusekiSettings.getDcatServiceUri() + "/get?graph=urn:x-arq:UnionGraph", supportedFormat.getMimetype().toString());
 
-			return new ResponseEntity<String>(dcatCache.get(key), HttpStatus.OK);
+			final HttpHeaders httpHeaders= new HttpHeaders();
+			httpHeaders.setContentType(supportedFormat.getMimetype());
+
+			return new ResponseEntity<String>(dcatCache.get(key),httpHeaders, HttpStatus.OK);
 
 
 		} catch (ExecutionException e) {
