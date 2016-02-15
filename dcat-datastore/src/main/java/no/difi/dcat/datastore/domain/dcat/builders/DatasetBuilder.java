@@ -3,9 +3,7 @@ package no.difi.dcat.datastore.domain.dcat.builders;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ResIterator;
-import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 
@@ -32,11 +30,16 @@ public class DatasetBuilder extends AbstractBuilder {
 			while (datasetIterator.hasNext()) {
 				Resource dataset = datasetIterator.next();
 				Dataset datasetObj = create(dataset, catalog);
-				ResIterator distributionIterator = dataset.getModel().listResourcesWithProperty(RDF.type, DCAT.Distribution);
+				StmtIterator distributionIterator = dataset.listProperties(DCAT.distribution);
 				List<Distribution> distributions = new ArrayList<>();
 				while (distributionIterator.hasNext()) {
-					Resource distribution = distributionIterator.next();
-					distributions.add(DistributionBuilder.create(distribution, null, null));
+					Statement next = distributionIterator.nextStatement();
+
+					if (next.getObject().isResource()) {
+						Resource distribution = next.getResource();
+						distributions.add(DistributionBuilder.create(distribution, null, null));
+					}
+
 				}
 				datasetObj.setDistributions(distributions);
 				datasets.add(datasetObj);
