@@ -18,6 +18,8 @@ public class DCAT {
 	public static final Resource NAMESPACE = model.createResource(NS);
 	
 	public static final Property Dataset = model.createProperty(NS, "Dataset");
+
+	public static final Property dataset = model.createProperty(NS, "dataset");
 	
 	public static final Property Distribution = model.createProperty(NS, "Distribution");
 	
