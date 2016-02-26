@@ -88,7 +88,7 @@ public class CrawlerJob implements Runnable {
 			LocalDateTime stop = LocalDateTime.now();
 			logger.info("[crawler_operations] [success] Finished crawler job: {}", dcatSource.toString() + ", Duration=" + returnCrawlDuration(start, stop));
 		} catch (Exception e) {
-			logger.error(String.format("[crawler_operations] [fail] Error running crawler job: %1$s, error=%2$s", dcatSource.toString(), e.toString()));
+			logger.error(String.format("[crawler_operations] [fail] Error running crawler job: %1$s,error=%2$s", dcatSource.toString(), e.toString()));
 		}
 		
 	}

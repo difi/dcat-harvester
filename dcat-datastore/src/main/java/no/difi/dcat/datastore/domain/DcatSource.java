@@ -162,7 +162,7 @@ public class DcatSource {
 	}
 
 	public String toString() {
-		return String.format("crawler_id=%1$s, crawler_name=%2$s, crawler_url=%3$s, crawler_user=%4$s", this.getId(), this.getDescription(), this.getUrl(), this.getUser());
+		return String.format("crawler_id=%1$s,crawler_name=%2$s,crawler_url=%3$s,crawler_user=%4$s", this.getId(), this.getDescription(), this.getUrl(), this.getUser());
 	}
 	
 	public String getGraph() {
