@@ -9,6 +9,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
@@ -26,7 +28,7 @@ public class Application extends SpringBootServletInitializer {
 
 
 	@Bean
-	public LoadingCache<Key, String> getDcatCache(){
+	public LoadingCache<Key, String> getDcatCache() {
 		return CacheBuilder.newBuilder()
 				.maximumSize(10)
 				.expireAfterWrite(24, TimeUnit.HOURS)
@@ -51,7 +53,7 @@ public class Application extends SpringBootServletInitializer {
 
 								HttpEntity entity = response1.getEntity();
 
-								return EntityUtils.toString(entity);
+								return EntityUtils.toString(entity, Charset.forName("UTF-8"));
 
 
 							}
@@ -63,7 +65,6 @@ public class Application extends SpringBootServletInitializer {
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(Application.class);
 	}
-
 
 
 	public static void main(String[] args) {
