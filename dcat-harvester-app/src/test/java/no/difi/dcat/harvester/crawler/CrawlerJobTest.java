@@ -85,5 +85,33 @@ public class CrawlerJobTest {
 
 		assertTrue("The entryscape file was invalid. Should have been enriched and validated, so that the handler would run.", didRun[0]);
 	}
+	@Test
+	public void testCrawlerJobFromVegesenet() throws IOException {
+
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource("vegvesenet.xml").getFile());
+
+		DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", file.getCanonicalPath(), "tester", "");
+
+		AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
+
+		FusekiResultHandler handler = Mockito.mock(FusekiResultHandler.class);
+
+
+		final boolean[] didRun = {false};
+		Mockito.doAnswer(invocationOnMock -> {
+			didRun[0] = true;
+			return null;
+		}).when(handler).process(Mockito.anyObject(), Mockito.any());
+
+
+
+		CrawlerJob job = new CrawlerJob(dcatSource, adminDataStore, null, handler);
+		job.run();
+
+		assertTrue("The Vegvesenet file was invalid. Should have been enriched and validated, so that the handler would run.", didRun[0]);
+	}
+
+
 
 }

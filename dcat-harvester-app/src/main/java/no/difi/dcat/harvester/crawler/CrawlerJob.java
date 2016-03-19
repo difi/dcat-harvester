@@ -4,17 +4,22 @@ import com.google.common.cache.LoadingCache;
 import no.difi.dcat.datastore.AdminDataStore;
 import no.difi.dcat.datastore.domain.DcatSource;
 import no.difi.dcat.datastore.domain.DifiMeta;
+import no.difi.dcat.datastore.domain.dcat.vocabulary.DCAT;
 import no.difi.dcat.harvester.crawler.converters.BrregAgentConverter;
 import no.difi.dcat.harvester.validation.DcatValidation;
 import no.difi.dcat.harvester.validation.ValidationError;
+import org.apache.jena.atlas.lib.Sync;
+import org.apache.jena.atlas.lib.SystemUtils;
 import org.apache.jena.atlas.web.HttpException;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
+import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.VCARD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +80,10 @@ public class CrawlerJob implements Runnable {
 			if(isEntryscape(union)){
 				enrichForEntryscape(union);
 			}
+
+			if(isVegvesenet(union)){
+				enrichForVegvesenet(union);
+			}
 			
 			BrregAgentConverter brregAgentConverter = new BrregAgentConverter(brregCache);
 			brregAgentConverter.collectFromModel(union);
@@ -93,11 +102,20 @@ public class CrawlerJob implements Runnable {
 		
 	}
 
+
 	private boolean isEntryscape(Model union) {
 		//detect entryscape data by doing a string match against the uri of a catalog
 		ResIterator resIterator = union.listResourcesWithProperty(RDF.type, union.createResource("http://www.w3.org/ns/dcat#Catalog"));
 		return resIterator.hasNext() && resIterator.nextResource().getURI().contains("://difi.entryscape.net/");
 	}
+
+	private boolean isVegvesenet(Model union) {
+		//detect entryscape data by doing a string match against the uri of a catalog
+		ResIterator resIterator = union.listResourcesWithProperty(RDF.type, union.createResource("http://www.w3.org/ns/dcat#Catalog"));
+		return resIterator.hasNext() && resIterator.nextResource().getURI().contains("utv.vegvesen.no");
+	}
+
+
 
 	private void enrichForEntryscape(Model union) {
 
@@ -121,7 +139,6 @@ public class CrawlerJob implements Runnable {
 			Literal literal = statement.getObject().asLiteral();
 			if(literal.getDatatype().equals(XSDDatatype.XSDstring)){
 
-				System.out.println(statement);
 
 				String string = literal.getString();
 				dctIssuedToDelete.add(statement);
@@ -158,6 +175,60 @@ public class CrawlerJob implements Runnable {
 
 		accrualPeriodicityToDelete.forEach(union::remove);
 
+	}
+
+	private void enrichForVegvesenet(Model union) {
+
+		//{className='Dataset',
+		// ruleId=43,
+		// ruleSeverity=error,
+		// ruleDescription='dcat:contactPoint should be a vcard:Kind.',
+		// message='null',
+		// s=http://svvuckanpoc01.utv.vegvesen.no/dataset/ebe18dff-487c-4cb5-ad8d-f000e95451db,
+		// p=http://www.w3.org/ns/dcat#contactPoint,
+		// o=-37c35710:1538f266172:-7fd9}
+		// Add type DCTerms.RightsStatement to alle DCTerms.rights
+		NodeIterator contactPoint = union.listObjectsOfProperty(DCAT.contactPoint);
+		while(contactPoint.hasNext()){
+			Resource resource = contactPoint.next().asResource();
+			System.out.println(resource);
+			resource.addProperty(RDF.type, union.createResource("http://www.w3.org/2006/vcard/ns#Kind"));
+		}
+
+
+		ResIterator catalogPublisher = union.listSubjectsWithProperty(RDF.type, DCAT.Catalog);
+		while(catalogPublisher.hasNext()){
+			Resource resource = catalogPublisher.next().asResource();
+			System.out.println(resource);
+
+			ResIterator resIterator = union.listSubjectsWithProperty(FOAF.name, "Statens vegvesen");
+
+
+			resource.addProperty(DCTerms.publisher, resIterator.nextResource());
+		}
+
+
+		List<Statement> toDelete = new ArrayList<>();
+		StmtIterator accessURL = union.listStatements(null, DCAT.accessUrl, (String) null);
+		while(accessURL.hasNext()){
+			toDelete.add(accessURL.nextStatement());
+		}
+
+		for (Statement statement : toDelete) {
+			Resource subject = statement.getSubject();
+			subject.addProperty(DCAT.accessUrl, union.createResource(statement.getObject().toString()));
+			union.remove(statement);
+		}
+
+		NodeIterator dctPublisher = union.listObjectsOfProperty(DCTerms.publisher);
+		while(dctPublisher.hasNext()){
+			Resource resource = dctPublisher.next().asResource();
+			System.out.println(resource);
+			resource.addProperty(RDF.type, FOAF.Agent);
+		}
+
+
+		union.write(System.out, "TTL");
 	}
 
 	private boolean isValid(Model model) {
