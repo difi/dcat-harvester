@@ -179,35 +179,22 @@ public class CrawlerJob implements Runnable {
 
 	private void enrichForVegvesenet(Model union) {
 
-		//{className='Dataset',
-		// ruleId=43,
-		// ruleSeverity=error,
-		// ruleDescription='dcat:contactPoint should be a vcard:Kind.',
-		// message='null',
-		// s=http://svvuckanpoc01.utv.vegvesen.no/dataset/ebe18dff-487c-4cb5-ad8d-f000e95451db,
-		// p=http://www.w3.org/ns/dcat#contactPoint,
-		// o=-37c35710:1538f266172:-7fd9}
-		// Add type DCTerms.RightsStatement to alle DCTerms.rights
+		// Make all use of dcat:contactPoint point to resources of type vcard:Kind
 		NodeIterator contactPoint = union.listObjectsOfProperty(DCAT.contactPoint);
 		while(contactPoint.hasNext()){
 			Resource resource = contactPoint.next().asResource();
-			System.out.println(resource);
 			resource.addProperty(RDF.type, union.createResource("http://www.w3.org/2006/vcard/ns#Kind"));
 		}
 
-
+		// Find a resource with foaf:name "Statens vegvesen" and use it as the dct:publisher for all dcat:Catalog(s)
 		ResIterator catalogPublisher = union.listSubjectsWithProperty(RDF.type, DCAT.Catalog);
 		while(catalogPublisher.hasNext()){
 			Resource resource = catalogPublisher.next().asResource();
-			System.out.println(resource);
-
 			ResIterator resIterator = union.listSubjectsWithProperty(FOAF.name, "Statens vegvesen");
-
-
 			resource.addProperty(DCTerms.publisher, resIterator.nextResource());
 		}
 
-
+		// Change dcat:accessUrl from string literal to uri resource
 		List<Statement> toDelete = new ArrayList<>();
 		StmtIterator accessURL = union.listStatements(null, DCAT.accessUrl, (String) null);
 		while(accessURL.hasNext()){
@@ -220,15 +207,15 @@ public class CrawlerJob implements Runnable {
 			union.remove(statement);
 		}
 
+		
+		// Make all uses of dct:publisher point to resources of type foaf:Agent
 		NodeIterator dctPublisher = union.listObjectsOfProperty(DCTerms.publisher);
 		while(dctPublisher.hasNext()){
 			Resource resource = dctPublisher.next().asResource();
-			System.out.println(resource);
 			resource.addProperty(RDF.type, FOAF.Agent);
 		}
 
 
-		union.write(System.out, "TTL");
 	}
 
 	private boolean isValid(Model model) {
