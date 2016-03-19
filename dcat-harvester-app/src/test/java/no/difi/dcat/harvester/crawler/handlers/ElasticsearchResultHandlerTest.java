@@ -13,10 +13,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,8 +91,8 @@ public class ElasticsearchResultHandlerTest {
 				"123456789");
 
 
-		ElasticSearchResultHandler handler = new ElasticSearchResultHandler("localhost", 9300);
-		handler.process(dcatSource, FileManager.get().loadModel(dcatSource.getUrl()));
+		ElasticSearchResultHandler handler = new ElasticSearchResultHandler("", 0);
+		handler.indexWithElasticsearch(dcatSource, FileManager.get().loadModel(dcatSource.getUrl()), new Elasticsearch(client));
 
 		//prevent race condition where elasticsearch is still indexing!!!
 		try {

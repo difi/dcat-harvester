@@ -47,7 +47,7 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
 
     }
 
-    private void indexWithElasticsearch(DcatSource dcatSource, Model model, Elasticsearch elasticsearch) {
+    protected void indexWithElasticsearch(DcatSource dcatSource, Model model, Elasticsearch elasticsearch) {
         Gson gson = new GsonBuilder().setPrettyPrinting().setDateFormat("yyyy-MM-dd'T'HH:mm:ssX").create();
 
         if (!elasticsearch.indexExists(DCAT_INDEX)) {
