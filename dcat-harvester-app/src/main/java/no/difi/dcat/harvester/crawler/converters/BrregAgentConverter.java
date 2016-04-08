@@ -80,7 +80,7 @@ public class BrregAgentConverter {
 		
 		while (iterator.hasNext()) {
 			RDFNode next = iterator.next();
-			if (next.isResource() && next.asResource().getURI().contains("data.brreg.no")) {
+			if (next.isURIResource() && next.asResource().getURI().contains("data.brreg.no")) {
 				String uri = next.asResource().getURI();
 				collectFromUri(uri, model);
 			} else {

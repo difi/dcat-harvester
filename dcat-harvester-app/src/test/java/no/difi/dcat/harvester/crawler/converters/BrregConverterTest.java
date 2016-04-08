@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.util.FileManager;
 import org.apache.jena.vocabulary.RDF;
 import org.junit.Test;
 
@@ -29,6 +30,18 @@ public class BrregConverterTest {
 		NodeIterator iterator = model.listObjectsOfProperty(RDF.type);
 		
 		assertEquals("Expected model to contain one resource of type foaf:Agent", "http://xmlns.com/foaf/0.1/Agent", iterator.next().asResource().getURI());
+	}
+
+	@Test
+	public void testConvertBrregFileBlankNode() throws Exception {
+		BrregAgentConverter converter = new BrregAgentConverter(Application.getBrregCache());
+
+		Model model = FileManager.get().loadModel("src/test/resources/brreg/blankNodeTest.xml");
+
+		converter.collectFromModel(model);
+
+		// this just tests that we can handle blank nodes
+		// no assertion is made, just tests that there is no null pointer exception
 	}
 	
 	@Test
