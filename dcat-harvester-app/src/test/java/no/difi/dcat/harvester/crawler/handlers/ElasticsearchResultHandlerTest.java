@@ -35,21 +35,28 @@ public class ElasticsearchResultHandlerTest {
 	Elasticsearch elasticsearch;
 
 	private File homeDir = null;
-	private Settings settings = null;
 
 	@Before
 	public void setUp() throws Exception {
-		homeDir = new File(HOME_DIR);
 
-		settings = Settings.settingsBuilder().put("path.home", homeDir.toString()).put("network.host", "localhost")
+		homeDir = new File("src/test/resources/elasticsearch");
+		 Settings settings = Settings.settingsBuilder()
+				.put("http.enabled", "false")
+				.put("path.home", homeDir.toString())
 				.build();
-		node = NodeBuilder.nodeBuilder().settings(settings).build();
+
+		node = NodeBuilder.nodeBuilder()
+				.local(true)
+				.settings(settings)
+				.build();
+
 		node.start();
 		client = node.client();
-		elasticsearch = new Elasticsearch(client);
 		Assert.assertNotNull(node);
 		Assert.assertFalse(node.isClosed());
 		Assert.assertNotNull(client);
+		elasticsearch = new Elasticsearch(client);
+
 	}
 
 	@After

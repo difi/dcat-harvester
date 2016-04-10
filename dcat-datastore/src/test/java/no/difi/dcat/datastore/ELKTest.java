@@ -32,10 +32,14 @@ public class ELKTest {
 	@Before
 	public void setUp() throws Exception {
 		homeDir = new File("src/test/resources/elasticsearch");
-
-		settings = Settings.settingsBuilder().put("path.home", homeDir.toString()).put("network.host", "0.0.0.0")
+		settings = Settings.settingsBuilder()
+				.put("http.enabled", "false")
+				.put("path.home", homeDir.toString())
 				.build();
-		node = NodeBuilder.nodeBuilder().settings(settings).build();
+		node = NodeBuilder.nodeBuilder()
+				.local(true)
+				.settings(settings)
+				.build();
 		node.start();
 		client = node.client();
 		Assert.assertNotNull(node);
