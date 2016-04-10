@@ -8,14 +8,17 @@ import no.difi.dcat.datastore.domain.dcat.vocabulary.DCAT;
 import no.difi.dcat.harvester.crawler.converters.BrregAgentConverter;
 import no.difi.dcat.harvester.validation.DcatValidation;
 import no.difi.dcat.harvester.validation.ValidationError;
+import org.apache.jena.atlas.io.StringWriterI;
 import org.apache.jena.atlas.lib.Sync;
 import org.apache.jena.atlas.lib.SystemUtils;
 import org.apache.jena.atlas.web.HttpException;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.Triple;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RiotException;
+import org.apache.jena.riot.*;
+import org.apache.jena.riot.system.StreamRDF;
+import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
@@ -23,6 +26,10 @@ import org.apache.jena.vocabulary.VCARD;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,9 +43,9 @@ public class CrawlerJob implements Runnable {
 	private DcatSource dcatSource;
 	private AdminDataStore adminDataStore;
 	private LoadingCache<URL, String> brregCache;
-	
+
 	private final Logger logger = LoggerFactory.getLogger(CrawlerJob.class);
-	
+
 	protected CrawlerJob(DcatSource dcatSource, AdminDataStore adminDataStore, LoadingCache<URL, String> brregCaache, CrawlerResultHandler... handlers) {
 		this.handlers = Arrays.asList(handlers);
 		this.dcatSource = dcatSource;
@@ -69,6 +76,9 @@ public class CrawlerJob implements Runnable {
 					union = ModelFactory.createUnion(union, dataset.getNamedModel(stringIterator.next()));
 				}
 
+				verifyModelByParsing(union);
+
+
 			}catch (RiotException e){
 				adminDataStore.addCrawlResults(dcatSource, DifiMeta.syntaxError, e.getMessage());
 				throw e;
@@ -84,7 +94,7 @@ public class CrawlerJob implements Runnable {
 			if(isVegvesenet(union)){
 				enrichForVegvesenet(union);
 			}
-			
+
 			BrregAgentConverter brregAgentConverter = new BrregAgentConverter(brregCache);
 			brregAgentConverter.collectFromModel(union);
 
@@ -93,13 +103,49 @@ public class CrawlerJob implements Runnable {
 					handler.process(dcatSource,union);
 				}
 			}
-			
+
 			LocalDateTime stop = LocalDateTime.now();
 			logger.info("[crawler_operations] [success] Finished crawler job: {}", dcatSource.toString() + ", Duration=" + returnCrawlDuration(start, stop));
 		} catch (Exception e) {
 			logger.error(String.format("[crawler_operations] [fail] Error running crawler job: %1$s, error=%2$s", dcatSource.toString(), e.toString()));
 		}
-		
+
+	}
+
+	protected void verifyModelByParsing(Model union) {
+		StringWriter str = new StringWriter();
+		union.write(str, RDFLanguages.strLangTurtle);
+		RDFDataMgr.parse(new StreamRDF() {
+			@Override
+			public void start() {
+
+			}
+
+			@Override
+			public void triple(Triple triple) {
+
+			}
+
+			@Override
+			public void quad(Quad quad) {
+
+			}
+
+			@Override
+			public void base(String base) {
+
+			}
+
+			@Override
+			public void prefix(String prefix, String iri) {
+
+			}
+
+			@Override
+			public void finish() {
+
+			}
+		}, new ByteArrayInputStream(str.toString().getBytes()), Lang.TTL);
 	}
 
 
@@ -207,7 +253,7 @@ public class CrawlerJob implements Runnable {
 			union.remove(statement);
 		}
 
-		
+
 		// Make all uses of dct:publisher point to resources of type foaf:Agent
 		NodeIterator dctPublisher = union.listObjectsOfProperty(DCTerms.publisher);
 		while(dctPublisher.hasNext()){
@@ -219,7 +265,7 @@ public class CrawlerJob implements Runnable {
 	}
 
 	private boolean isValid(Model model) {
-		
+
 		final ValidationError.RuleSeverity[] status = {ValidationError.RuleSeverity.ok};
 		final String[] message = {null};
 
@@ -253,10 +299,10 @@ public class CrawlerJob implements Runnable {
 		}
 
 		adminDataStore.addCrawlResults(dcatSource, rdfStatus, message[0]);
-		
+
 		return validated;
 	}
-	
+
 	private String returnCrawlDuration(LocalDateTime start, LocalDateTime stop) {
 		return String.valueOf(stop.compareTo(start));
 	}

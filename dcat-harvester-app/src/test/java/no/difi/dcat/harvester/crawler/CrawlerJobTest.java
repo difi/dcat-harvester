@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RiotException;
+import org.apache.jena.util.FileManager;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -85,6 +87,7 @@ public class CrawlerJobTest {
 
 		assertTrue("The entryscape file was invalid. Should have been enriched and validated, so that the handler would run.", didRun[0]);
 	}
+
 	@Test
 	public void testCrawlerJobFromVegesenet() throws IOException {
 
@@ -111,6 +114,21 @@ public class CrawlerJobTest {
 
 		assertTrue("The Vegvesenet file was invalid. Should have been enriched and validated, so that the handler would run.", didRun[0]);
 	}
+
+	@Test(expected = RiotException.class)
+	public void testCrawlingJsonLdWithSpaceInUri() throws IOException {
+
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource("space-in-uri.jsonld").getFile());
+
+		FusekiResultHandler handler = Mockito.mock(FusekiResultHandler.class);
+
+		CrawlerJob job = new CrawlerJob(null, null, null, handler);
+		job.verifyModelByParsing(FileManager.get().loadModel(file.getCanonicalPath()));
+		job.run();
+
+	}
+
 
 
 
