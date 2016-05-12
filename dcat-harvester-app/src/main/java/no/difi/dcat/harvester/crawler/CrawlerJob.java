@@ -29,10 +29,8 @@ import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CrawlerJob implements Runnable {
 
@@ -96,8 +94,21 @@ public class CrawlerJob implements Runnable {
 
 
         } catch (JenaException e) {
-            adminDataStore.addCrawlResults(dcatSource, DifiMeta.syntaxError, e.getMessage());
+            String message = e.getMessage();
+
+            try {
+                if (message.contains("[line: ")) {
+                    String[] split = message.split("]");
+                    split[0] = "";
+                    message = Arrays.stream(split)
+                        .map(i -> i.toString())
+                        .collect(Collectors.joining("]"));
+                    message = message.substring(1, message.length());
+                }
+            }catch (Exception e2){}
+            adminDataStore.addCrawlResults(dcatSource, DifiMeta.syntaxError, message);
             logger.error(String.format("[crawler_operations] [fail] Error running crawler job: %1$s, error=%2$s", dcatSource.toString(), e.toString()));
+
         } catch (HttpException e) {
             adminDataStore.addCrawlResults(dcatSource, DifiMeta.networkError, e.getMessage());
             logger.error(String.format("[crawler_operations] [fail] Error running crawler job: %1$s, error=%2$s", dcatSource.toString(), e.toString()));
