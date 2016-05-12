@@ -10,6 +10,7 @@ import org.apache.jena.riot.RiotException;
 import org.apache.jena.shared.BadURIException;
 import org.apache.jena.util.FileManager;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -20,15 +21,20 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 public class CrawlerJobTest {
 
     @Test
-    public void testCrawlerJob() {
-        DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", "src/test/resources/npolar.jsonld", "tester", "123456789");
+    public void testCrawlerJob() throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+
+
+        DcatSource dcatSource = new DcatSource("http//dcat.difi.no/test", "Test", classLoader.getResource("npolar.jsonld").getFile(), "tester", "123456789");
 
         DcatDataStore dcatDataStore = Mockito.mock(DcatDataStore.class);
         Mockito.doThrow(Exception.class).when(dcatDataStore).saveDataCatalogue(Mockito.anyObject(), Mockito.anyObject());
 
         FusekiResultHandler handler = new FusekiResultHandler(dcatDataStore, null);
 
-        CrawlerJob job = new CrawlerJob(dcatSource, null, null, handler);
+        AdminDataStore adminDataStore = Mockito.mock(AdminDataStore.class);
+
+        CrawlerJob job = new CrawlerJob(dcatSource, adminDataStore, null, handler);
 
         job.run();
     }
