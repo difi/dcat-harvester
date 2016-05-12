@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationSettings {
 
 	private String harvesterUrl;
+	private String kibanaLinkFirstHalf;
+	private String kibanaLinkSecondHalf;
 
 	public String getHarvesterUrl() {
 		return harvesterUrl;
@@ -19,7 +21,19 @@ public class ApplicationSettings {
 		this.harvesterUrl = harvesterUrl;
 	}
 
-	
-	
-	
+	public String getKibanaLinkFirstHalf() {
+		return kibanaLinkFirstHalf;
+	}
+
+	public void setKibanaLinkFirstHalf(String kibanaLinkFirstHalf) {
+		this.kibanaLinkFirstHalf = kibanaLinkFirstHalf;
+	}
+
+	public String getKibanaLinkSecondHalf() {
+		return kibanaLinkSecondHalf;
+	}
+
+	public void setKibanaLinkSecondHalf(String kibanaLinkSecondHalf) {
+		this.kibanaLinkSecondHalf = kibanaLinkSecondHalf;
+	}
 }

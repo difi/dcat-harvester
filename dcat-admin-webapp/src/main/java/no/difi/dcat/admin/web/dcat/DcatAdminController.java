@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
+import com.github.jsonldjava.utils.Obj;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,11 +91,12 @@ public class DcatAdminController {
 
 		ModelAndView model = new ModelAndView("dcatSource");
 		model.addObject("dcatSource", dcatSourceById.get());
-
-
+		model.addObject("kibanaLink", new KibanaLink(applicationSettings));
 
 		return model;
 	}
+
+
 	
 	@RequestMapping(value= "/admin/harvestDcatSource", method = RequestMethod.GET)
 	public ModelAndView harvestDcatSource(@RequestParam("id") String dcatSourceId, ModelMap model) {

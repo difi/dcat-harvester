@@ -45,9 +45,10 @@
         <div class="col-md-12">
 
             <h3>Harvest History (100 last harvests) -
-                <a href="/app/kibana/#/dashboard/dashboard_template?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-24h,mode:quick,to:now))&_a=(filters:!(),options:(darkTheme:!f),panels:!((col:4,id:Crawler-Operations,panelIndex:1,row:3,size_x:9,size_y:3,type:visualization),(col:1,id:Crawler-Results,panelIndex:2,row:3,size_x:3,size_y:3,type:visualization),(col:1,id:Crawler-Metadata,panelIndex:4,row:1,size_x:12,size_y:2,type:visualization),(col:7,id:Validation-RuleId,panelIndex:6,row:6,size_x:6,size_y:4,type:visualization),(col:1,columns:!(ruleSeverity,event,cause,ruleId),id:validation_ruleId,panelIndex:7,row:6,size_x:6,size_y:4,sort:!(timestamp,desc),type:search)),query:(query_string:(analyze_wildcard:!t,query:'%22${dcatSource.getIdUrlEncoded()}%22')),title:dashboard_template,uiState:())">
+                <a href="${kibanaLink.getFirstHalf()}${dcatSource.getIdUrlEncoded()}${kibanaLink.getSecondHalf()}">
                     Se mer i Kibana (link)
-                </a></h3>
+                </a>
+            </h3>
             <table class="table table-striped">
                 <thead>
                 <tr>
