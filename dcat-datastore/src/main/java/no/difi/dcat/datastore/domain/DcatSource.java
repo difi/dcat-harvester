@@ -6,6 +6,8 @@ import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDFS;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -132,6 +134,16 @@ public class DcatSource {
 	public String getId() {
 		return id;
 	}
+
+	public String getIdUrlEncoded() {
+		try {
+			return URLEncoder.encode(id, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
 
 	public String getUrl() {
 		return url;

@@ -35,12 +35,20 @@
                 <td>${dcatSource.url}</td>
                 </tbody>
             </table>
+
+            <div>
+
+            </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
 
-            <h3>Harvest History (100 last harvests)</h3>
+            <h3>Harvest History (100 last harvests) -
+                <a href="${kibanaLink.getFirstHalf()}${dcatSource.getIdUrlEncoded()}${kibanaLink.getSecondHalf()}">
+                    Se mer i Kibana (link)
+                </a>
+            </h3>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -54,7 +62,7 @@
                     <tr>
                         <td style="min-width: 120px">${harvest.getCreatedDateFormatted()}</td>
                         <td>${harvest.status.getLocalName()}</td>
-                        <td>${harvest.getMessageOrEmpty()}</td>
+                        <td><c:out value="${harvest.getMessageOrEmpty()}"/></td>
                     </tr>
                 </c:forEach>
                 </tbody>
