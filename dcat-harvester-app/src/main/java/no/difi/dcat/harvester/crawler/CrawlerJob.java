@@ -18,6 +18,7 @@ import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.*;
 import org.apache.jena.riot.system.StreamRDF;
+import org.apache.jena.shared.JenaException;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
@@ -64,12 +65,11 @@ public class CrawlerJob implements Runnable {
 
 
 		try {
-			Model union = null;
 			try{
 
 				Dataset dataset = RDFDataMgr.loadDataset(dcatSource.getUrl());
 
-				 union = ModelFactory.createUnion(ModelFactory.createDefaultModel(), dataset.getDefaultModel());
+				Model union = ModelFactory.createUnion(ModelFactory.createDefaultModel(), dataset.getDefaultModel());
 				Iterator<String> stringIterator = dataset.listNames();
 
 				while(stringIterator.hasNext()){
@@ -79,7 +79,24 @@ public class CrawlerJob implements Runnable {
 				verifyModelByParsing(union);
 
 
-			}catch (RiotException e){
+				if(isEntryscape(union)){
+					enrichForEntryscape(union);
+				}
+
+				if(isVegvesenet(union)){
+					enrichForVegvesenet(union);
+				}
+
+				BrregAgentConverter brregAgentConverter = new BrregAgentConverter(brregCache);
+				brregAgentConverter.collectFromModel(union);
+
+				if (isValid(union)) {
+					for (CrawlerResultHandler handler : handlers) {
+						handler.process(dcatSource,union);
+					}
+				}
+
+			}catch (JenaException e){
 				adminDataStore.addCrawlResults(dcatSource, DifiMeta.syntaxError, e.getMessage());
 				throw e;
 			}catch (HttpException e){
@@ -87,27 +104,16 @@ public class CrawlerJob implements Runnable {
 				throw e;
 			}
 
-			if(isEntryscape(union)){
-				enrichForEntryscape(union);
-			}
 
-			if(isVegvesenet(union)){
-				enrichForVegvesenet(union);
-			}
 
-			BrregAgentConverter brregAgentConverter = new BrregAgentConverter(brregCache);
-			brregAgentConverter.collectFromModel(union);
-
-			if (isValid(union)) {
-				for (CrawlerResultHandler handler : handlers) {
-					handler.process(dcatSource,union);
-				}
-			}
 
 			LocalDateTime stop = LocalDateTime.now();
 			logger.info("[crawler_operations] [success] Finished crawler job: {}", dcatSource.toString() + ", Duration=" + returnCrawlDuration(start, stop));
 		} catch (Exception e) {
 			logger.error(String.format("[crawler_operations] [fail] Error running crawler job: %1$s, error=%2$s", dcatSource.toString(), e.toString()));
+			e.printStackTrace();
+			adminDataStore.addCrawlResults(dcatSource, DifiMeta.error, e.getMessage());
+
 		}
 
 	}
@@ -146,6 +152,41 @@ public class CrawlerJob implements Runnable {
 
 			}
 		}, new ByteArrayInputStream(str.toString().getBytes()), Lang.TTL);
+
+		str = new StringWriter();
+		union.write(str, RDFLanguages.strLangRDFXML);
+		RDFDataMgr.parse(new StreamRDF() {
+			@Override
+			public void start() {
+
+			}
+
+			@Override
+			public void triple(Triple triple) {
+
+			}
+
+			@Override
+			public void quad(Quad quad) {
+
+			}
+
+			@Override
+			public void base(String base) {
+
+			}
+
+			@Override
+			public void prefix(String prefix, String iri) {
+
+			}
+
+			@Override
+			public void finish() {
+
+			}
+		}, new ByteArrayInputStream(str.toString().getBytes()), Lang.RDFXML);
+
 	}
 
 
