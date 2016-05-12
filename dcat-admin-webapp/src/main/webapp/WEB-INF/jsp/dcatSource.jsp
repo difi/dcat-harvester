@@ -45,7 +45,7 @@
         <div class="col-md-12">
 
             <h3>Harvest History (100 last harvests) -
-                <a href="${kibanaLink.getFirstHalf()}${dcatSource.getIdUrlEncoded()}${kibanaLink.getSecondHalf()}">
+                <a target="_blank" href="${kibanaLink.getFirstHalf()}${dcatSource.getIdUrlEncoded()}${kibanaLink.getSecondHalf()}">
                     Se mer i Kibana (link)
                 </a>
             </h3>
