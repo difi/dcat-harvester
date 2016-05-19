@@ -119,7 +119,7 @@ public class CrawlerResultHandlerTest {
 			String message = (String) invocationOnMock.getArguments()[2];
 
 			assertEquals("Thesyntax-error.jsonld file should give a syntax error", DifiMeta.syntaxError, status);
-			assertEquals("Should be the following syntax error", "[line: 1, col: 23] Unrecognized token 'fewjkfjewkl': was expecting 'null', 'true', 'false' or NaN", message);
+			assertEquals("Should be the following syntax error", "Unrecognized token 'fewjkfjewkl': was expecting 'null', 'true', 'false' or NaN", message);
 
 			return null;
 		}).when(adminDataStore).addCrawlResults(Mockito.any(), Mockito.any(), Mockito.any());

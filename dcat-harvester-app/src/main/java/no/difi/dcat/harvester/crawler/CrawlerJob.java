@@ -103,7 +103,7 @@ public class CrawlerJob implements Runnable {
                     message = Arrays.stream(split)
                         .map(i -> i.toString())
                         .collect(Collectors.joining("]"));
-                    message = message.substring(1, message.length());
+                    message = message.substring(1, message.length()).trim();
                 }
             }catch (Exception e2){}
             adminDataStore.addCrawlResults(dcatSource, DifiMeta.syntaxError, message);
