@@ -8,7 +8,6 @@ services:
     networks:
       platform:
 
-
   server:
     build: dcat-harvester-server
     ports:
@@ -46,11 +45,6 @@ services:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
     depends_on:
       - elasticsearch
-    networks:
-      logging:
-
-  automation:
-    build: automation
     networks:
       logging:
 
