@@ -4,4 +4,4 @@ until $(curl --output /dev/null --silent --head --fail http://elasticsearch:9200
     sleep 2
 done
 printf '\nUploading Kibana configs\n'
-curl -XPOST 'elasticsearch:9200/.kibana/_bulk?pretty' --data-binary "@/tmp/dashboard.json"
+curl -XPOST 'elasticsearch:9200/.kibana/_bulk?pretty' --data-binary "@/tmp/upload.json"
