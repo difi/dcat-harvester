@@ -14,14 +14,26 @@ server:
    - ./logs:/usr/local/tomcat/logs:rw
   links:
    - fuseki
-   - elk
+   - elasticsearch
 
-
-elk:
-  build: elk-server
+elasticsearch:
+  image: elasticsearch
   ports:
-    - "5601:5601"
     - "9200:9200"
     - "9300:9300"
+
+logstash:
+  image: logstash
   volumes:
     - ./logs:/usr/local/tomcat/logs:rw
+  links:
+    - elasticsearch
+
+kibana:
+  image: kibana
+  ports:
+    - "5601:5601"
+  environment:
+    - ELASTICSEARCH_URL=http://elasticsearch:9200
+  links:
+    - elasticsearch
