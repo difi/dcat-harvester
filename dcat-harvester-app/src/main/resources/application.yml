@@ -12,7 +12,7 @@ fuseki:
   dcatServiceUri: http://fuseki:8080/fuseki/dcat
   adminServiceUri: http://fuseki:8080/fuseki/admin
 application:
-  elasticSearchHost: elk
+  elasticSearchHost: elasticsearch
 ---
 spring:
     profiles: development

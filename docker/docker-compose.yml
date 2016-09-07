@@ -26,6 +26,7 @@ services:
       - "9300:9300"
     networks:
       logging:
+      platform:
 
   logstash:
     build: logstash
