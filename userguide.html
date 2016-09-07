@@ -51,7 +51,7 @@
             <hr style="margin-top: 0px"/>
 
             <p>If this is the first time you fire up the system, you should go to <a href="http://localhost:8080/dcat-admin-webapp/login">http://localhost:8080/dcat-admin-webapp/login</a> in order to login</p>
-            <img src="images/login.png" style="width:100%">
+            <img src="images/login.png" style="width:100%" />
             <p>The default username and password are:</p>
             <table class="table">
                 <tr>
@@ -71,16 +71,16 @@
 
             <p>When you have logged into you account you will be presented with a form to add new data source and a list of your current data sources.
             Do not worry if you do not see the "Users admin" button, it just means you are not an admin of the system.</p>
-            <img src="images/addDataSource.png" style="width:100%">
+            <img src="images/addDataSource.png" style="width:100%" />
 
     <p>To add your first data source you will need to know the URL to that data source. I'm going to use a the following test file <a href="https://raw.githubusercontent.com/EmidioStani/dcat-ap_validator/master/tests-data/test-perfect.rdf">https://raw.githubusercontent.com/EmidioStani/dcat-ap_validator/master/tests-data/test-perfect.rdf</a></p>
 
             <p>Copy the link to your DCAT file (the URL) into the URL field, add a description and an organisation number if you have one. Then click on "Save".</p>
-            <img src="images/addDataSource2.png" style="width:100%">
+            <img src="images/addDataSource2.png" style="width:100%" />
 
             <p>Your data source has now been added to the system. To harvest your data source, just click on the harvest button.
                 After harvesting please wait a few seconds and then refresh the page to see if the harvest was successful.</p>
-            <img src="images/addDataSource3.png" style="width:100%">
+            <img src="images/addDataSource3.png" style="width:100%"/>
             <p>This harvest was successful. If it was unsuccessful the status would say "error".  The current status "warning" just means that there is potentially
             more information that could be added to your DCAT file according to the standard.</p>
 
@@ -97,44 +97,83 @@
 
                 </tr>
                 <tr>
+                    <td>ok</td>
+                    <td>Everything was ok.</td>
+
+                </tr>
+                <tr>
                     <td>warning</td>
-                    <td></td>
+                    <td>Your data is correct, but could be even better.</td>
 
                 </tr>
                 <tr>
                     <td>error</td>
-                    <td></td>
+                    <td>There was an error either validating your data or for some other reason.</td>
 
                 </tr>
                 <tr>
                     <td>syntaxError</td>
-                    <td></td>
+                    <td>Your syntax is wrong.</td>
+
+                </tr>
+                <tr>
+                    <td>networkError</td>
+                    <td>The harvester could not download the file specified in the URL.</td>
 
                 </tr>
             </table>
 
-            <h2 id="Understand-errors">Understand errors</h2>
+            <p>By clicking on the status you can get a more detailed view of the harvest history and more information about the status. </p>
+
+
+            <img src="images/harvestHistory.png" style="width:100%"/>
+
+            <h2 id="Understand-errors">Understanding errors</h2>
             <hr style="margin-top: 0px"/>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis at laoreet odio, vel tincidunt metus. Nulla placerat turpis et convallis interdum. Sed ultricies quis elit id auctor. Phasellus vel egestas est. Ut condimentum
-                ante vitae accumsan lobortis. Ut luctus augue dui, quis tempus massa tincidunt et. Cras non suscipit ligula, in porttitor metus. In hac habitasse platea dictumst. Quisque vestibulum varius nibh, et rutrum nibh varius eget.
-                Vestibulum varius convallis tortor, et elementum odio viverra vel. Duis imperdiet neque eros, ut dictum neque porttitor vel. Nunc id massa venenatis, posuere magna nec, tristique nibh. Integer posuere sem sit amet tempus
-                tempor. Curabitur odio ex, commodo ut venenatis porta, dapibus non dolor. Phasellus libero justo, vestibulum at imperdiet ut, iaculis id dui.</p>
-            <p>Vestibulum eget rutrum ex. Proin aliquet elit vel interdum iaculis. Fusce sodales sodales massa, non finibus elit vehicula ut. Ut eu odio egestas, tempus nisl at, porta neque. Morbi at tortor nec lorem varius faucibus. Donec
-                vitae nulla ultricies, ultricies urna ac, condimentum lorem. Duis id laoreet purus, in aliquam nunc. Etiam purus ligula, congue eget nisi non, ultrices placerat ante. Vestibulum convallis vulputate enim quis sollicitudin.
-                Nunc ut tincidunt erat, eget fermentum urna. Maecenas aliquam imperdiet lacus, in consequat tortor venenatis feugiat. Suspendisse potenti. Nulla nec imperdiet nunc, non feugiat metus.</p>
-            <p>Mauris neque urna, dictum eget orci non, tempus placerat leo. Aliquam erat volutpat. Vestibulum at massa purus. Quisque rhoncus aliquam diam, quis fringilla nulla euismod ac. Aenean sit amet tortor efficitur, sagittis sapien
-                sit amet, tincidunt orci. Aenean interdum urna vulputate mauris commodo, a euismod libero accumsan. Nam sed elit vel libero viverra sagittis sed sit amet nibh. Nulla gravida sem sed ultrices ornare. Praesent auctor orci
-                commodo ullamcorper lacinia. Phasellus ullamcorper elit nec ante ultrices mattis vitae nec mauris. Quisque scelerisque magna augue, vitae convallis mi tincidunt sed. Integer lacinia sed tortor ut laoreet. Duis tincidunt,
-                metus ac porttitor molestie, lectus elit efficitur lorem, et tristique arcu purus a neque. Fusce eget massa nec neque sodales eleifend. Aliquam et ante est.</p>
-            <p>Nunc ultricies venenatis egestas. Aenean blandit leo nec porttitor tincidunt. Maecenas semper pulvinar ornare. Sed consectetur interdum ex sed faucibus. Morbi fringilla odio eu accumsan condimentum. Integer tempus dui lectus,
-                ut iaculis nibh imperdiet vel. Duis at interdum tellus. Integer ac massa et ipsum malesuada imperdiet et eget purus. Vestibulum eleifend, ligula ut pellentesque vehicula, magna est ullamcorper leo, vitae ullamcorper est diam
-                vitae ex. Integer nunc elit, euismod suscipit justo ac, ultrices sodales eros. Aliquam ac sem in lorem viverra tincidunt. Cras dignissim neque a velit porta, at tincidunt sapien consequat.</p>
-            <p>Nam hendrerit nibh at pharetra blandit. Curabitur tincidunt ac odio a porta. Praesent dignissim dignissim justo non laoreet. Nam tincidunt porttitor malesuada. Nulla ex metus, blandit vulputate erat ut, hendrerit ultrices
-                metus. Nunc pulvinar vulputate velit, id blandit ipsum maximus a. Donec velit lorem, euismod vitae enim nec, egestas fermentum purus. Etiam ultricies urna sed enim ultrices, efficitur faucibus nunc cursus. Aliquam ac arcu
-                ullamcorper, convallis metus at, laoreet quam. Etiam interdum, mauris nec interdum elementum, metus lacus commodo ante, ac maximus tortor justo quis mauris. Cum sociis natoque penatibus et magnis dis parturient montes,
-                nascetur ridiculus mus. Fusce a erat nec nulla pellentesque viverra. Vestibulum ipsum nisl, efficitur a mi vel, condimentum porta enim. Cras consequat dui eget dui pretium, sit amet porta libero rhoncus.</p>
+           <p>There most common errors are validation errors and syntax errors. Information about the error is available by clicking on the status text
+           for a particular data source.</p>
+            <h4>Validation error</h4>
 
+            <p>Validation errors have a message with the text "ValidationError...". These errors are generated when validating your data against our validation rules.
+            </p>
+
+
+            <img src="images/validationError1.png" style="width:100%"/>
+
+            <p>The above validation error is due to the data is missing a resource of type dcat:Catalog.</p>
+
+            <pre>
+ValidationError{
+    className=<span style="color:lightcoral">'Catalog'</span>,
+    ruleId=<span style="color:lightcoral">112</span>,
+    ruleSeverity=<span style="color:lightcoral">error</span>,
+    ruleDescription=<span style="color:lightcoral">'dcat:Catalog does not exist.'</span>,
+    message=<span style="color:lightcoral">'null'</span>,
+    s=<span style="color:lightcoral">null</span>,
+    p=<span style="color:lightcoral">null</span>,
+    o=<span style="color:lightcoral">null</span>
+}
+                </pre>
+
+            <p>Some errors will have more details, like the one below.</p>
+
+
+            <img src="images/validationError2.png" style="width: 100%"/>
+<pre>
+ValidationError{
+    className=<span style="color:lightcoral">'CatalogRecord'</span>,
+    ruleId=<span style="color:lightcoral">143</span>,
+    ruleSeverity=<span style="color:lightcoral">error</span>,
+    ruleDescription=<span style="color:lightcoral">'dct:modified should be a literal typed as date or dateTime.'</span>,
+    message=<span style="color:lightcoral">'null'</span>,
+    s=<span style="color:lightcoral">http://nobelprize.org/datarecords/dcat#dr1</span>,
+    p=<span style="color:lightcoral">http://purl.org/dc/terms/modified</span>,
+    o=<span style="color:lightcoral"><b>2014-09-25</b></span>
+}
+    </pre>
+
+            <p>Explaining that the "o" (as in the object in the triple: subject predicate object), which is the string "2014-09-25", is the wrong type and should be one of either date or dateTime.</p>
 
             <h2 id="Errors-in-Kibana">Errors in Kibana</h2>
             <hr style="margin-top: 0px"/>
