@@ -42,18 +42,19 @@ public class FusekiUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-		Map<String,String> userMap = new HashMap<>();
-	
-		createTestUser("test_user", "password", "USER");
-		createTestUser("test_admin", "password", "ADMIN");
-		
+		Map<String,String> userMap;
+
+		if(!adminDataStore.hasAdminUser()){
+			createTestUser("test_admin", "password", "ADMIN");
+		}
+
 		try {
 			userMap = adminDataStore.getUser(username);
+			return new User(username, userMap.get("password"), Arrays.asList(new SimpleGrantedAuthority(userMap.get("role"))));
 		} catch (UserNotFoundException e) {
 			throw new UsernameNotFoundException(e.getMessage());
 		}
 		
-		return new User(username, userMap.get("password"), Arrays.asList(new SimpleGrantedAuthority(userMap.get("role"))));
 	}
 	
 	private void createTestUser(String username, String password, String role) {

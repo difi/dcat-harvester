@@ -1,27 +1,54 @@
-fuseki:
-  build: fuseki-test-server
-  ports:
-   - "3030:8080"
+version: "2"
 
+services:
+  fuseki:
+    build: fuseki-test-server
+    ports:
+     - "3030:8080"
+    networks:
+      platform:
 
-server:
-  build: dcat-harvester-server
-  ports:
-   - "8080:8080"
-  environment:
-   - JAVA_OPTS="-Dspring.profiles.active=docker"
-  volumes:
-   - ./logs:/usr/local/tomcat/logs:rw
-  links:
-   - fuseki
-   - elk
+  server:
+    build: dcat-harvester-server
+    ports:
+     - "8080:8080"
+    environment:
+     - JAVA_OPTS="-Dspring.profiles.active=docker"
+    volumes:
+     - ./logs:/usr/local/tomcat/logs:rw
+    networks:
+      platform:
 
+  elasticsearch:
+    build: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      logging:
+      platform:
 
-elk:
-  build: elk-server
-  ports:
-    - "5601:5601"
-    - "9200:9200"
-    - "9300:9300"
-  volumes:
-    - ./logs:/usr/local/tomcat/logs:rw
+  logstash:
+    build: logstash
+    entrypoint: /opt/logstash/bin/logstash -f /etc/logstash/conf.d/logstash.conf
+    volumes:
+      - ./logs:/usr/local/tomcat/logs:rw
+    depends_on:
+      - elasticsearch
+    networks:
+      logging:
+
+  kibana:
+    build: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      logging:
+
+networks:
+  platform:
+  logging:

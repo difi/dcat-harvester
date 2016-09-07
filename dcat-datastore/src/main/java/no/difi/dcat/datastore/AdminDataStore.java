@@ -335,16 +335,20 @@ public class AdminDataStore {
 		}
 	}
 
-	/**
-	 * @param username
-	 */
-	public void deleteUser(String username) {
-		// @TODO Use SPARQL update instead
 
-		// throw exception if the user has a dcatSource.
+	public boolean hasAdminUser(){
 
-		String user = String.format("http://dcat.difi.no/%s", username);
-		fuseki.drop(user);
+		Map<String, String> map = new HashMap<>();
+		String query = String.join("\n",
+			"ask  {",
+			"     ?userid foaf:accountName ?username ;",
+			"           difiMeta:password ?password ;",
+			"			difiMeta:email ?email ;",
+			"           difiMeta:role \"ADMIN\" ;",
+            ".",
+            "}");
+		return  fuseki.ask(query);
+
 	}
 
 	public List<User> getUsers() {
