@@ -90,9 +90,9 @@ public class AdminDcatDataService {
 		
 	}
 	
-	public void deleteUser(String username, User user) {
+	public void deleteUser(String usernameToDelete, User adminUser) {
 		
-		if (user.isAdmin()) {
+		if (adminUser.isAdmin()) {
 				
 				String query = String.join("\n",
 						"delete {",
@@ -107,13 +107,13 @@ public class AdminDcatDataService {
 
 				Map<String, String> map = new HashMap<>();
 
-				map.put("username", username);
+				map.put("username", usernameToDelete);
 
 				adminDataStore.fuseki.sparqlUpdate(query, map);	
 				if (adminDataStore.fuseki.ask("ask { ?user foaf:accountName ?username}", map)) {
-					logger.error("[user_admin] [fail] User was not deleted: {}", user.toString());
+					logger.error("[user_admin] [fail] User was not deleted: {}", adminUser.toString());
 				} else {
-					logger.info("[user_admin] [success] Deleted user: {}", user.toString());
+					logger.info("[user_admin] [success] Deleted user: {}", adminUser.toString());
 			}
 
 		} else {

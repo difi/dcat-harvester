@@ -24,3 +24,4 @@ dcat-harvester-app/dcat-harvester-app.iml
 dcat-generate-dummy-data/dcat-generate-dummy-data.iml
 
 dcat-harvester-app/brreg/intermediate/
+src/test/resources/fuseki-home

@@ -513,6 +513,38 @@ public class DataStoreTest {
 
 	}
 
+	@Test
+	public void testHasAdminUser() throws UserAlreadyExistsException {
+		no.difi.dcat.datastore.domain.User testAdmin1 = new no.difi.dcat.datastore.domain.User("", "testAdmin1", "", "", "ADMIN");
+		no.difi.dcat.datastore.domain.User testAdmin2 = new no.difi.dcat.datastore.domain.User("", "testAdmin2", "", "", "ADMIN");
+
+
+
+		Fuseki fuseki = new Fuseki("http://localhost:3131/admin/");
+
+		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
+		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore,
+			new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")));
+
+		assertFalse(adminDataStore.hasAdminUser());
+
+
+		adminDataStore.addUser(testAdmin1);
+		assertTrue(adminDataStore.hasAdminUser());
+
+		adminDataStore.addUser(testAdmin2);
+		assertTrue(adminDataStore.hasAdminUser());
+
+		adminDcatDataService.deleteUser(testAdmin1.getUsername(), testAdmin1);
+		assertTrue(adminDataStore.hasAdminUser());
+
+		adminDcatDataService.deleteUser(testAdmin2.getUsername(), testAdmin2);
+		adminDataStore.getUsers().stream().forEach(System.err::println);
+		assertFalse(adminDataStore.hasAdminUser());
+
+
+	}
+
 	public void fuseki() throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource("fuseki-embedded.ttl").getFile());
