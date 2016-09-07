@@ -146,7 +146,7 @@ public class DcatSource {
 
 
 	public String getUrl() {
-		return url;
+		return url.trim();
 	}
 
 	public String getUser() {
