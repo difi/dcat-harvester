@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,17 +8,25 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <title>Jumbotron Template for Bootstrap</title>
+    <title>DIFI - DCAT Harvester</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="css/jumbotron.css" rel="stylesheet">
+
+    <style>
+        li.active{
+            text-decoration:underline;
+        }
+    </style>
 </head>
 
-<body>
+<body data-spy="scroll" data-target="#myScrollspy" data-offset="20">
 
 <nav class="navbar navbar-static-top navbar-dark bg-inverse">
     <a class="navbar-brand" href="index.html">DCAT Harvester</a>
@@ -30,10 +37,10 @@
         <li class="nav-item">
             <a class="nav-link" href="userguide.html">User guide</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item active">
             <a class="nav-link" href="architecture.html">Architecture</a>
         </li>
-        <li class="nav-item active">
+        <li class="nav-item">
             <a class="nav-link" href="devguide.html">Dev guide</a>
         </li>
     </ul>
@@ -42,9 +49,116 @@
 
 <div class="container">
     <!-- Example row of columns -->
-    <div class="row">
+
+
+    <div class="row" style="padding-top:20px">
+
+
+        <div class="col-xs-12 col-md-9  bd-content">
+            <h2 id="Modules">Modules</h2>
+            <hr style="margin-top: 0px"/>
+
+           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla. Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at quam porta faucibus.</p>
+
+            <h4 id="dcat-admin-webapp">dcat-admin-webapp</h4>
+            <hr style="margin-top: 0px"/>
+            <p>Frontend admin interface</p>
+
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla. Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at quam porta faucibus.</p>
+
+
+
+            <h4 id="dcat-api-app">dcat-api-app</h4>
+            <hr style="margin-top: 0px"/>
+
+            <p>Api for the frontend and also for the RSS feeds and RDF/JSON-LD data.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla. Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at quam porta faucibus.</p>
+
+            <h4 id="dcat-datastore">dcat-datastore</h4>
+            <hr style="margin-top: 0px"/>
+
+            <p>Module with abstractions over Fuseki and Elasticsearch.</p>
+
+            <p>The <code>AdminDataStore</code> class provides methods for user administaration (except delete user) and DCAT source administration (exception deletion).
+                The method for adding a user can also be used for updating users, and there is logic for stopping multiple users having the same username.
+                Same goes for adding DCAT sources, however multiple users are allowed to add the same URL for harvesting. This doesn't mean they share the same source.
+                 </p>
+
+            <p><code>AdminDcatDataService</code> provides delete methods for both DCAT sources and users. When deleting a user, you first have to clean up all the users DCAT sources.</p>
+
+            <p><code>DcatDataStore</code> is the abstraction used for storing the harvested DCAT data from a DCAT source, and also for retrieving said data.</p>
+
+            <p>The <code>Fuseki</code> and <code>Elasticsearch</code> are simple abstractions above Fuseki and Elasticsearch to simplify inserts, updates and deletes.</p>
+
+            <h4 id="dcat-generate-dummy-data">dcat-generate-dummy-data</h4>
+            <hr style="margin-top: 0px"/>
+
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla. Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at quam porta faucibus.</p>
+
+            <h4 id="dcat-harvester-app">dcat-harvester-app</h4>
+            <hr style="margin-top: 0px"/>
+            <p>Module for harvesting DCAT data from sources.</p>
+
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla. Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at quam porta faucibus.</p>
+
+            <h2 id="Building-and-running">Building and running</h2>
+            <hr style="margin-top: 0px"/>
+
+            <h4>Prerequisits</h4>
+            <ul>
+                <li>docker</li>
+                <li>docker-compose</li>
+                <li>a unix operating system (for simplicity, not really a requirement)</li>
+                <li>Java 8</li>
+                <li>maven >3.3.x</li>
+            </ul>
+
+            <p>The easiest and simplest way to build and run the system is to use the command line script <code>./rundocker.sh</code> which will
+            build the Java modules, build all the docker images and then start the containers.</p>
+
+            <p>The admin interface should now be available at <a href="http://localhost:8080/dcat-admin-webapp/">http://localhost:8080/dcat-admin-webapp/</a></p>
+
+            <p>The docker setup is not intended for production use.</p>
+
+
+        </div>
+
+
+
+
+        <div class="col-xs-12 col-md-3 push-md-9 bd-sidebar hidden-print hidden-sm-down" style="position:fixed">
+
+
+            <nav id="myScrollspy">
+                <ul class="nav nav-pills nav-stacked">
+                    <li>
+                        <a href="#Modules">Modules</a>
+                    </li>
+                    <li style="margin-left:10px;">
+                        <a style="font-size: 0.9em" href="#dcat-admin-webapp">dcat-admin-webapp</a>
+                    </li>
+                    <li style="margin-left:10px;">
+                        <a style="font-size: 0.9em" href="#dcat-api-app">dcat-api-app</a>
+                    </li>
+                    <li style="margin-left:10px;">
+                        <a style="font-size: 0.9em" href="#dcat-datastore">dcat-datastore</a>
+                    </li>
+                    <li style="margin-left:10px;">
+                        <a style="font-size: 0.9em" href="#dcat-generate-dummy-data">dcat-generate-dummy-data</a>
+                    </li>
+                    <li style="margin-left:10px;">
+                        <a style="font-size: 0.9em" href="#dcat-harvester-app">dcat-harvester-app</a>
+                    </li>
+
+                    <li>
+                        <a href="#Building-and-running">Building and running</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
     </div>
+
 
     <hr>
 

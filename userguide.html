@@ -8,17 +8,25 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <title>Jumbotron Template for Bootstrap</title>
+    <title>DIFI - DCAT Harvester</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="css/jumbotron.css" rel="stylesheet">
+
+    <style>
+        li.active{
+            text-decoration:underline;
+        }
+    </style>
 </head>
 
-<body>
+<body data-spy="scroll" data-target="#myScrollspy" data-offset="20">
 
 <nav class="navbar navbar-static-top navbar-dark bg-inverse">
     <a class="navbar-brand" href="index.html">DCAT Harvester</a>
@@ -51,7 +59,7 @@
             <hr style="margin-top: 0px"/>
 
             <p>If this is the first time you fire up the system, you should go to <a href="http://localhost:8080/dcat-admin-webapp/login">http://localhost:8080/dcat-admin-webapp/login</a> in order to login</p>
-            <img src="images/login.png" style="width:100%" />
+            <img src="images/login.png" style="width:100%"/>
             <p>The default username and password are:</p>
             <table class="table">
                 <tr>
@@ -70,19 +78,20 @@
             <hr style="margin-top: 0px"/>
 
             <p>When you have logged into you account you will be presented with a form to add new data source and a list of your current data sources.
-            Do not worry if you do not see the "Users admin" button, it just means you are not an admin of the system.</p>
-            <img src="images/addDataSource.png" style="width:100%" />
+                Do not worry if you do not see the "Users admin" button, it just means you are not an admin of the system.</p>
+            <img src="images/addDataSource.png" style="width:100%"/>
 
-    <p>To add your first data source you will need to know the URL to that data source. I'm going to use a the following test file <a href="https://raw.githubusercontent.com/EmidioStani/dcat-ap_validator/master/tests-data/test-perfect.rdf">https://raw.githubusercontent.com/EmidioStani/dcat-ap_validator/master/tests-data/test-perfect.rdf</a></p>
+            <p>To add your first data source you will need to know the URL to that data source. I'm going to use a the following test file <a
+                    href="https://raw.githubusercontent.com/EmidioStani/dcat-ap_validator/master/tests-data/test-perfect.rdf">https://raw.githubusercontent.com/EmidioStani/dcat-ap_validator/master/tests-data/test-perfect.rdf</a></p>
 
             <p>Copy the link to your DCAT file (the URL) into the URL field, add a description and an organisation number if you have one. Then click on "Save".</p>
-            <img src="images/addDataSource2.png" style="width:100%" />
+            <img src="images/addDataSource2.png" style="width:100%"/>
 
             <p>Your data source has now been added to the system. To harvest your data source, just click on the harvest button.
                 After harvesting please wait a few seconds and then refresh the page to see if the harvest was successful.</p>
             <img src="images/addDataSource3.png" style="width:100%"/>
-            <p>This harvest was successful. If it was unsuccessful the status would say "error".  The current status "warning" just means that there is potentially
-            more information that could be added to your DCAT file according to the standard.</p>
+            <p>This harvest was successful. If it was unsuccessful the status would say "error". The current status "warning" just means that there is potentially
+                more information that could be added to your DCAT file according to the standard.</p>
 
 
             <h2 id="Monitor-harvest-status">Monitor harvest status</h2>
@@ -131,8 +140,8 @@
             <h2 id="Understand-errors">Understanding errors</h2>
             <hr style="margin-top: 0px"/>
 
-           <p>There most common errors are validation errors and syntax errors. Information about the error is available by clicking on the status text
-           for a particular data source.</p>
+            <p>There most common errors are validation errors and syntax errors. Information about the error is available by clicking on the status text
+                for a particular data source.</p>
             <h4>Validation error</h4>
 
             <p>Validation errors have a message with the text "ValidationError...". These errors are generated when validating your data against our validation rules.
@@ -160,7 +169,7 @@ ValidationError{
 
 
             <img src="images/validationError2.png" style="width: 100%"/>
-<pre>
+            <pre>
 ValidationError{
     className=<span style="color:lightcoral">'CatalogRecord'</span>,
     ruleId=<span style="color:lightcoral">143</span>,
@@ -179,72 +188,153 @@ ValidationError{
             <hr style="margin-top: 0px"/>
 
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis at laoreet odio, vel tincidunt metus. Nulla placerat turpis et convallis interdum. Sed ultricies quis elit id auctor. Phasellus vel egestas est. Ut condimentum
-                ante vitae accumsan lobortis. Ut luctus augue dui, quis tempus massa tincidunt et. Cras non suscipit ligula, in porttitor metus. In hac habitasse platea dictumst. Quisque vestibulum varius nibh, et rutrum nibh varius eget.
-                Vestibulum varius convallis tortor, et elementum odio viverra vel. Duis imperdiet neque eros, ut dictum neque porttitor vel. Nunc id massa venenatis, posuere magna nec, tristique nibh. Integer posuere sem sit amet tempus
-                tempor. Curabitur odio ex, commodo ut venenatis porta, dapibus non dolor. Phasellus libero justo, vestibulum at imperdiet ut, iaculis id dui.</p>
-            <p>Vestibulum eget rutrum ex. Proin aliquet elit vel interdum iaculis. Fusce sodales sodales massa, non finibus elit vehicula ut. Ut eu odio egestas, tempus nisl at, porta neque. Morbi at tortor nec lorem varius faucibus. Donec
-                vitae nulla ultricies, ultricies urna ac, condimentum lorem. Duis id laoreet purus, in aliquam nunc. Etiam purus ligula, congue eget nisi non, ultrices placerat ante. Vestibulum convallis vulputate enim quis sollicitudin.
-                Nunc ut tincidunt erat, eget fermentum urna. Maecenas aliquam imperdiet lacus, in consequat tortor venenatis feugiat. Suspendisse potenti. Nulla nec imperdiet nunc, non feugiat metus.</p>
-            <p>Mauris neque urna, dictum eget orci non, tempus placerat leo. Aliquam erat volutpat. Vestibulum at massa purus. Quisque rhoncus aliquam diam, quis fringilla nulla euismod ac. Aenean sit amet tortor efficitur, sagittis sapien
-                sit amet, tincidunt orci. Aenean interdum urna vulputate mauris commodo, a euismod libero accumsan. Nam sed elit vel libero viverra sagittis sed sit amet nibh. Nulla gravida sem sed ultrices ornare. Praesent auctor orci
-                commodo ullamcorper lacinia. Phasellus ullamcorper elit nec ante ultrices mattis vitae nec mauris. Quisque scelerisque magna augue, vitae convallis mi tincidunt sed. Integer lacinia sed tortor ut laoreet. Duis tincidunt,
-                metus ac porttitor molestie, lectus elit efficitur lorem, et tristique arcu purus a neque. Fusce eget massa nec neque sodales eleifend. Aliquam et ante est.</p>
-            <p>Nunc ultricies venenatis egestas. Aenean blandit leo nec porttitor tincidunt. Maecenas semper pulvinar ornare. Sed consectetur interdum ex sed faucibus. Morbi fringilla odio eu accumsan condimentum. Integer tempus dui lectus,
-                ut iaculis nibh imperdiet vel. Duis at interdum tellus. Integer ac massa et ipsum malesuada imperdiet et eget purus. Vestibulum eleifend, ligula ut pellentesque vehicula, magna est ullamcorper leo, vitae ullamcorper est diam
-                vitae ex. Integer nunc elit, euismod suscipit justo ac, ultrices sodales eros. Aliquam ac sem in lorem viverra tincidunt. Cras dignissim neque a velit porta, at tincidunt sapien consequat.</p>
-            <p>Nam hendrerit nibh at pharetra blandit. Curabitur tincidunt ac odio a porta. Praesent dignissim dignissim justo non laoreet. Nam tincidunt porttitor malesuada. Nulla ex metus, blandit vulputate erat ut, hendrerit ultrices
-                metus. Nunc pulvinar vulputate velit, id blandit ipsum maximus a. Donec velit lorem, euismod vitae enim nec, egestas fermentum purus. Etiam ultricies urna sed enim ultrices, efficitur faucibus nunc cursus. Aliquam ac arcu
-                ullamcorper, convallis metus at, laoreet quam. Etiam interdum, mauris nec interdum elementum, metus lacus commodo ante, ac maximus tortor justo quis mauris. Cum sociis natoque penatibus et magnis dis parturient montes,
-                nascetur ridiculus mus. Fusce a erat nec nulla pellentesque viverra. Vestibulum ipsum nisl, efficitur a mi vel, condimentum porta enim. Cras consequat dui eget dui pretium, sit amet porta libero rhoncus.</p>
+            <p>The history view of the DCAT source will not show every error message, and doesn't show any of the warnings. To see these you have to click on the
+                "Se mer i Kibanan" link.
+            </p>
+
+
+            <svg style="max-width:100%; height:auto; position:relative; " width="2226" height="2130" viewBox="0 0 2500 2500" preserveAspectRatio="both">
+
+                <image x="150" y="150" width="2226" height="2130" xlink:href="images/kibana1.png"/>
+
+
+              
+                <g transform="scale(2.0) rotate(-10) translate(430,690)">
+                    <path d="M 571 391 L 390.98 419.42" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-miterlimit="10" stroke-dasharray="9 9" pointer-events="none"/>
+                    <path d="M 384.31 420.48 L 392.5 414.63 L 390.98 419.42 L 393.9 423.52 Z" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/>
+                </g>
+
+                <rect height="110" width="440" x="2180" y="1650" style="fill: rgba(255,255,255,0.8)"/>
+
+                <g transform="translate(2200, 1700)">
+                    <text x="0" y="0" font-size="3em">Overview of rules</text>
+                    <text x="0" y="40" font-size="3em">that are broken</text>
+                </g>
+
+
+                <g transform="scale(2.0) translate(150,1550)">
+                    <g transform="rotate(-130) ">
+                        <path d="M 571 391 L 390.98 419.42" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-miterlimit="10" stroke-dasharray="9 9" pointer-events="none"/>
+                        <path d="M 384.31 420.48 L 392.5 414.63 L 390.98 419.42 L 393.9 423.52 Z" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/>
+                    </g>
+                </g>
+
+                <rect height="110" width="360" x="0" y="1600" style="fill: rgba(255,255,255,0.8)"/>
+
+
+                <g transform="translate(0, 1650)">
+                    <text x="0" y="0" font-size="3em">Each instance of</text>
+                    <text x="0" y="40" font-size="3em">a broken rule</text>
+                </g>
+
+            </svg>
+
+            <p>
+                The overview on the bottom right gives a list of all the broken rules, with a count for each rules showing how many times it was broken.
+                On the bottom left is the detailed view were you can explore a single instance of such a broken rule.
+            </p>
+
+            <p>
+                By clicking on a rule on the right, the entire view will filter based on that rules. On the left it is now possible to expand an event to look at the cause of that event.
+            </p>
+
+            <img src="images/kibana2.png" style="width:100%"/>
 
             <h2 id="User-management">User management</h2>
             <hr style="margin-top: 0px"/>
 
+            <p>After loggin in with an admin user, click on the blue "Users Admin" button to get to the admin page.</p>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis at laoreet odio, vel tincidunt metus. Nulla placerat turpis et convallis interdum. Sed ultricies quis elit id auctor. Phasellus vel egestas est. Ut condimentum
-                ante vitae accumsan lobortis. Ut luctus augue dui, quis tempus massa tincidunt et. Cras non suscipit ligula, in porttitor metus. In hac habitasse platea dictumst. Quisque vestibulum varius nibh, et rutrum nibh varius eget.
-                Vestibulum varius convallis tortor, et elementum odio viverra vel. Duis imperdiet neque eros, ut dictum neque porttitor vel. Nunc id massa venenatis, posuere magna nec, tristique nibh. Integer posuere sem sit amet tempus
-                tempor. Curabitur odio ex, commodo ut venenatis porta, dapibus non dolor. Phasellus libero justo, vestibulum at imperdiet ut, iaculis id dui.</p>
-            <p>Vestibulum eget rutrum ex. Proin aliquet elit vel interdum iaculis. Fusce sodales sodales massa, non finibus elit vehicula ut. Ut eu odio egestas, tempus nisl at, porta neque. Morbi at tortor nec lorem varius faucibus. Donec
-                vitae nulla ultricies, ultricies urna ac, condimentum lorem. Duis id laoreet purus, in aliquam nunc. Etiam purus ligula, congue eget nisi non, ultrices placerat ante. Vestibulum convallis vulputate enim quis sollicitudin.
-                Nunc ut tincidunt erat, eget fermentum urna. Maecenas aliquam imperdiet lacus, in consequat tortor venenatis feugiat. Suspendisse potenti. Nulla nec imperdiet nunc, non feugiat metus.</p>
-            <p>Mauris neque urna, dictum eget orci non, tempus placerat leo. Aliquam erat volutpat. Vestibulum at massa purus. Quisque rhoncus aliquam diam, quis fringilla nulla euismod ac. Aenean sit amet tortor efficitur, sagittis sapien
-                sit amet, tincidunt orci. Aenean interdum urna vulputate mauris commodo, a euismod libero accumsan. Nam sed elit vel libero viverra sagittis sed sit amet nibh. Nulla gravida sem sed ultrices ornare. Praesent auctor orci
-                commodo ullamcorper lacinia. Phasellus ullamcorper elit nec ante ultrices mattis vitae nec mauris. Quisque scelerisque magna augue, vitae convallis mi tincidunt sed. Integer lacinia sed tortor ut laoreet. Duis tincidunt,
-                metus ac porttitor molestie, lectus elit efficitur lorem, et tristique arcu purus a neque. Fusce eget massa nec neque sodales eleifend. Aliquam et ante est.</p>
-            <p>Nunc ultricies venenatis egestas. Aenean blandit leo nec porttitor tincidunt. Maecenas semper pulvinar ornare. Sed consectetur interdum ex sed faucibus. Morbi fringilla odio eu accumsan condimentum. Integer tempus dui lectus,
-                ut iaculis nibh imperdiet vel. Duis at interdum tellus. Integer ac massa et ipsum malesuada imperdiet et eget purus. Vestibulum eleifend, ligula ut pellentesque vehicula, magna est ullamcorper leo, vitae ullamcorper est diam
-                vitae ex. Integer nunc elit, euismod suscipit justo ac, ultrices sodales eros. Aliquam ac sem in lorem viverra tincidunt. Cras dignissim neque a velit porta, at tincidunt sapien consequat.</p>
-            <p>Nam hendrerit nibh at pharetra blandit. Curabitur tincidunt ac odio a porta. Praesent dignissim dignissim justo non laoreet. Nam tincidunt porttitor malesuada. Nulla ex metus, blandit vulputate erat ut, hendrerit ultrices
-                metus. Nunc pulvinar vulputate velit, id blandit ipsum maximus a. Donec velit lorem, euismod vitae enim nec, egestas fermentum purus. Etiam ultricies urna sed enim ultrices, efficitur faucibus nunc cursus. Aliquam ac arcu
-                ullamcorper, convallis metus at, laoreet quam. Etiam interdum, mauris nec interdum elementum, metus lacus commodo ante, ac maximus tortor justo quis mauris. Cum sociis natoque penatibus et magnis dis parturient montes,
-                nascetur ridiculus mus. Fusce a erat nec nulla pellentesque viverra. Vestibulum ipsum nisl, efficitur a mi vel, condimentum porta enim. Cras consequat dui eget dui pretium, sit amet porta libero rhoncus.</p>
+
+            <h3>Create a user</h3>
+
+            <img src="images/userAdmin1.png" style="width: 100%"/>
+
+            <p>To create a user, simply fill in the form on the left. There are two roles to choose from.</p>
+            <table class="table">
+                <tr>
+                    <th>Role</th>
+                    <th>Description</th>
+
+                </tr>
+                <tr>
+                    <td>USER</td>
+                    <td>
+                        <ul>
+
+                            <li>Add dcat sources</li>
+                            <li>Edit their own dcat sources</li>
+                            <li>Delete their own dcat sources</li>
+
+                        </ul>
+
+                    </td>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ADMIN</td>
+                    <td>
+                        <ul>
+
+                            <li>Add dcat sources</li>
+                            <li>Edit their own dcat sources</li>
+                            <li style="padding-bottom: 10px">Delete their own dcat sources</li>
+
+                            <li>Edit other user's dcat sources</li>
+                            <li>Delete other user's dcat sources</li>
+                            <li>Add user</li>
+                            <li>Edit user</li>
+                            <li>Delete user</li>
+
+
+                        </ul>
+
+                    </td>
+                </tr>
+            </table>
+
+            <p>After filling in the form, press the save button to add the user to the system.</p>
+
+            <h3>Edit a user</h3>
+
+            <p>To edit a user, click the edit button next to the user. The form on the left will now show the user's information.</p>
+
+
+            <img src="images/userAdmin2.png" style="width: 100%"/>
+
+            <p>You can now change everything expect for the username and click "Save" to save the changes.</p>
+
+            <h3>Delete a user</h3>
+
+            <p>To delete a user, click to "x" next to the user. A user can only be deleted if all their registered sources are deleted first.</p>
+
 
         </div>
 
-        <div class="col-xs-12 col-md-3 push-md-9 bd-sidebar hidden-print hidden-sm hidden-xs" style="position:fixed">
+        <div class="col-xs-12 col-md-3 push-md-9 bd-sidebar hidden-print hidden-sm-down" style="position:fixed">
 
 
-            <nav>
-                <div class="">
-                    <a class="" href="#Login">Login</a>
-                </div>
-                <div class="">
-                    <a class="" href="#Add-data-source">Add data source</a>
-                </div>
-                <div class="">
-                    <a class="" href="#Monitor-harvest-status">Monitor harvest status</a>
-                </div>
-                <div class="">
-                    <a class="" href="#Understand-errors">Understand errors</a>
-                </div>
-                <div class="">
-                    <a class="" href="#Errors-in-Kibana">Errors in Kibana</a>
-                </div>
-                <div class="">
-                    <a class="" href="#User-management">User management</a>
-                </div>
+            <nav id="myScrollspy">
+                <ul class="nav nav-pills nav-stacked">
+                    <li>
+                        <a href="#Login">Login</a>
+                    </li>
+                    <li>
+                        <a href="#Add-data-source">Add data source</a>
+                    </li>
+                    <li>
+                        <a href="#Monitor-harvest-status">Monitor harvest status</a>
+                    </li>
+                    <li>
+                        <a href="#Understand-errors">Understand errors</a>
+                    </li>
+                    <li>
+                        <a href="#Errors-in-Kibana">Errors in Kibana</a>
+                    </li>
+                    <li>
+                        <a href="#User-management">User management</a>
+                    </li>
+                </ul>
             </nav>
         </div>
 
