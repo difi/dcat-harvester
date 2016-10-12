@@ -52,12 +52,16 @@ public class DcatModuleGenerator implements ModuleGenerator {
 			el.setText(dcatModule.getOrgNumber());
 			element.addContent(el);
 		}
+		if (dcatModule.getAccessRight() != null) {
+			Element el = new Element("accessRight", NAMESPACE);
+			el.setText(dcatModule.getAccessRight());
+			element.addContent(el);
+		}
 		if (dcatModule.getSubjects() != null) {
 			for(String subject: dcatModule.getSubjects()) {
 				Element el = new Element("subject", NAMESPACE);
 				el.setText(subject);
 				element.addContent(el);
-				
 			}
 		}
 		if (dcatModule.getKeywords() != null) {

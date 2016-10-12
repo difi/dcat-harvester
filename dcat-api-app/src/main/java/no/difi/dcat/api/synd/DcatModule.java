@@ -26,6 +26,7 @@ public class DcatModule extends ModuleImpl {
 	private Date modified;
 	private String publisher;
 	private String orgNumber;
+	private String accessRight;
 	private List<String> subjects;
 	private List<String> keywords;
 	private List<String> formats;
@@ -34,12 +35,13 @@ public class DcatModule extends ModuleImpl {
 		super(DcatModule.class, URI);
 	}
 
-	public DcatModule(Date modified, String publisher, String orgNumber, List<String> subjects, List<String> keywords,
+	public DcatModule(Date modified, String publisher, String orgNumber, String accessRight, List<String> subjects, List<String> keywords,
 			List<String> formats) {
 		this();
 		this.modified = modified;
 		this.publisher = publisher;
 		this.orgNumber = orgNumber;
+		this.accessRight = accessRight;
 		this.subjects = subjects;
 		this.keywords = keywords;
 		this.formats = formats;
@@ -69,6 +71,14 @@ public class DcatModule extends ModuleImpl {
 		this.orgNumber = orgNumber;
 	}
 
+	public String getAccessRight() {
+		return accessRight;
+	}
+
+	public void setAccessRight(String accessRight) {
+		this.accessRight = accessRight;
+	}	
+	
 	public List<String> getSubjects() {
 		return subjects;
 	}
@@ -104,6 +114,8 @@ public class DcatModule extends ModuleImpl {
 		// Dataset
 		
 		dcatModule.setPublisher(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.publisher, FOAF.name));
+		
+		dcatModule.setAccessRight(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.accessRights));
 		
 		StmtIterator keywordIterator = dataset
 				.listProperties(DCAT.keyword);
@@ -166,9 +178,12 @@ public class DcatModule extends ModuleImpl {
 		setModified(module.getModified());
 		setPublisher(module.getPublisher());
 		setOrgNumber(module.getOrgNumber());
+		setAccessRight(module.getAccessRight());
 		setSubjects(module.getSubjects());
 		setKeywords(module.getKeywords());
 		setFormats(module.getKeywords());
 	}
+
+
 
 }
