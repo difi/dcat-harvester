@@ -311,18 +311,11 @@ public class CrawlerJob implements Runnable {
         final String[] message = {null};
 
         boolean validated = DcatValidation.validate(model, (error) -> {
-            if (error.isError()) {
-                status[0] = error.getRuleSeverity();
-                message[0] = error.toString();
-            }
-            if (error.isWarning()) {
-                if (status[0] != ValidationError.RuleSeverity.error) {
-                    status[0] = error.getRuleSeverity();
-                }
-            } else {
-                status[0] = error.getRuleSeverity();
-            }
-            logger.error("[validation_" + error.getRuleSeverity() + "] " + error.toString() + ", " + this.dcatSource.toString());
+
+        	status[0] = error.getRuleSeverity();
+        	message[0] = error.toString();
+            
+        	logger.error("[validation_" + error.getRuleSeverity() + "] " + error.toString() + ", " + this.dcatSource.toString());
         });
 
         Resource rdfStatus = null;

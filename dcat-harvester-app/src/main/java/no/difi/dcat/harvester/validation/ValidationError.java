@@ -22,7 +22,7 @@ public class ValidationError{
             ruleDescription = next.getLiteral("Rule_Description").toString();
 
             Literal messageLiteral = next.getLiteral("message");
-            if(message != null){
+            if(messageLiteral != null){
                   message = messageLiteral.toString();
             }
             s = next.get("s");
