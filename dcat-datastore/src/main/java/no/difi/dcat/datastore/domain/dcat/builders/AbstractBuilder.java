@@ -43,6 +43,25 @@ public abstract class AbstractBuilder {
 		return null;
 	}
 	
+	public static List<String> extractMultipleStrings(Resource resource, Property property){
+		ArrayList<String> list = new ArrayList<String>();
+		
+		StmtIterator iterator = resource.listProperties(property);
+		while (iterator.hasNext()) {
+			Statement statement = iterator.next();
+
+			if (statement.getObject().isLiteral()) {
+				list.add(statement.getString() + " literal");
+			}else if (statement.getObject().isResource()) {
+				list.add(statement.getObject().asResource().getURI() + " res");
+			}else if (statement.getObject().isAnon()) {
+				list.add(statement.getObject().asResource().getURI() + " anon");
+			}				
+		}
+				
+		return list;
+	}
+	
 	public static Map<String, String> extractLanguageLiteral(Resource resource, Property property) {
 		Map<String,String> map = new HashMap<>();
 		StmtIterator iterator = resource.listProperties(property);

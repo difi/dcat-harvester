@@ -36,5 +36,7 @@ public class DCAT {
 	public static final Property contactPoint = model.createProperty(NS, "contactPoint");
 
 	public static final Property theme = model.createProperty(NS, "theme");
+	
+	public static final Property downloadURL = model.createProperty(NS, "downloadURL");
 
 }

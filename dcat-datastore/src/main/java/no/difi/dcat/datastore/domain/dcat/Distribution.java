@@ -1,6 +1,8 @@
 package no.difi.dcat.datastore.domain.dcat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Distribution {
@@ -10,7 +12,10 @@ public class Distribution {
 	private Map<String,String> description;
 	private String accessURL;
 	private String license;
-	private String format;
+	private List<String> format;
+	private List<String> pages;
+	private List<String> conformsTo;
+	private List<String> downloadURL;
 	
 	private Dataset dataset;
 	
@@ -56,12 +61,44 @@ public class Distribution {
 	public void setLicense(String license) {
 		this.license = license;
 	}
-	public String getFormat() {
+	public List<String> getFormat() {
+		if (format == null) {
+			format = new ArrayList<String>();
+		}
 		return format;
 	}
-	public void setFormat(String format) {
+	public void setFormat(List<String> format) {
 		this.format = format;
 	}
+	public List<String> getPages() {
+		if (pages == null) {
+			pages = new ArrayList<String>();
+		}
+		return pages;
+	}
+	public void setPages(List<String> pages) {
+		this.pages = pages;
+	}
+	public List<String> getConformsTo() {
+		if (conformsTo == null) {
+			conformsTo = new ArrayList<String>();
+		}
+		return conformsTo;
+	}
+	public void setConformsTo(List<String> conformsTo) {
+		this.conformsTo = conformsTo;
+	}
+	public List<String> getDownloadURL() {
+		if (downloadURL == null) {
+			downloadURL = new ArrayList<String>();
+		}
+		return downloadURL;
+	}
+	public void setDownloadURL(List<String> downloadURL) {
+		this.downloadURL = downloadURL;
+	}
+	
+	
 	
 	
 }
