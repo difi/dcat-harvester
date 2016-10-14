@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import no.difi.dcat.datastore.domain.dcat.Contact;
 import no.difi.dcat.datastore.domain.dcat.Publisher;
+import no.difi.dcat.datastore.domain.dcat.Temporal;
 import no.difi.dcat.datastore.domain.dcat.vocabulary.DCAT;
 
 public abstract class AbstractBuilder {
@@ -132,6 +133,26 @@ public abstract class AbstractBuilder {
 		} catch (Exception e) {
 			logger.warn("Error when extracting property {} from resource {}", DCTerms.publisher, resource.getURI(), e);
 		}
+		
+		return null;
+	}
+	
+	public static Temporal extractTemporal(Resource resource){
+		try{
+			Temporal temporal = new Temporal();
+			
+			Statement property = resource.getProperty(DCTerms.temporal);
+			Resource object = resource.getModel().getResource(property.getObject().asResource().getURI());
+			
+			temporal.setId(object.getURI());
+			temporal.setStartDate(extractAsString(object,ResourceFactory.createProperty("http://schema.org/startDate")));
+			temporal.setEndDate(extractAsString(object, ResourceFactory.createProperty("http://schema.org/endDate")));
+						
+			return temporal;
+		}catch (Exception e) {
+			logger.warn("Error while extracting property {] from resource {}", DCTerms.temporal, resource.getURI(), e);
+		}
+		
 		
 		return null;
 	}

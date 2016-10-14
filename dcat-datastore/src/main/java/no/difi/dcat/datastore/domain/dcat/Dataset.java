@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+
 public class Dataset {
 	
 	private String id;
@@ -14,9 +15,17 @@ public class Dataset {
 	private Publisher publisher;
 	private Date issued;
 	private Date modified;
-	private String language;
+	private List<String> languages;
 	private String landingPage;
 	
+	private String identifier;
+	private String accessRights;
+	private String frequency;
+	private List<String> themes;
+	private List<String> related;
+	private List<String> spatial;
+	
+	private Temporal temporal;
 	private Catalog catalog;
 	private List<Distribution> distributions;
 	
@@ -80,11 +89,11 @@ public class Dataset {
 	public void setModified(Date modified) {
 		this.modified = modified;
 	}
-	public String getLanguage() {
-		return language;
+	public List<String> getLanguages() {
+		return languages;
 	}
-	public void setLanguage(String language) {
-		this.language = language;
+	public void setLanguages(List<String> languages) {
+		this.languages = languages;
 	}
 	public String getLandingPage() {
 		return landingPage;
@@ -92,7 +101,50 @@ public class Dataset {
 	public void setLandingPage(String landingPage) {
 		this.landingPage = landingPage;
 	}
+	public String getIdentifier() {
+		return identifier;
+	}
+	public String getAccessRights() {
+		return accessRights;
+	}
+	public String getFrequency() {
+		return frequency;
+	}
+	public List<String> getThemes() {
+		return themes;
+	}
+	public List<String> getRelated() {
+		return related;
+	}
+	public List<String> getSpatial() {
+		return spatial;
+	}
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+	public void setAccessRights(String accessRights) {
+		this.accessRights = accessRights;
+	}
+	public void setFrequency(String frequency) {
+		this.frequency = frequency;
+	}
+	public void setThemes(List<String> themes) {
+		this.themes = themes;
+	}
+	public void setRelated(List<String> related) {
+		this.related = related;
+	}
+	public void setSpatial(List<String> spatial) {
+		this.spatial = spatial;
+	}
+	public Temporal getTemporal() {
+		return temporal;
+	}
+	public void setTemporal(Temporal temporal) {
+		this.temporal = temporal;
+	}
 
+	
 	
 	
 }

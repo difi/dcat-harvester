@@ -61,10 +61,18 @@ public class DatasetBuilder extends AbstractBuilder {
 			created.setDescription(extractLanguageLiteral(dataset, DCTerms.description));
 			created.setIssued(extractDate(dataset, DCTerms.issued));
 			created.setModified(extractDate(dataset, DCTerms.modified));
-			created.setLanguage(extractAsString(dataset, DCTerms.language));
+			created.setLanguages(extractMultipleStrings(dataset, DCTerms.language));
 			created.setLandingPage(extractAsString(dataset, DCAT.landingPage));
 			created.setKeywords(extractMultipleLanguageLiterals(dataset, DCAT.keyword));
 			created.setContact(extractContact(dataset));
+			created.setIdentifier(extractAsString(dataset, DCTerms.identifier));
+			created.setAccessRights(extractAsString(dataset, DCTerms.accessRights));
+			created.setFrequency(extractAsString(dataset, DCTerms.accrualPeriodicity));
+			created.setThemes(extractMultipleStrings(dataset, DCAT.theme));
+			created.setRelated(extractMultipleStrings(dataset, DCTerms.relation));
+			created.setSpatial(extractMultipleStrings(dataset, DCTerms.spatial));
+			created.setTemporal(extractTemporal(dataset));
+			
 		}
 		if (catalog != null) {
 			created.setCatalog(CatalogBuilder.create(catalog));
