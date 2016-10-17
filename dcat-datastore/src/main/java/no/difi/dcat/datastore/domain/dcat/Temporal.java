@@ -1,6 +1,5 @@
 package no.difi.dcat.datastore.domain.dcat;
 
-import org.apache.jena.vocabulary.DCTerms;
 
 /**
  * Represents the dct:temporal property of
@@ -11,14 +10,10 @@ import org.apache.jena.vocabulary.DCTerms;
  */
 public class Temporal {
 
-	private String type;
 	private String id;
 	private String startDate;
 	private String endDate;
 
-	public Temporal(){
-		type = DCTerms.PeriodOfTime.getLocalName();
-	}
 
 	public String getId() {
 		return id;
@@ -42,13 +37,5 @@ public class Temporal {
 
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
-	}
-
-	public String getType() {
-		return type;
-	}
-	
-	public void setType(String type) {	
-		this.type = type;
 	}
 }
