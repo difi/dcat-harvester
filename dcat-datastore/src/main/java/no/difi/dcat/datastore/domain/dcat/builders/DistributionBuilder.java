@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
 
@@ -61,9 +60,7 @@ public class DistributionBuilder extends AbstractBuilder {
             created.setFormat(extractMultipleStrings(distribution, DCTerms.format));
             created.setDownloadURL(extractMultipleStrings(distribution, DCAT.downloadURL));
             created.setConformsTo(extractMultipleStrings(distribution, DCTerms.conformsTo));
-            //TODO: fiks når utforming av page er avklart
-//            created.setPages(extractMultipleStrings(distribution, FOAF.page)); 
-            
+            created.setPages(extractMultiplePages(distribution)); 
         }
         if (dataset != null && dataset != null) {
             created.setDataset(DatasetBuilder.create(dataset, catalog));

@@ -13,7 +13,7 @@ public class Distribution {
 	private String accessURL;
 	private String license;
 	private List<String> format;
-	private List<String> pages;
+	private List<Document> pages;
 	private List<String> conformsTo;
 	private List<String> downloadURL;
 	
@@ -70,13 +70,13 @@ public class Distribution {
 	public void setFormat(List<String> format) {
 		this.format = format;
 	}
-	public List<String> getPages() {
+	public List<Document> getPages() {
 		if (pages == null) {
-			pages = new ArrayList<String>();
+			pages = new ArrayList<Document>();
 		}
 		return pages;
 	}
-	public void setPages(List<String> pages) {
+	public void setPages(List<Document> pages) {
 		this.pages = pages;
 	}
 	public List<String> getConformsTo() {
@@ -97,8 +97,9 @@ public class Distribution {
 	public void setDownloadURL(List<String> downloadURL) {
 		this.downloadURL = downloadURL;
 	}
-	
-	
-	
-	
 }
+	
+	
+	
+	
+

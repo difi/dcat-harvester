@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.difi.dcat.datastore.domain.dcat.Contact;
+import no.difi.dcat.datastore.domain.dcat.Document;
 import no.difi.dcat.datastore.domain.dcat.Publisher;
 import no.difi.dcat.datastore.domain.dcat.Temporal;
 import no.difi.dcat.datastore.domain.dcat.vocabulary.DCAT;
@@ -52,11 +54,11 @@ public abstract class AbstractBuilder {
 			Statement statement = iterator.next();
 
 			if (statement.getObject().isLiteral()) {
-				list.add(statement.getString() + " literal");
+				list.add(statement.getString());
 			}else if (statement.getObject().isResource()) {
-				list.add(statement.getObject().asResource().getURI() + " res");
+				list.add(statement.getObject().asResource().getURI());
 			}else if (statement.getObject().isAnon()) {
-				list.add(statement.getObject().asResource().getURI() + " anon");
+				list.add(statement.getObject().asResource().getURI());
 			}				
 		}
 				
@@ -151,9 +153,32 @@ public abstract class AbstractBuilder {
 			return temporal;
 		}catch (Exception e) {
 			logger.warn("Error while extracting property {] from resource {}", DCTerms.temporal, resource.getURI(), e);
+		}	
+		
+		return null;
+	}
+	
+	
+	public static List<Document> extractMultiplePages(Resource resource){
+		ArrayList<Document> docs = new ArrayList<Document>();
+		try{
+			StmtIterator iter = resource.listProperties(FOAF.page);//finds nothing
+
+			while (iter.hasNext()) {
+				Statement st = iter.next();
+
+				Document d1 = new Document();
+				
+				d1.setId(st.getObject().toString());
+				if (st.getObject().isResource()) {
+					d1.setTopic(st.getObject().asResource().getProperty(FOAF.topic).getObject().toString());
+					docs.add(d1);
+				}
+			}
+			return docs;
+		}catch (Exception e) {
+			// TODO: handle exception
 		}
-		
-		
 		return null;
 	}
 }
