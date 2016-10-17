@@ -37,6 +37,8 @@ public class DCAT {
 
 	public static final Property theme = model.createProperty(NS, "theme");
 	
+	public static final Property themeTaxonomy = model.createProperty(NS, "themeTaxonomy");
+	
 	public static final Property downloadURL = model.createProperty(NS, "downloadURL");
 
 }

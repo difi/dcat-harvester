@@ -158,11 +158,10 @@ public abstract class AbstractBuilder {
 	}
 	
 	
-	public static List<Document> extractMultiplePages(Resource resource){
+	public static List<Document> extractMultipleDocuments(Resource resource, Property property){
 		ArrayList<Document> docs = new ArrayList<Document>();
 		try{
-			StmtIterator iter = resource.listProperties(FOAF.page);//finds nothing
-
+			StmtIterator iter = resource.listProperties(property);
 			while (iter.hasNext()) {
 				Statement st = iter.next();
 
@@ -179,5 +178,21 @@ public abstract class AbstractBuilder {
 			// TODO: handle exception
 		}
 		return null;
+	}
+	
+	public static Document extractDocument(Resource resource, Property property){
+
+		Statement statement = resource.getProperty(property);
+		if (statement != null) {
+			Document doc = new Document();
+			
+			doc.setId(statement.getObject().toString());
+			if (statement.getObject().isResource()) {
+				doc.setTopic(statement.getObject().asResource().getProperty(property).getObject().toString());
+			}
+			return doc;
+		}else {
+			return null;
+		}
 	}
 }
