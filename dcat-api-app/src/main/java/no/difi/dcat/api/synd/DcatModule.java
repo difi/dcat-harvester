@@ -24,9 +24,12 @@ public class DcatModule extends ModuleImpl {
 	private static final long serialVersionUID = -2270589093650785086L;
 
 	private Date modified;
+	private String title;
+	private String description;
 	private String publisher;
 	private String orgNumber;
 	private String accessRight;
+	private String landingPage;
 	private List<String> subjects;
 	private List<String> keywords;
 	private List<String> formats;
@@ -36,7 +39,7 @@ public class DcatModule extends ModuleImpl {
 	}
 
 	public DcatModule(Date modified, String publisher, String orgNumber, String accessRight, List<String> subjects, List<String> keywords,
-			List<String> formats) {
+			List<String> formats, String title, String description, String landingPage) {
 		this();
 		this.modified = modified;
 		this.publisher = publisher;
@@ -45,6 +48,9 @@ public class DcatModule extends ModuleImpl {
 		this.subjects = subjects;
 		this.keywords = keywords;
 		this.formats = formats;
+		this.title = title;
+		this.description = description;
+		this.landingPage = landingPage;
 	}
 
 	public Date getModified() {
@@ -103,6 +109,30 @@ public class DcatModule extends ModuleImpl {
 		this.formats = formats;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title){
+		this.title = title;
+	}
+	
+	public String getDescription(){
+		return description;
+	}
+	
+	public void setDescription(String description){
+		this.description = description;
+	}
+	
+	public String getLandingPage() {
+		return landingPage;
+	}
+
+	public void setLandingPage(String landingPage) {
+		this.landingPage = landingPage;
+	}
+
 	static DcatModule getInstance(Resource dataset) {
 
 		DcatModule dcatModule = new DcatModule();
@@ -116,6 +146,10 @@ public class DcatModule extends ModuleImpl {
 		dcatModule.setPublisher(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.publisher, FOAF.name));
 		
 		dcatModule.setAccessRight(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.accessRights));
+		
+		dcatModule.setTitle(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.title));
+		dcatModule.setDescription(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.description));
+		dcatModule.setLandingPage(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCAT.landingPage));
 		
 		StmtIterator keywordIterator = dataset
 				.listProperties(DCAT.keyword);
@@ -182,7 +216,10 @@ public class DcatModule extends ModuleImpl {
 		setSubjects(module.getSubjects());
 		setKeywords(module.getKeywords());
 		setFormats(module.getKeywords());
+		setTitle(module.getTitle());
+		setDescription(module.getDescription());		
 	}
+
 
 
 

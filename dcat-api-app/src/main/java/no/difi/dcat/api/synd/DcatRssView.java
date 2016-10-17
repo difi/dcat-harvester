@@ -38,15 +38,15 @@ public class DcatRssView extends AbstractRssFeedView {
 	                Object feedObj = ((List<?>) ob).get(i);
 	                DcatFeed dcatFeed = (DcatFeed)feedObj;
 	    		Item item = new Item();
-	    		item.setTitle(dcatFeed.getTitle());
-	    		item.setLink(dcatFeed.getLink());
+//	    		item.setTitle(dcatFeed.getTitle());
+//	    		item.setLink(dcatFeed.getLink());
 	    		item.setPubDate(dcatFeed.getPubDate());
 	    		Guid guid = new Guid();
 	    		guid.setValue(dcatFeed.getGuid());
 	    		item.setGuid(guid);
-	    		Description description = new Description();
-	    		description.setValue(dcatFeed.getDescription());
-	    		item.setDescription(description);
+//	    		Description description = new Description();
+//	    		description.setValue(dcatFeed.getDescription());
+//	    		item.setDescription(description);
 				item.getModules().add(dcatFeed.getDcatModule());
 	    		items.add(item);
 	           }
