@@ -72,6 +72,7 @@ public class DatasetBuilder extends AbstractBuilder {
 			created.setRelated(extractMultipleStrings(dataset, DCTerms.relation));
 			created.setSpatial(extractMultipleStrings(dataset, DCTerms.spatial));
 			created.setTemporal(extractTemporal(dataset));
+			created.setPublisher(extractPublisher(dataset));
 			
 		}
 		if (catalog != null) {
