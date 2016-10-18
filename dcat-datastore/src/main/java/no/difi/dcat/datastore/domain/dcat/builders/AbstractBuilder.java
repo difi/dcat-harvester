@@ -126,9 +126,16 @@ public abstract class AbstractBuilder {
 		try {
 			Publisher publisher = new Publisher();
 			Statement property = resource.getProperty(DCTerms.publisher);
-			Resource object = resource.getModel().getResource(property.getObject().asResource().getURI());
-			publisher.setId(object.getURI());
-			publisher.setName(extractAsString(object, FOAF.name));
+			
+			if (property.getObject().isResource()) {
+	
+				Resource object = property.getObject().asResource();
+						
+				publisher.setId(object.getURI());
+				publisher.setName(extractAsString(object, FOAF.name));
+				publisher.setIdentifier(extractAsString(object, DCTerms.identifier));
+				publisher.setType(extractAsString(object, DCTerms.type));
+			}
 			
 			return publisher;
 		} catch (Exception e) {

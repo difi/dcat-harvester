@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Distribution {
-	
+public class Distribution implements Cloneable{
+
 	private String id;
 	private Map<String,String> title;
 	private Map<String,String> description;
@@ -16,9 +16,9 @@ public class Distribution {
 	private List<Document> pages;
 	private List<String> conformsTo;
 	private List<String> downloadURL;
-	
+
 	private Dataset dataset;
-	
+
 	public String getId() {
 		return id;
 	}
@@ -97,9 +97,43 @@ public class Distribution {
 	public void setDownloadURL(List<String> downloadURL) {
 		this.downloadURL = downloadURL;
 	}
+
+
+	@Override
+	public Distribution clone(){
+		Distribution clone = new Distribution();
+
+		clone.setAccessURL(accessURL);
+		clone.setConformsTo(conformsTo);
+		clone.setDataset(dataset);
+		clone.setDescription(description);
+		clone.setDownloadURL(downloadURL);
+		clone.setFormat(format);
+		clone.setId(id);
+		clone.setLicense(license);
+		clone.setPages(pages);
+		clone.setTitle(title);
+
+		return clone;
+	}
+	public static Distribution[] splitFormat(Distribution distribution) {
+		Distribution[] distributions = new Distribution[distribution.getFormat().size()];
+		
+		for (int i = 0; i < distributions.length; i++) {
+					distributions[i] = distribution.clone();
+					
+					distributions[i].setId(distributions[i].getId() + "/" + i);
+					
+					List<String> format = new ArrayList<String>();
+					format.add(distribution.getFormat().get(i));
+					distributions[i].setFormat(format);
+		}
+		
+		return distributions;
+	}
 }
-	
-	
-	
-	
+
+
+
+
 

@@ -59,19 +59,17 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
         List<Distribution> distributions = new DistributionBuilder(model).build();
         logger.info("Number of distribution documents {} for dcat source {}", distributions.size(), dcatSource.getId());
         for (Distribution distribution : distributions) {
-            String json = gson.toJson(distribution);
 
-            IndexRequest indexRequest = new IndexRequest(DCAT_INDEX,DISTRIBUTION_TYPE, distribution.getId());
-            indexRequest.source(gson.toJson(distribution));
+            	IndexRequest indexRequest = new IndexRequest(DCAT_INDEX,DISTRIBUTION_TYPE, distribution.getId());
+            	indexRequest.source(gson.toJson(distribution));
 
-            logger.debug("Add distribution document {} to bulk request", distribution.getId());
-            bulkRequest.add(indexRequest);
+            	logger.debug("Add distribution document {} to bulk request", distribution.getId());
+            	bulkRequest.add(indexRequest);
         }
 
         List<Dataset> datasets = new DatasetBuilder(model).build();
         logger.info("Number of distribution documents {} for dcat source {}", datasets.size(), dcatSource.getId());
         for (Dataset dataset : datasets) {
-            String json = gson.toJson(dataset);
 
             IndexRequest indexRequest = new IndexRequest(DCAT_INDEX,DATASET_TYPE,dataset.getId());
             indexRequest.source(gson.toJson(dataset));
@@ -85,5 +83,6 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
             //TODO: process failures by iterating through each bulk response item?
         }
     }
+    
 
 }
