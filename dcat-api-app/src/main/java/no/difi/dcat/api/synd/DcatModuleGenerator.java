@@ -47,6 +47,11 @@ public class DcatModuleGenerator implements ModuleGenerator {
 	@Override
 	public void generate(Module module, Element element) {
 		DcatModule dcatModule = (DcatModule) module;
+		if (dcatModule.getIdentifier() != null) {
+			Element el = new Element("identifier", NSDCT);
+			el.setText(dcatModule.getIdentifier());
+			element.addContent(el);
+		}
 		if (dcatModule.getTitle() != null) {
 			Element el = new Element("title", NSDCT);
 			el.setText(dcatModule.getTitle());
@@ -69,12 +74,16 @@ public class DcatModuleGenerator implements ModuleGenerator {
 		}
 		if (dcatModule.getPublisher() != null) {
 			Element el = new Element("publisher", NSDCT);
-			el.setText(dcatModule.getPublisher());
-			element.addContent(el);
-		}
-		if (dcatModule.getOrgNumber() != null) {
-			Element el = new Element("orgnumber", NAMESPACE);
-			el.setText(dcatModule.getOrgNumber());
+			
+			el.addContent(new Element("name", NSFOAF).setText(dcatModule.getPublisher()));
+			
+			if (dcatModule.getOrgNumber() != null) {
+				Element el2 = new Element("identifier", NSDCT);
+			
+				el2.setText(dcatModule.getOrgNumber());
+				el.addContent(el2);
+			}
+			
 			element.addContent(el);
 		}
 		if (dcatModule.getAccessRights() != null) {

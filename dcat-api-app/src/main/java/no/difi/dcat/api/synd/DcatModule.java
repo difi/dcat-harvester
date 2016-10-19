@@ -25,6 +25,7 @@ public class DcatModule extends ModuleImpl {
 
 	private Date modified;
 	private String title;
+	private String identifier;
 	private String description;
 	private String publisher;
 	private String orgNumber;
@@ -39,7 +40,7 @@ public class DcatModule extends ModuleImpl {
 	}
 
 	public DcatModule(Date modified, String publisher, String orgNumber, String accessRight, List<String> subjects, List<String> keywords,
-			List<String> formats, String title, String description, String landingPage) {
+			List<String> formats, String title, String description, String landingPage, String identifier) {
 		this();
 		this.modified = modified;
 		this.publisher = publisher;
@@ -51,6 +52,7 @@ public class DcatModule extends ModuleImpl {
 		this.title = title;
 		this.description = description;
 		this.landingPage = landingPage;
+		this.identifier = identifier;
 	}
 
 	public Date getModified() {
@@ -133,6 +135,14 @@ public class DcatModule extends ModuleImpl {
 		this.landingPage = landingPage;
 	}
 
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
 	static DcatModule getInstance(Resource dataset) {
 
 		DcatModule dcatModule = new DcatModule();
@@ -146,6 +156,7 @@ public class DcatModule extends ModuleImpl {
 		dcatModule.setPublisher(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.publisher, FOAF.name));
 		
 		dcatModule.setAccessRights(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.accessRights));
+		dcatModule.setIdentifier(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.identifier));
 		
 		dcatModule.setTitle(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.title));
 		dcatModule.setDescription(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.description));
@@ -217,7 +228,8 @@ public class DcatModule extends ModuleImpl {
 		setKeywords(module.getKeywords());
 		setFormats(module.getKeywords());
 		setTitle(module.getTitle());
-		setDescription(module.getDescription());		
+		setDescription(module.getDescription());
+		setIdentifier(module.getIdentifier());
 	}
 
 
