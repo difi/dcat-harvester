@@ -2,7 +2,10 @@ package no.difi.dcat.harvester.crawler.converters;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.jena.rdf.model.Model;
@@ -12,7 +15,6 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.ResIterator;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.slf4j.Logger;
@@ -95,20 +97,36 @@ public class BrregAgentConverter {
 		if (!uri.endsWith(".xml")) {
 			uri = uri + ".xml";
 		}
-			
-		try {
-			URL url = new URL(uri);
-			String content = brregCache.get(url);
-			InputStream inputStream = new ByteArrayInputStream(content.getBytes());
-			Model incomingModel = convert(inputStream);
-			
-			removeDuplicateProperties(model, incomingModel, FOAF.name); //TODO: remove all duplicate properties?
-			
-			model.add(incomingModel);
-			
-		} catch (Exception e) {
-			logger.warn("Failed to look up publisher: {}", uri, e);
+		if (remoteFileExsists(uri)) {
+
+			try {
+				URL url = new URL(uri);
+				String content = brregCache.get(url);
+				InputStream inputStream = new ByteArrayInputStream(content.getBytes());
+				Model incomingModel = convert(inputStream);
+
+				removeDuplicateProperties(model, incomingModel, FOAF.name); //TODO: remove all duplicate properties?
+
+				model.add(incomingModel);
+
+			} catch (Exception e) {
+				logger.warn("Failed to look up publisher: {}", uri, e);
+			}	
 		}	
+	}
+
+	private boolean remoteFileExsists(String uri) {
+		try {
+			HttpURLConnection.setFollowRedirects(false);
+			HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
+			connection.setRequestMethod("HEAD");
+			return (connection.getResponseCode() == HttpURLConnection.HTTP_OK);
+			
+		} catch (MalformedURLException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
 	}
 
 	private void removeDuplicateProperties(Model existingModel, Model incomingModel, Property property) {

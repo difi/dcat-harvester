@@ -150,15 +150,20 @@ public abstract class AbstractBuilder {
 			Temporal temporal = new Temporal();
 			
 			Statement property = resource.getProperty(DCTerms.temporal);
-			Resource object = resource.getModel().getResource(property.getObject().asResource().getURI());
-			
-			temporal.setId(object.getURI());
-			temporal.setStartDate(extractAsString(object,ResourceFactory.createProperty("http://schema.org/startDate")));
-			temporal.setEndDate(extractAsString(object, ResourceFactory.createProperty("http://schema.org/endDate")));
-						
-			return temporal;
+			if (property != null) {
+				if (property.getObject().isResource()) {
+					Resource object = property.getObject().asResource();
+
+					temporal.setId(object.getURI());
+					temporal.setStartDate(extractAsString(object,ResourceFactory.createProperty("http://schema.org/startDate")));
+					temporal.setEndDate(extractAsString(object, ResourceFactory.createProperty("http://schema.org/endDate")));
+
+					return temporal;
+				}
+			}
+			return null;
 		}catch (Exception e) {
-			logger.warn("Error while extracting property {] from resource {}", DCTerms.temporal, resource.getURI(), e);
+			logger.warn("Error while extracting property {} from resource {}", DCTerms.temporal, resource.getURI(), e);
 		}	
 		
 		return null;
