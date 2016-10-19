@@ -77,9 +77,9 @@ public class DcatModuleGenerator implements ModuleGenerator {
 			el.setText(dcatModule.getOrgNumber());
 			element.addContent(el);
 		}
-		if (dcatModule.getAccessRight() != null) {
-			Element el = new Element("accessRight", NSDCT);
-			el.setText(dcatModule.getAccessRight());
+		if (dcatModule.getAccessRights() != null) {
+			Element el = new Element("accessRights", NSDCT);
+			el.setText(dcatModule.getAccessRights());
 			element.addContent(el);
 		}
 		if (dcatModule.getSubjects() != null) {

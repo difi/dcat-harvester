@@ -28,7 +28,7 @@ public class DcatModule extends ModuleImpl {
 	private String description;
 	private String publisher;
 	private String orgNumber;
-	private String accessRight;
+	private String accessRights;
 	private String landingPage;
 	private List<String> subjects;
 	private List<String> keywords;
@@ -44,7 +44,7 @@ public class DcatModule extends ModuleImpl {
 		this.modified = modified;
 		this.publisher = publisher;
 		this.orgNumber = orgNumber;
-		this.accessRight = accessRight;
+		this.accessRights = accessRight;
 		this.subjects = subjects;
 		this.keywords = keywords;
 		this.formats = formats;
@@ -77,12 +77,12 @@ public class DcatModule extends ModuleImpl {
 		this.orgNumber = orgNumber;
 	}
 
-	public String getAccessRight() {
-		return accessRight;
+	public String getAccessRights() {
+		return accessRights;
 	}
 
-	public void setAccessRight(String accessRight) {
-		this.accessRight = accessRight;
+	public void setAccessRights(String accessRight) {
+		this.accessRights = accessRight;
 	}	
 	
 	public List<String> getSubjects() {
@@ -145,7 +145,7 @@ public class DcatModule extends ModuleImpl {
 		
 		dcatModule.setPublisher(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.publisher, FOAF.name));
 		
-		dcatModule.setAccessRight(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.accessRights));
+		dcatModule.setAccessRights(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.accessRights));
 		
 		dcatModule.setTitle(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.title));
 		dcatModule.setDescription(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.description));
@@ -212,7 +212,7 @@ public class DcatModule extends ModuleImpl {
 		setModified(module.getModified());
 		setPublisher(module.getPublisher());
 		setOrgNumber(module.getOrgNumber());
-		setAccessRight(module.getAccessRight());
+		setAccessRights(module.getAccessRights());
 		setSubjects(module.getSubjects());
 		setKeywords(module.getKeywords());
 		setFormats(module.getKeywords());
