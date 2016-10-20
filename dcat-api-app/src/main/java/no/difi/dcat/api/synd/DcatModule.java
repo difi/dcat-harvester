@@ -154,6 +154,7 @@ public class DcatModule extends ModuleImpl {
 		// Dataset
 		
 		dcatModule.setPublisher(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.publisher, FOAF.name));
+		dcatModule.setOrgNumber(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.publisher, DCTerms.identifier));
 		
 		dcatModule.setAccessRights(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.accessRights));
 		dcatModule.setIdentifier(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.identifier));

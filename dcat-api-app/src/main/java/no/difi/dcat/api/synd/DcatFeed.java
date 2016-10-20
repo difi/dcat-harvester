@@ -102,7 +102,6 @@ public class DcatFeed {
 		while (datasets.hasNext()) {
 			Resource dataset = datasets.next();
 			DcatFeed dcatFeed = DcatFeed.getInstance(dataset);
-			dcatFeed.getDcatModule().setOrgNumber(dcatSource.getOrgnumber());
 			feeds.add(dcatFeed);
 		}
 		return feeds;
