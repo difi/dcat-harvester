@@ -68,7 +68,7 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
         }
 
         List<Dataset> datasets = new DatasetBuilder(model).build();
-        logger.info("Number of distribution documents {} for dcat source {}", datasets.size(), dcatSource.getId());
+        logger.info("Number of dataset documents {} for dcat source {}", datasets.size(), dcatSource.getId());
         for (Dataset dataset : datasets) {
 
             IndexRequest indexRequest = new IndexRequest(DCAT_INDEX,DATASET_TYPE,dataset.getId());

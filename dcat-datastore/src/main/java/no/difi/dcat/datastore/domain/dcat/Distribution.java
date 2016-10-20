@@ -117,19 +117,22 @@ public class Distribution implements Cloneable{
 		return clone;
 	}
 	public static Distribution[] splitFormat(Distribution distribution) {
-		Distribution[] distributions = new Distribution[distribution.getFormat().size()];
-		
-		for (int i = 0; i < distributions.length; i++) {
-					distributions[i] = distribution.clone();
-					
-					distributions[i].setId(distributions[i].getId() + "/" + i);
-					
-					List<String> format = new ArrayList<String>();
-					format.add(distribution.getFormat().get(i));
-					distributions[i].setFormat(format);
+		if (distribution.getFormat().size() == 0) {
+			return new Distribution[] {distribution};
+		}else{
+			Distribution[] distributions = new Distribution[distribution.getFormat().size()];
+			for (int i = 0; i < distributions.length; i++) {
+				distributions[i] = distribution.clone();
+
+				distributions[i].setId(distributions[i].getId() + "/" + i);
+
+				List<String> format = new ArrayList<String>();
+				format.add(distribution.getFormat().get(i));
+				distributions[i].setFormat(format);
+			}
+
+			return distributions;
 		}
-		
-		return distributions;
 	}
 }
 
