@@ -108,13 +108,16 @@ public abstract class AbstractBuilder {
 		try {
 			Contact contact = new Contact();
 			Statement property = resource.getProperty(DCAT.contactPoint);
-			Resource object = resource.getModel().getResource(property.getObject().asResource().getURI());
-			contact.setId(object.getURI());
-			//TODO: use correct vcard
-			contact.setFullname(extractAsString(object, ResourceFactory.createProperty("http://www.w3.org/2006/vcard/ns#fn")));
-			contact.setEmail(extractAsString(object, ResourceFactory.createProperty("http://www.w3.org/2006/vcard/ns#hasEmail")).replace("mailto:", ""));
+			if (property != null) {
+				
+				Resource object = resource.getModel().getResource(property.getObject().asResource().getURI());
+				contact.setId(object.getURI());
+				//TODO: use correct vcard
+				contact.setFullname(extractAsString(object, ResourceFactory.createProperty("http://www.w3.org/2006/vcard/ns#fn")));
+				contact.setEmail(extractAsString(object, ResourceFactory.createProperty("http://www.w3.org/2006/vcard/ns#hasEmail")).replace("mailto:", ""));
 			
 			return contact;
+			}
 		} catch (Exception e) {
 			logger.warn("Error when extracting property {} from resource {}", DCTerms.publisher, resource.getURI(), e);
 		}

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -25,6 +26,8 @@ import com.google.common.cache.LoadingCache;
 import no.acando.semtech.xmltordf.Builder;
 import no.acando.semtech.xmltordf.PostProcessing;
 import no.acando.semtech.xmltordf.XmlToRdfObject;
+
+
 
 public class BrregAgentConverter {
 
@@ -118,10 +121,18 @@ public class BrregAgentConverter {
 	private boolean remoteFileExsists(String uri) {
 		try {
 			HttpURLConnection.setFollowRedirects(false);
-			HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
-			connection.setRequestMethod("HEAD");
-			return (connection.getResponseCode() == HttpURLConnection.HTTP_OK);
+			URLConnection urlc = new URL(uri).openConnection();
+			if (HttpURLConnection.class.isInstance(urlc.getClass())) {
+				HttpURLConnection connection = (HttpURLConnection) new URL(uri).openConnection();
+				connection.setRequestMethod("HEAD");
+				return (connection.getResponseCode() == HttpURLConnection.HTTP_OK);
+			}else if (urlc.getClass().getName().equals("sun.net.www.protocol.file.FileURLConnection")){
+				return true;
+			}else {
+				return false;
+			}
 			
+		
 		} catch (MalformedURLException e) {
 			return false;
 		} catch (IOException e) {
