@@ -30,6 +30,8 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.stream.Collectors;
 
 public class CrawlerJob implements Runnable {
@@ -82,6 +84,8 @@ public class CrawlerJob implements Runnable {
 
             BrregAgentConverter brregAgentConverter = new BrregAgentConverter(brregCache);
             brregAgentConverter.collectFromModel(union);
+            
+            splitDistributionFormats(union);
 
             if (isValid(union)) {
                 for (CrawlerResultHandler handler : handlers) {
@@ -119,7 +123,7 @@ public class CrawlerJob implements Runnable {
 
     }
 
-    protected void verifyModelByParsing(Model union) {
+	protected void verifyModelByParsing(Model union) {
         StringWriter str = new StringWriter();
         union.write(str, RDFLanguages.strLangTurtle);
         RDFDataMgr.parse(new StreamRDF() {
@@ -304,8 +308,73 @@ public class CrawlerJob implements Runnable {
 
 
     }
+    
+    private void splitDistributionFormats(Model union) {
+    	ResIterator datasetIterator = union.listResourcesWithProperty(RDF.type, DCAT.Dataset);
+    	
+    	//         distribution, dataset
+    	List<Entry<Resource, Resource>> addList = new ArrayList<>();
+    	List<Resource> removeList = new ArrayList<>();
+    	
+    	while (datasetIterator.hasNext()) {
+			Resource dataset = datasetIterator.next();
+			
+			StmtIterator distributionIterator = dataset.listProperties(DCAT.distribution);
+			while (distributionIterator.hasNext()) {
+				Statement distribution = distributionIterator.next();
 
-    private boolean isValid(Model model) {
+				List<Statement> formatList = distribution.getObject().asResource().listProperties(DCTerms.format).toList();
+				
+				if (formatList.size() > 1) {
+					//for each F make copy of D with F as only format
+					for (int i = 0; i < formatList.size(); i++) {
+						Resource format = formatList.get(i).getObject().asResource();
+						
+						Resource dCopy = copyResource(distribution.getObject().asResource(), distribution.getObject().asResource() + "/" + i);
+			
+						dCopy.removeAll(DCTerms.format);
+						
+						dCopy.addProperty(DCTerms.format, format);
+						//add DCopies + dataset to addList
+						addList.add(new SimpleEntry<Resource, Resource>(dCopy, dataset));
+					}
+					//add D + dataset to removeList
+					removeList.add(distribution.getObject().asResource());
+				}else {
+					addList.add(new SimpleEntry<Resource, Resource>(distribution.getObject().asResource(), dataset));
+				}
+			}
+		}
+
+    	//go through lists
+    	for (int i = 0; i < removeList.size(); i++) {
+    		union.removeAll(removeList.get(i), null, null);
+    		union.removeAll(null, null, removeList.get(i));
+		}
+    	for (int i = 0; i < addList.size(); i++) {
+    		Resource distribution = addList.get(i).getKey();
+    		Resource dataset = addList.get(i).getValue();
+			
+    		dataset.addProperty(DCAT.distribution, distribution);
+		}
+    	
+	}
+
+    private Resource copyResource(Resource resource, String uri) {
+    	Resource r = resource.getModel().createResource(uri, DCAT.Distribution);
+    	
+    	StmtIterator iterator = resource.listProperties();
+    	
+    	
+    	while (iterator.hasNext()) {
+			Statement statement = (Statement) iterator.next();
+			r.addProperty(statement.getPredicate(), statement.getObject());
+		}
+    	
+		return r;
+	}
+
+	private boolean isValid(Model model) {
 
         final ValidationError.RuleSeverity[] status = {ValidationError.RuleSeverity.ok};
         final String[] message = {null};

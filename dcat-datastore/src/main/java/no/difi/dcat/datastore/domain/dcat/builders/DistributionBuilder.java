@@ -7,8 +7,6 @@ import org.apache.jena.rdf.model.*;
 import org.apache.jena.sparql.vocabulary.FOAF;
 import org.apache.jena.vocabulary.DCTerms;
 import org.apache.jena.vocabulary.RDF;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import no.difi.dcat.datastore.domain.dcat.Distribution;
 import no.difi.dcat.datastore.domain.dcat.vocabulary.DCAT;
@@ -16,7 +14,6 @@ import no.difi.dcat.datastore.domain.dcat.vocabulary.DCAT;
 public class DistributionBuilder extends AbstractBuilder {
 
 	private Model model;
-    private final Logger logger = LoggerFactory.getLogger(DistributionBuilder.class);
 
 
 	public DistributionBuilder(Model model) {
@@ -43,12 +40,7 @@ public class DistributionBuilder extends AbstractBuilder {
 
 					if (next.getObject().isResource()) {
 						Resource distribution = next.getResource();
-						Distribution[] dist = Distribution.splitFormat(create(distribution, dataset, catalog));
-
-						logger.debug("Distribution {} was split into {} pieces", distribution, dist.length);
-						for (int i = 0; i < dist.length; i++) {
-							distributions.add(dist[i]);
-						}
+						distributions.add(create(distribution, dataset, catalog));
 					}
 				}
 			}
