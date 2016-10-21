@@ -114,12 +114,15 @@ public abstract class AbstractBuilder {
 				contact.setId(object.getURI());
 				//TODO: use correct vcard
 				contact.setFullname(extractAsString(object, ResourceFactory.createProperty("http://www.w3.org/2006/vcard/ns#fn")));
-				contact.setEmail(extractAsString(object, ResourceFactory.createProperty("http://www.w3.org/2006/vcard/ns#hasEmail")).replace("mailto:", ""));
+				String email = extractAsString(object, ResourceFactory.createProperty("http://www.w3.org/2006/vcard/ns#hasEmail"));
+				if (email != null){
+					contact.setEmail(email.replace("mailto:", ""));				
+				}
 			
 			return contact;
 			}
 		} catch (Exception e) {
-			logger.warn("Error when extracting property {} from resource {}", DCTerms.publisher, resource.getURI(), e);
+			logger.warn("Error when extracting property {} from resource {}", DCAT.contactPoint, resource.getURI(), e);
 		}
 		
 		return null;
@@ -129,15 +132,16 @@ public abstract class AbstractBuilder {
 		try {
 			Publisher publisher = new Publisher();
 			Statement property = resource.getProperty(DCTerms.publisher);
-			
-			if (property.getObject().isResource()) {
-	
-				Resource object = property.getObject().asResource();
-						
-				publisher.setId(object.getURI());
-				publisher.setName(extractAsString(object, FOAF.name));
-				publisher.setIdentifier(extractAsString(object, DCTerms.identifier));
-				publisher.setType(extractAsString(object, DCTerms.type));
+			if (property != null) {
+				if (property.getObject().isResource()) {
+
+					Resource object = property.getObject().asResource();
+
+					publisher.setId(object.getURI());
+					publisher.setName(extractAsString(object, FOAF.name));
+					publisher.setIdentifier(extractAsString(object, DCTerms.identifier));
+					publisher.setType(extractAsString(object, DCTerms.type));
+				}
 			}
 			
 			return publisher;

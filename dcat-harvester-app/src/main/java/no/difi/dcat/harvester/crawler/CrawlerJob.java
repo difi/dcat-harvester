@@ -328,13 +328,17 @@ public class CrawlerJob implements Runnable {
 				if (formatList.size() > 1) {
 					//for each F make copy of D with F as only format
 					for (int i = 0; i < formatList.size(); i++) {
-						Resource format = formatList.get(i).getObject().asResource();
 						
 						Resource dCopy = copyResource(distribution.getObject().asResource(), distribution.getObject().asResource() + "/" + i);
 			
+						RDFNode format = formatList.get(i).getObject();
+
 						dCopy.removeAll(DCTerms.format);
-						
-						dCopy.addProperty(DCTerms.format, format);
+						if (format.isResource()) {
+							dCopy.addProperty(DCTerms.format, format);
+						}else if(format.isLiteral()){
+							dCopy.addLiteral(DCTerms.format, format.asLiteral());
+						}
 						//add DCopies + dataset to addList
 						addList.add(new SimpleEntry<Resource, Resource>(dCopy, dataset));
 					}
