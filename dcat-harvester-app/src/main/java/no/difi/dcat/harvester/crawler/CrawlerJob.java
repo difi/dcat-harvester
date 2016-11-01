@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.AbstractMap.SimpleEntry;
@@ -57,13 +56,15 @@ public class CrawlerJob implements Runnable {
     @Override
     public void run() {
         logger.info("[crawler_operations] [success] Started crawler job: {}", dcatSource.toString());
-        LocalDateTime start = LocalDateTime.now();
+        long start = System.currentTimeMillis();
 
 
         try {
 
             Dataset dataset = RDFDataMgr.loadDataset(dcatSource.getUrl());
-
+            
+            long loadTime = System.currentTimeMillis();
+            
             Model union = ModelFactory.createUnion(ModelFactory.createDefaultModel(), dataset.getDefaultModel());
             Iterator<String> stringIterator = dataset.listNames();
 
@@ -93,8 +94,9 @@ public class CrawlerJob implements Runnable {
                 }
             }
 
-            LocalDateTime stop = LocalDateTime.now();
+            long stop = System.currentTimeMillis();
             logger.info("[crawler_operations] [success] Finished crawler job: {}", dcatSource.toString() + ", Duration=" + returnCrawlDuration(start, stop));
+            logger.info("[crawler_operations] [success] Total duration: " + (stop - start) + "ms, Waiting for data: " + (loadTime - start) + "ms, Processing: " + (stop - loadTime) + "ms" );
 
 
         } catch (JenaException e) {
@@ -410,8 +412,8 @@ public class CrawlerJob implements Runnable {
         return validated;
     }
 
-    private String returnCrawlDuration(LocalDateTime start, LocalDateTime stop) {
-        return String.valueOf(stop.compareTo(start));
+    private String returnCrawlDuration(long start, long stop) {
+        return String.valueOf(stop - start) + "ms";
     }
 
 }
