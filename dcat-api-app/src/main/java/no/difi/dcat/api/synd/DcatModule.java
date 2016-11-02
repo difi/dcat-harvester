@@ -191,8 +191,12 @@ public class DcatModule extends ModuleImpl {
 		}
 
 		String modified = PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.modified);
-		if (modified != null) {
-			dcatModule.setModified(DatatypeConverter.parseDate(modified).getTime());
+		if (modified != null && modified.equals("")) {
+			try{
+				dcatModule.setModified(DatatypeConverter.parseDate(modified).getTime());
+			}catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		// Distribution
