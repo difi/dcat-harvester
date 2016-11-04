@@ -26,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.*;
@@ -133,8 +136,14 @@ public class CrawlerJob implements Runnable {
     }
 
 	protected void verifyModelByParsing(Model union) {
-        StringWriter str = new StringWriter();
-        union.write(str, RDFLanguages.strLangTurtle);
+//        StringWriter str = new StringWriter();
+//        union.write(str, RDFLanguages.strLangTurtle);
+        
+       ByteArrayOutputStream oStr = new ByteArrayOutputStream();
+        union.write(oStr, RDFLanguages.strLangTurtle);
+        
+        
+        
         RDFDataMgr.parse(new StreamRDF() {
             @Override
             public void start() {
@@ -165,10 +174,14 @@ public class CrawlerJob implements Runnable {
             public void finish() {
 
             }
-        }, new ByteArrayInputStream(str.toString().getBytes()), Lang.TTL);
+        }, new ByteArrayInputStream(oStr.toByteArray()), Lang.TTL);
 
-        str = new StringWriter();
-        union.write(str, RDFLanguages.strLangRDFXML);
+//        str = new StringWriter();
+//        union.write(str, RDFLanguages.strLangRDFXML);
+
+        oStr = new ByteArrayOutputStream();
+        union.write(oStr, RDFLanguages.strLangRDFXML);
+        
         RDFDataMgr.parse(new StreamRDF() {
             @Override
             public void start() {
@@ -199,7 +212,7 @@ public class CrawlerJob implements Runnable {
             public void finish() {
 
             }
-        }, new ByteArrayInputStream(str.toString().getBytes()), Lang.RDFXML);
+        }, new ByteArrayInputStream(oStr.toByteArray()), Lang.RDFXML);
 
     }
 
