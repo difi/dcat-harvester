@@ -120,6 +120,13 @@ public class CrawlerJob implements Runnable {
             logger.error(String.format("[crawler_operations] [fail] Error running crawler job: %1$s, error=%2$s", dcatSource.toString(), e.toString()));
         } catch (Exception e) {
             logger.error(String.format("[crawler_operations] [fail] Error running crawler job: %1$s, error=%2$s", dcatSource.toString(), e.toString()));
+            
+            StackTraceElement[] stackTrace = e.getStackTrace();
+            
+            for (int j = 0; j < stackTrace.length; j++) {
+            	logger.error(stackTrace[j].toString());
+			}
+            
             adminDataStore.addCrawlResults(dcatSource, DifiMeta.error, e.getMessage());
         }
 
