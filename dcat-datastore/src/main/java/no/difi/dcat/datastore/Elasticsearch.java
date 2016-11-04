@@ -7,6 +7,7 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,26 +24,26 @@ public class Elasticsearch implements AutoCloseable {
 	private Client client;
 
 	public Elasticsearch(String host, int port) {
-		this.client = returnElasticsearchTransportClient(host, port);
+		this.client = returnElasticsearchTransportClient(host, port, "dcatharvester");
 	}
 
 	public Elasticsearch(Client client) {
 		this.client = client;
 	}
 
-//	public Client returnElasticsearchTransportClient(String host, int port, String clusterName) {
-//		Client client = null;
-//		Settings settings = null;
-//		try {
-//			settings = Settings.settingsBuilder().put(CLUSTER_NAME, clusterName).build();
-//			client = TransportClient.builder().settings(settings).build()
-//					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
-//		} catch (UnknownHostException e) {
-//			logger.error(e.toString());
-//		}
-//
-//		return client;
-//	}
+	public Client returnElasticsearchTransportClient(String host, int port, String clusterName) {
+		Client client = null;
+		Settings settings = null;
+		try {
+			settings = Settings.settingsBuilder().put(CLUSTER_NAME, clusterName).build();
+			client = TransportClient.builder().settings(settings).build()
+					.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
+		} catch (UnknownHostException e) {
+			logger.error(e.toString());
+		}
+
+		return client;
+	}
 
 	public Client returnElasticsearchTransportClient(String host, int port) {
 		Client client = null;
