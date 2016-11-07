@@ -7,14 +7,21 @@ import no.difi.dcat.admin.settings.ApplicationSettings;
  */
 public class KibanaLink{
 
+	String port;
     String firstHalf;
     String secondHalf;
 
     KibanaLink(ApplicationSettings applicationSettings){
+    	
+    	port = applicationSettings.getKibanaPort();
         firstHalf = applicationSettings.getKibanaLinkFirstHalf();
         secondHalf = applicationSettings.getKibanaLinkSecondHalf();
     }
 
+    public String getPort(){
+    	return port;
+    }
+    
     public String getFirstHalf() {
         return firstHalf;
     }
