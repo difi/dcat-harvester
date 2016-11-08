@@ -13,10 +13,10 @@ import com.rometools.rome.feed.rss.Channel;
 import com.rometools.rome.feed.rss.Item;
 
 public class DcatRssView extends AbstractRssFeedView {
-	
+
 	public DcatRssView() {
 	}
-	
+
 	@Override
 	protected void buildFeedMetadata(Map<String, Object> model, Channel channel, 
 			HttpServletRequest request) {
@@ -27,19 +27,18 @@ public class DcatRssView extends AbstractRssFeedView {
 	@Override
 	protected List<Item> buildFeedItems(
 			Map<String, Object> model, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+					throws Exception {
 		List<Item> items = new ArrayList<>();
-	
+
 		Object ob = model.get("feeds");
 		if (ob instanceof List){
-	           for(int i = 0; i < ((List<?>)ob).size(); i++){
-	                Object feedObj = ((List<?>) ob).get(i);
-	                DcatFeed dcatFeed = (DcatFeed)feedObj;
-	    		Item item = new Item();
-	    		item.setPubDate(dcatFeed.getPubDate());
+			for(int i = 0; i < ((List<?>)ob).size(); i++){
+				Object feedObj = ((List<?>) ob).get(i);
+				DcatFeed dcatFeed = (DcatFeed)feedObj;
+				Item item = new Item();
 				item.getModules().add(dcatFeed.getDcatModule());
-	    		items.add(item);
-	           }
+				items.add(item);
+			}
 		}
 		return items;
 	}

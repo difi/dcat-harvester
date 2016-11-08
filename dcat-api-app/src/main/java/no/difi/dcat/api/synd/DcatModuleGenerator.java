@@ -47,9 +47,9 @@ public class DcatModuleGenerator implements ModuleGenerator {
 	@Override
 	public void generate(Module module, Element element) {
 		DcatModule dcatModule = (DcatModule) module;
-		if (dcatModule.getIdentifier() != null) {
-			Element el = new Element("identifier", NSDCT);
-			el.setText(dcatModule.getIdentifier());
+		if (dcatModule.getGUID() != null) {
+			Element el = new Element("guid", NAMESPACE);
+			el.setText(dcatModule.getGUID());
 			element.addContent(el);
 		}
 		if (dcatModule.getTitle() != null) {
@@ -67,6 +67,11 @@ public class DcatModuleGenerator implements ModuleGenerator {
 			el.setText(dcatModule.getLandingPage());
 			element.addContent(el);
 		}
+		if (dcatModule.getIssued() != null) {
+			Element el = new Element("issued", NSDCT);
+			el.setText(df.format(dcatModule.getIssued()));
+			element.addContent(el);
+		} 
 		if (dcatModule.getModified() != null) {
 			Element el = new Element("modified", NSDCT);
 			el.setText(df.format(dcatModule.getModified()));
@@ -104,7 +109,12 @@ public class DcatModuleGenerator implements ModuleGenerator {
 				el.setText(keyword);
 				element.addContent(el);
 			}
-		}		
+		}
+		if (dcatModule.getDistributionType() != null) {
+			Element el = new Element("type", NSDCT);
+			el.setText(dcatModule.getDistributionType());
+			element.addContent(el);
+		}
 		if (dcatModule.getFormats() != null) {
 			for (String format : dcatModule.getFormats()) {
 				Element el = new Element("format", NSDCT);

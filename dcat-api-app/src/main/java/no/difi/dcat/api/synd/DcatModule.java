@@ -24,13 +24,15 @@ public class DcatModule extends ModuleImpl {
 	private static final long serialVersionUID = -2270589093650785086L;
 
 	private Date modified;
+	private Date issued;
 	private String title;
-	private String identifier;
+	private String guid;
 	private String description;
 	private String publisher;
 	private String orgNumber;
 	private String accessRights;
 	private String landingPage;
+	private String distributionType;
 	private List<String> subjects;
 	private List<String> keywords;
 	private List<String> formats;
@@ -39,10 +41,11 @@ public class DcatModule extends ModuleImpl {
 		super(DcatModule.class, URI);
 	}
 
-	public DcatModule(Date modified, String publisher, String orgNumber, String accessRight, List<String> subjects, List<String> keywords,
+	public DcatModule(Date modified, Date issued, String publisher, String orgNumber, String accessRight, List<String> subjects, List<String> keywords,
 			List<String> formats, String title, String description, String landingPage, String identifier) {
 		this();
 		this.modified = modified;
+		this.issued = issued;
 		this.publisher = publisher;
 		this.orgNumber = orgNumber;
 		this.accessRights = accessRight;
@@ -52,7 +55,7 @@ public class DcatModule extends ModuleImpl {
 		this.title = title;
 		this.description = description;
 		this.landingPage = landingPage;
-		this.identifier = identifier;
+		this.guid = identifier;
 	}
 
 	public Date getModified() {
@@ -61,6 +64,14 @@ public class DcatModule extends ModuleImpl {
 
 	public void setModified(Date modified) {
 		this.modified = modified;
+	}
+
+	public Date getIssued() {
+		return issued;
+	}
+
+	public void setIssued(Date issued) {
+		this.issued = issued;
 	}
 
 	public String getPublisher() {
@@ -111,6 +122,14 @@ public class DcatModule extends ModuleImpl {
 		this.formats = formats;
 	}
 
+	public String getDistributionType() {
+		return distributionType;
+	}
+
+	public void setDistributionType(String distributionType) {
+		this.distributionType = distributionType;
+	}
+
 	public String getTitle() {
 		return title;
 	}
@@ -135,12 +154,12 @@ public class DcatModule extends ModuleImpl {
 		this.landingPage = landingPage;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String getGUID() {
+		return guid;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setGUID(String guid) {
+		this.guid = guid;
 	}
 
 	static DcatModule getInstance(Resource dataset) {
@@ -157,7 +176,7 @@ public class DcatModule extends ModuleImpl {
 		dcatModule.setOrgNumber(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.publisher, DCTerms.identifier));
 		
 		dcatModule.setAccessRights(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.accessRights));
-		dcatModule.setIdentifier(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.identifier));
+		dcatModule.setGUID(dataset.getURI());
 		
 		dcatModule.setTitle(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.title));
 		dcatModule.setDescription(PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.description));
@@ -199,6 +218,15 @@ public class DcatModule extends ModuleImpl {
 			}
 		}
 		
+		String issued = PropertyExtractor.extractExactlyOneStringOrNull(dataset, DCTerms.issued);
+		if (issued != null && !issued.equals("")) {
+			try{
+				dcatModule.setIssued(DatatypeConverter.parseDate(issued).getTime());
+			}catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			}
+		} 
+		
 		// Distribution
 		
 		StmtIterator stmtIterator = dataset.listProperties(DCAT.distribution);
@@ -211,8 +239,10 @@ public class DcatModule extends ModuleImpl {
 						dcatModule.getFormats().add(format);
 					}
 				}
+				dcatModule.setDistributionType(PropertyExtractor.extractExactlyOneStringOrNull(next.getResource(), DCTerms.type));
 			}
 		}
+		
 
 		return dcatModule;
 	}
@@ -226,6 +256,7 @@ public class DcatModule extends ModuleImpl {
 	public void copyFrom(CopyFrom obj) {
 		DcatModule module = (DcatModule) obj;
 		setModified(module.getModified());
+		setIssued(module.getIssued());
 		setPublisher(module.getPublisher());
 		setOrgNumber(module.getOrgNumber());
 		setAccessRights(module.getAccessRights());
@@ -234,8 +265,10 @@ public class DcatModule extends ModuleImpl {
 		setFormats(module.getKeywords());
 		setTitle(module.getTitle());
 		setDescription(module.getDescription());
-		setIdentifier(module.getIdentifier());
+		setGUID(module.getGUID());
 	}
+
+	
 
 
 
