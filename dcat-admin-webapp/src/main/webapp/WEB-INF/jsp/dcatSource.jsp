@@ -39,7 +39,7 @@
 				<div class="col-md-12">
 					<h3>
 						Harvest History (100 last harvests) - <a target="_blank"
-							href="http://<%out.print(pageContext.getRequest().getServerName().split(":")[0] + ":");%>${kibanaLink.getPort()}${kibanaLink.getFirstHalf()}${dcatSource.getIdUrlEncoded()}${kibanaLink.getSecondHalf()}">
+							href="http://<%out.print(pageContext.getRequest().getServerName().split(":")[0] + ":");%>${kibanaLink.getFirstHalf()}${dcatSource.getIdUrlEncoded()}${kibanaLink.getSecondHalf()}">
 							Se mer i Kibana (link) </a>
 					</h3>
 					<table class="table table-striped">
