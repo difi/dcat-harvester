@@ -8,6 +8,7 @@ import java.util.Map;
 public class Dataset {
 	
 	private String id;
+	private String dcatSourceId;
 	private Map<String,String> title;
 	private Map<String,String> description;
 	private Contact contact;
@@ -142,6 +143,12 @@ public class Dataset {
 	}
 	public void setTemporal(Temporal temporal) {
 		this.temporal = temporal;
+	}
+	public String getDcatSourceId() {
+		return dcatSourceId;
+	}
+	public void setDcatSourceId(String dcatSourceId) {
+		this.dcatSourceId = dcatSourceId;
 	}
 
 	

@@ -8,10 +8,12 @@ import java.util.Map;
 public class Distribution implements Cloneable{
 
 	private String id;
+	private String dcatSourceId;
 	private Map<String,String> title;
 	private Map<String,String> description;
 	private String accessURL;
 	private String license;
+	private String distributionType;
 	private List<String> format;
 	private List<Document> pages;
 	private List<String> conformsTo;
@@ -61,6 +63,12 @@ public class Distribution implements Cloneable{
 	public void setLicense(String license) {
 		this.license = license;
 	}
+	public String getDistributionType() {
+		return distributionType;
+	}
+	public void setDistributionType(String distributionType) {
+		this.distributionType = distributionType;
+	}
 	public List<String> getFormat() {
 		if (format == null) {
 			format = new ArrayList<String>();
@@ -99,6 +107,12 @@ public class Distribution implements Cloneable{
 	}
 
 
+	public String getDcatSourceId() {
+		return dcatSourceId;
+	}
+	public void setDcatSourceId(String dcatSourceId) {
+		this.dcatSourceId = dcatSourceId;
+	}
 	@Override
 	public Distribution clone(){
 		Distribution clone = new Distribution();
@@ -108,6 +122,7 @@ public class Distribution implements Cloneable{
 		clone.setDataset(dataset);
 		clone.setDescription(description);
 		clone.setDownloadURL(downloadURL);
+		clone.setDistributionType(distributionType);
 		clone.setFormat(format);
 		clone.setId(id);
 		clone.setLicense(license);

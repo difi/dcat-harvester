@@ -14,10 +14,12 @@ import no.difi.dcat.datastore.domain.dcat.vocabulary.DCAT;
 public class DistributionBuilder extends AbstractBuilder {
 
 	private Model model;
+	private final String dcatSourceId;
 
 
-	public DistributionBuilder(Model model) {
+	public DistributionBuilder(Model model, String dcatSourceId) {
 		this.model = model;
+		this.dcatSourceId = dcatSourceId;
 	}
 
 	public List<Distribution> build() {
@@ -40,7 +42,7 @@ public class DistributionBuilder extends AbstractBuilder {
 
 					if (next.getObject().isResource()) {
 						Resource distribution = next.getResource();
-						distributions.add(create(distribution, dataset, catalog));
+						distributions.add(create(distribution, dataset, catalog, dcatSourceId));
 					}
 				}
 			}
@@ -50,7 +52,7 @@ public class DistributionBuilder extends AbstractBuilder {
 
 	}
 
-	public static Distribution create(Resource distribution, Resource dataset, Resource catalog) {
+	public static Distribution create(Resource distribution, Resource dataset, Resource catalog, String dcatSourceId) {
 		Distribution created = new Distribution();
 
 		if (distribution != null) {
@@ -59,13 +61,15 @@ public class DistributionBuilder extends AbstractBuilder {
 			created.setDescription(extractLanguageLiteral(distribution, DCTerms.description));
 			created.setAccessURL(extractAsString(distribution, DCAT.accessUrl));
 			created.setLicense(extractAsString(distribution, DCTerms.license));
+			created.setDistributionType(extractAsString(distribution, DCTerms.type));
 			created.setFormat(extractMultipleStrings(distribution, DCTerms.format));
 			created.setDownloadURL(extractMultipleStrings(distribution, DCAT.downloadURL));
 			created.setConformsTo(extractMultipleStrings(distribution, DCTerms.conformsTo));
-			created.setPages(extractMultipleDocuments(distribution, FOAF.page)); 
+			created.setPages(extractMultipleDocuments(distribution, FOAF.page));
+			created.setDcatSourceId(dcatSourceId);
 		}
 		if (dataset != null && catalog != null) {
-			created.setDataset(DatasetBuilder.create(dataset, catalog));
+			created.setDataset(DatasetBuilder.create(dataset, catalog, dcatSourceId));
 		}
 
 		return created;

@@ -27,9 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;

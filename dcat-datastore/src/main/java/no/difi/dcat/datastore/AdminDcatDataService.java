@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.elasticsearch.client.Client;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,18 +70,38 @@ public class AdminDcatDataService {
 		Map<String, String> map = new HashMap<>();
 
 		map.put("dcatSourceUri", dcatSource.getId());
-
+		
 		adminDataStore.fuseki.sparqlUpdate(query, map);
-
 		dcatDataStore.deleteDataCatalogue(dcatSource);
-//		elasticsearch = new Elasticsearch();
-//		Client client = elasticsearch.returnElasticsearchTransportClient("localhost", 9300);
-//		
-//		if(elasticsearch.deleteDocument(".kibana", "search", dcatSourceId, client)) {
-//			logger.info("[crawler_admin] [success] Deleted DCAT source from Elasticsearch: {}", dcatSource.toString());
-//		} else {
-//			logger.error("[crawler_admin] [fail] DCAT source was not deleted from Elasticsearch: {}", dcatSource.toString());
-//		}
+
+		try {
+			
+			logger.info("[crawler_admin] [info] connecting to elasticssearch...");
+		
+			elasticsearch = new Elasticsearch("elasticsearch", 9300);
+			logger.info("[crawler_admin] [info] connected to elasticssearch");
+		} catch (Exception e) {
+			logger.error("[crawler_admin] [error] failed to connect to elasticsearch");
+			StackTraceElement[] stackTrace = e.getStackTrace();
+            
+            for (int j = 0; j < stackTrace.length; j++) {
+            	logger.error(stackTrace[j].toString());
+			}
+		}
+		
+		if(elasticsearch.deleteDocument(".kibana", "search", dcatSourceId)) {
+			logger.info("[crawler_admin] [success] Deleted DCAT source from Kibana: {}", dcatSource.toString());
+		} else {
+			logger.error("[crawler_admin] [fail] DCAT source was not deleted from Kibana: {}", dcatSource.toString());
+		}
+		
+		if(elasticsearch.deleteDocument("dcat", "dataset", dcatSourceId)) {
+			logger.info("[crawler_admin] [success] Deleted DCAT source from Kibana: {}", dcatSource.toString());
+		} else {
+			logger.error("[crawler_admin] [fail] DCAT source was not deleted from Kibana: {}", dcatSource.toString());
+		}
+		
+		elasticsearch.deleteAllFromSource("dcat", "dataset", dcatSourceId);
 		
 		if (adminDataStore.fuseki.ask("ask { ?dcatSourceUri foaf:accountName ?dcatSourceUri}", map)) { 
 			logger.error("[crawler_admin] [fail] DCAT source was not deleted from Fuseki: {}", dcatSource.toString());

@@ -14,9 +14,11 @@ import no.difi.dcat.datastore.domain.dcat.vocabulary.DCAT;
 public class DatasetBuilder extends AbstractBuilder {
 
 	private final Model model;
+	private final String dcatSourceId;
 	
-	public DatasetBuilder(Model model) {
+	public DatasetBuilder(Model model, String dcatSourceId) {
 		this.model = model;
+		this.dcatSourceId = dcatSourceId;
 	}
 	
 	public List<Dataset> build() {
@@ -31,7 +33,7 @@ public class DatasetBuilder extends AbstractBuilder {
 
 			while (datasetIterator.hasNext()) {
 				Resource dataset = datasetIterator.next().getResource();
-				Dataset datasetObj = create(dataset, catalog);
+				Dataset datasetObj = create(dataset, catalog, dcatSourceId);
 				StmtIterator distributionIterator = dataset.listProperties(DCAT.distribution);
 				List<Distribution> distributions = new ArrayList<>();
 				while (distributionIterator.hasNext()) {
@@ -41,7 +43,7 @@ public class DatasetBuilder extends AbstractBuilder {
 					if (next.getObject().isResource()) {
 						Resource distribution = next.getResource();
 						
-						Distribution[] dist = Distribution.splitFormat(DistributionBuilder.create(distribution, null, null));
+						Distribution[] dist = Distribution.splitFormat(DistributionBuilder.create(distribution, null, null, dcatSourceId));
 
 						for (int i = 0; i < dist.length; i++) {
 							distributions.add(dist[i]);
@@ -57,7 +59,7 @@ public class DatasetBuilder extends AbstractBuilder {
 		return datasets;
 	}
 	
-	public static Dataset create(Resource dataset, Resource catalog) {
+	public static Dataset create(Resource dataset, Resource catalog, String sourceId) {
 		Dataset created = new Dataset();
 		
 		if (dataset != null) {
@@ -78,7 +80,7 @@ public class DatasetBuilder extends AbstractBuilder {
 			created.setSpatial(extractMultipleStrings(dataset, DCTerms.spatial));
 			created.setTemporal(extractTemporal(dataset));
 			created.setPublisher(extractPublisher(dataset));
-			
+			created.setDcatSourceId(sourceId);
 		}
 		if (catalog != null) {
 			created.setCatalog(CatalogBuilder.create(catalog));

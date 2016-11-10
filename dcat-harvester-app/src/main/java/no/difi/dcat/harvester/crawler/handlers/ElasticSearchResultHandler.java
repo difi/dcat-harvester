@@ -56,7 +56,7 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
 
         BulkRequestBuilder bulkRequest = elasticsearch.getClient().prepareBulk();
 
-        List<Distribution> distributions = new DistributionBuilder(model).build();
+        List<Distribution> distributions = new DistributionBuilder(model, dcatSource.getId()).build();
         logger.info("Number of distribution documents {} for dcat source {}", distributions.size(), dcatSource.getId());
         for (Distribution distribution : distributions) {
 
@@ -67,7 +67,7 @@ public class ElasticSearchResultHandler implements CrawlerResultHandler {
             	bulkRequest.add(indexRequest);
         }
 
-        List<Dataset> datasets = new DatasetBuilder(model).build();
+        List<Dataset> datasets = new DatasetBuilder(model, dcatSource.getId()).build();
         logger.info("Number of dataset documents {} for dcat source {}", datasets.size(), dcatSource.getId());
         for (Dataset dataset : datasets) {
 

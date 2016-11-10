@@ -2,19 +2,27 @@ package no.difi.dcat.datastore;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.AbstractMap.SimpleEntry;
 
 public class Elasticsearch implements AutoCloseable {
 
@@ -104,6 +112,45 @@ public class Elasticsearch implements AutoCloseable {
 		return !rsp.isFound();
 	}
 
+	public void deleteAllFromSource(String index, String type, String dcatSourceID){
+		try {
+			logger.info("[Datastore][info]Looking for entries to delete: " + dcatSourceID + "in index" + index);
+
+			SearchResponse rsp = client.prepareSearch(index)
+					.setQuery(QueryBuilders.queryStringQuery("\"" + dcatSourceID + "\"" )
+					.field("dcatSourceId"))
+					.setSize(5)
+					.setScroll("1m")
+					.execute().actionGet();
+
+			ArrayList<Entry<String, String>> deleteList = new ArrayList<>();
+			
+			while (rsp.getHits().getHits().length != 0) {
+				//store _id in delete-list
+				Iterator<SearchHit> hitIterator = rsp.getHits().iterator();
+				while (hitIterator.hasNext()) {
+					SearchHit next =  hitIterator.next();
+					deleteList.add(new SimpleEntry<String, String>(next.getId(), next.getType()));
+				}
+				//run new query
+				String scrollID = rsp.getScrollId();
+				rsp = client.prepareSearchScroll(scrollID).setScroll("1m").execute().actionGet();
+			}
+			//deleting...
+			for (Entry<String, String> entry : deleteList) {
+				client.prepareDelete(index, entry.getValue(), entry.getKey()).execute();
+			}
+
+		} catch (Exception e) {
+			logger.error("[datastore] [error] Something went terribly wrong!");
+			logger.error(e.getMessage());
+			StackTraceElement[] stackTrace = e.getStackTrace();
+
+			for (int j = 0; j < stackTrace.length; j++) {
+				logger.error(stackTrace[j].toString());
+			}
+		}
+	}
 
 	public void close() {
 		client.close();
