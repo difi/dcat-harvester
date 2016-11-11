@@ -27,7 +27,7 @@ public class Main {
 		AdminDataStore adminDataStore = new AdminDataStore(admin);
 		DcatDataStore dcatDataStore = new DcatDataStore(dcat);
 
-		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, dcatDataStore);
+		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, dcatDataStore, "localhost");
 
 		try {
 			adminDataStore.addUser(new User(null, USER, "password", "test@example.com", "USER"));

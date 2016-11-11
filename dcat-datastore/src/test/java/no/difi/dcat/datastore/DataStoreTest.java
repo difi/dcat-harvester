@@ -264,7 +264,7 @@ public class DataStoreTest {
 		assertNotNull("There should exist a dcat source", dcatSource);
 
 		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore,
-				new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")));
+				new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")), "localhost");
 
 		adminDcatDataService.deleteDcatSource(dcatSource.getId(), testAdmin);
 
@@ -303,7 +303,7 @@ public class DataStoreTest {
 		assertNotNull("There should exist a second dcat source", dcatSource2);
 
 		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore,
-				new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")));
+				new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")), "localhost");
 
 		adminDcatDataService.deleteDcatSource(dcatSource.getId(), testAdmin);
 
@@ -354,7 +354,7 @@ public class DataStoreTest {
 		DcatSource dcatSource = adminDataStore
 				.addDcatSource(new DcatSource(null, "sourc2", "http:2", "testUserName", "1234567890"));
 
-		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(fuseki));
+		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(fuseki), "localhost");
 		adminDcatDataService.deleteDcatSource(dcatSource.getId(), adminDataStore.getUserObject("testUserName"));
 
 		List<DcatSource> testUserNameDcatSources = adminDataStore.getDcatSourcesForUser("testUserName");
@@ -524,7 +524,7 @@ public class DataStoreTest {
 
 		AdminDataStore adminDataStore = new AdminDataStore(fuseki);
 		AdminDcatDataService adminDcatDataService = new AdminDcatDataService(adminDataStore,
-			new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")));
+			new DcatDataStore(new Fuseki("http://localhost:3131/dcat/")), "localhost");
 
 		assertFalse(adminDataStore.hasAdminUser());
 
