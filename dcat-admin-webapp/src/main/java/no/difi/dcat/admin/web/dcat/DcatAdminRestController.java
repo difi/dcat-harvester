@@ -2,7 +2,6 @@ package no.difi.dcat.admin.web.dcat;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import no.difi.dcat.admin.settings.ApplicationSettings;
 import no.difi.dcat.admin.settings.FusekiSettings;
 
 @RestController
@@ -32,6 +32,8 @@ public class DcatAdminRestController {
 
 	@Autowired
 	private FusekiSettings fusekiSettings;
+	@Autowired
+	private ApplicationSettings applicationSettings;
 	private AdminDataStore adminDataStore;
 	private AdminDcatDataService adminDcatDataService;
 
@@ -40,7 +42,7 @@ public class DcatAdminRestController {
 	@PostConstruct
 	public void initialize() {
 		adminDataStore = new AdminDataStore(new Fuseki(fusekiSettings.getAdminServiceUri()));
-		adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki(fusekiSettings.getDcatServiceUri())));
+		adminDcatDataService = new AdminDcatDataService(adminDataStore, new DcatDataStore(new Fuseki(fusekiSettings.getDcatServiceUri())), applicationSettings.getElasticSearchHost());
 	}
 
 	@RequestMapping("/api/admin/dcat-sources")

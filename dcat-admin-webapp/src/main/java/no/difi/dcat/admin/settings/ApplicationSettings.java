@@ -13,6 +13,7 @@ public class ApplicationSettings {
 	private String kibanaPort;
 	private String kibanaLinkFirstHalf;
 	private String kibanaLinkSecondHalf;
+	private String elasticSearchHost;
 
 	public String getHarvesterUrl() {
 		return harvesterUrl;
@@ -44,5 +45,13 @@ public class ApplicationSettings {
 
 	public void setKibanaLinkSecondHalf(String kibanaLinkSecondHalf) {
 		this.kibanaLinkSecondHalf = kibanaLinkSecondHalf;
+	}
+
+	public String getElasticSearchHost() {
+		return elasticSearchHost;
+	}
+
+	public void setElasticSearchHost(String elasticSearchHost) {
+		this.elasticSearchHost = elasticSearchHost;
 	}
 }
