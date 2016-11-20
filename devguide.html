@@ -20,8 +20,8 @@
     <link href="css/jumbotron.css" rel="stylesheet">
 
     <style>
-        li.active{
-            text-decoration:underline;
+        li.active {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -58,21 +58,146 @@
             <h2 id="Modules">Modules</h2>
             <hr style="margin-top: 0px"/>
 
-           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla. Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at quam porta faucibus.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla.
+                Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan
+                blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at
+                quam porta faucibus.</p>
 
             <h4 id="dcat-admin-webapp">dcat-admin-webapp</h4>
             <hr style="margin-top: 0px"/>
             <p>Frontend admin interface</p>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla. Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at quam porta faucibus.</p>
-
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla.
+                Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan
+                blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at
+                quam porta faucibus.</p>
 
 
             <h4 id="dcat-api-app">dcat-api-app</h4>
             <hr style="margin-top: 0px"/>
 
             <p>Api for the frontend and also for the RSS feeds and RDF/JSON-LD data.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla. Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at quam porta faucibus.</p>
+
+            <p>The api for retrieving DCAT data from the store is located in "DcatRestController.java" and provides the following functionality.</p>
+
+            <h5>Retrieve all DCAT data</h5>
+            <table class="table">
+                <thead></thead>
+                <tbody>
+                <tr>
+                    <td>Type</td>
+                    <td>GET</td>
+                </tr>
+                <tr>
+                    <td>Path</td>
+                    <td>/api/dcat</td>
+                </tr>
+                <tr>
+                    <td>Param</td>
+                    <td>format</td>
+                </tr>
+                <tr>
+                    <td>Param value</td>
+                    <td>
+                        <ul>
+                            <li>jsonld</li>
+                            <li>rdf/xml</li>
+                            <li>application/ld+json</li>
+                            <li>application/rdf+xml</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td>Get all DCAT data in a single request. Either as JSON-LD or as RDF/XML.</td>
+                </tr>
+
+                <tr>
+                    <td>Example</td>
+                    <td><code>/api/dcat?format=rdf%2Fxml</code></td>
+                </tr>
+
+                </tbody>
+            </table>
+
+
+            <h5>Invalidate cache</h5>
+            <table class="table">
+                <thead></thead>
+                <tbody>
+                <tr>
+                    <td>Type</td>
+                    <td>POST</td>
+                </tr>
+                <tr>
+                    <td>Path</td>
+                    <td>/api/invalidateCache</td>
+                </tr>
+
+                <tr>
+                    <td>Description</td>
+                    <td>Invalidate the cache for the <code>/api/dcat</code> call.</td>
+                </tr>
+
+
+                </tbody>
+            </table>
+
+
+            <h5>Refresh cache</h5>
+            <table class="table">
+                <thead></thead>
+                <tbody>
+                <tr>
+                    <td>Type</td>
+                    <td>POST</td>
+                </tr>
+                <tr>
+                    <td>Path</td>
+                    <td>/api/refreshCache</td>
+                </tr>
+
+                <tr>
+                    <td>Description</td>
+                    <td>Refresh the cache for the <code>/api/dcat</code> call. This call blocks until the cache has been refreshed!</td>
+                </tr>
+
+
+                </tbody>
+            </table>
+            <p>
+                The api to retrieve all the DCAT data can be slow, so there is a simple cache solution to cache all the RDF data.
+                The cache solution is in "Application.java" and uses Guava to cache the response from Fuseki. The response is cached in clear text,
+                so there will normally be one cache entry per format (eg. JSON-LD and RDF/XML). The cache entries automatically expire every 24 hours.
+
+            </p>
+
+
+            <p>
+             As well as RDF, the api can also output an RSS stream. "FeedController.java" has the following api:
+            </p>
+
+            <h5>RSS feed api</h5>
+            <table class="table">
+                <thead></thead>
+                <tbody>
+                <tr>
+                    <td>Type</td>
+                    <td>GET</td>
+                </tr>
+                <tr>
+                    <td>Path</td>
+                    <td>/api/rss/feed</td>
+                </tr>
+
+                <tr>
+                    <td>Description</td>
+                    <td>Returns an RSS feed of the DCAT data.</td>
+                </tr>
+
+
+                </tbody>
+            </table>
 
             <h4 id="dcat-datastore">dcat-datastore</h4>
             <hr style="margin-top: 0px"/>
@@ -82,7 +207,7 @@
             <p>The <code>AdminDataStore</code> class provides methods for user administaration (except delete user) and DCAT source administration (exception deletion).
                 The method for adding a user can also be used for updating users, and there is logic for stopping multiple users having the same username.
                 Same goes for adding DCAT sources, however multiple users are allowed to add the same URL for harvesting. This doesn't mean they share the same source.
-                 </p>
+            </p>
 
             <p><code>AdminDcatDataService</code> provides delete methods for both DCAT sources and users. When deleting a user, you first have to clean up all the users DCAT sources.</p>
 
@@ -93,13 +218,19 @@
             <h4 id="dcat-generate-dummy-data">dcat-generate-dummy-data</h4>
             <hr style="margin-top: 0px"/>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla. Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at quam porta faucibus.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla.
+                Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan
+                blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at
+                quam porta faucibus.</p>
 
             <h4 id="dcat-harvester-app">dcat-harvester-app</h4>
             <hr style="margin-top: 0px"/>
             <p>Module for harvesting DCAT data from sources.</p>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla. Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at quam porta faucibus.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla.
+                Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan
+                blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at
+                quam porta faucibus.</p>
 
             <h2 id="Building-and-running">Building and running</h2>
             <hr style="margin-top: 0px"/>
@@ -114,7 +245,7 @@
             </ul>
 
             <p>The easiest and simplest way to build and run the system is to use the command line script <code>./rundocker.sh</code> which will
-            build the Java modules, build all the docker images and then start the containers.</p>
+                build the Java modules, build all the docker images and then start the containers.</p>
 
             <p>The admin interface should now be available at <a href="http://localhost:8080/dcat-admin-webapp/">http://localhost:8080/dcat-admin-webapp/</a></p>
 
@@ -122,8 +253,6 @@
 
 
         </div>
-
-
 
 
         <div class="col-xs-12 col-md-3 push-md-9 bd-sidebar hidden-print hidden-sm-down" style="position:fixed">
