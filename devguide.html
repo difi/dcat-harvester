@@ -58,19 +58,37 @@
             <h2 id="Modules">Modules</h2>
             <hr style="margin-top: 0px"/>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla.
-                Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan
-                blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at
-                quam porta faucibus.</p>
+            <p>There are four main modules in the DCAT Harvester.
+            There is one module for user interaction with an API and a frontend. Another module
+            caters to the consumers of the data, with RSS feeds and complete RDF export functionality.
+            A shared module with the datastore abstractions connects Elasticsearch and Fuseki to the other modules.
+                Finally the main module, the actual harvester, downloads DCAT data and validates it before
+                storing it in Stardog and indexing it to Elasticsearch.
+
+            </p>
 
             <h4 id="dcat-admin-webapp">dcat-admin-webapp</h4>
             <hr style="margin-top: 0px"/>
-            <p>Frontend admin interface</p>
+            <p>Frontend admin interface built with JSP. There are three main views. The admin
+            view is used to administer the users. Here you can create, update and delete users.
+            The users view is for registering a DCAT source for harvesting and monitoring
+            your harvesting status. And then dcat source view is for inspecting a specific
+            DCAT source with a history of it's 100 previous harvests and potentially error messages.
+            More errors messages are available through Kibana.</p>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla.
-                Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan
-                blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at
-                quam porta faucibus.</p>
+            <p>The JSP pages are initiated with controllers found in the dcat and user packages. The controllers load the
+            required data and trigger the matching JSP page.</p>
+
+            <p>Requests initiated from the webpage are handled by an API. All request use JSON and
+            have matching DTOs in their package.</p>
+
+            <h5>Security</h5>
+
+            <p>Spring security is used to authenticate and authorize users. User information is saved
+            in Fuseki. All requests need to be authenticated. Users can manipulate their own data, eg. their DCAT sources,
+            while admin users can add and remove other users and also edit their DCAT sources.</p>
+
+
 
 
             <h4 id="dcat-api-app">dcat-api-app</h4>
@@ -218,19 +236,38 @@
             <h4 id="dcat-generate-dummy-data">dcat-generate-dummy-data</h4>
             <hr style="margin-top: 0px"/>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla.
-                Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan
-                blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at
-                quam porta faucibus.</p>
+            <p>Small stand-alone program for generating test data in DCAT format.</p>
 
             <h4 id="dcat-harvester-app">dcat-harvester-app</h4>
             <hr style="margin-top: 0px"/>
             <p>Module for harvesting DCAT data from sources.</p>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis arcu sed scelerisque vehicula. Donec a tortor consectetur, porta purus volutpat, convallis sapien. Vestibulum consectetur dolor a tristique fringilla.
-                Maecenas viverra lacus arcu, ac dapibus est facilisis non. In tempor commodo lorem et vestibulum. Maecenas a feugiat erat, at aliquet mi. Phasellus a gravida lorem. Aenean posuere risus libero, vitae convallis arcu accumsan
-                blandit. Vestibulum orci purus, blandit suscipit vulputate a, placerat a felis. Mauris volutpat mauris purus, efficitur vulputate ligula sagittis eu. Mauris bibendum massa ut aliquet ullamcorper. Etiam sagittis lectus at
-                quam porta faucibus.</p>
+            <p>The main component of the system, designed to retrieve DCAT data from various sources and incorporate it
+            into a single database</p>
+
+            <p>A CrawlerJob is the main process of the harvester. It downloads DCAT data from a specified source, does validation and any
+            transformations required before sending it to be Stardog and Elasticsearch.</p>
+
+            <p>The validation is a set of SPARQL queries that return any invalid data. The queires are available in the resources folder
+            under validation-rules/from-eu. The rules are a copied from <a href="https://github.com/EmidioStani/dcat-ap_validator">https://github.com/EmidioStani/dcat-ap_validator</a></p>
+
+            <p>CrawlerJob information is stored in Fuseki, together with user information in the uses database.</p>
+
+            <p>A CrawelJob can be initiated with a request to <code>/api/admin/harvest-all</code> or <code>/api/admin/harvest?id=CRAWLER_ID_HERE</code></p>
+
+            <p>To support data from Vegvesenet and from Entryscape there are two transforms in CrawlerJob. <code>enrichForEntryscape(model)</code> will transform Entryscape data
+            and <code>enrichForVegvesenet(model)</code> will transform data from Vegvesenet.</p>
+
+            <h5>XmlToRdf</h5>
+
+            <p>DCAT Catalogs can contain identifiers for corporations and organisations. These identifiers can be looked
+            up in the Brønnøysund registers to find the name and other information about the organisations.</p>
+
+            <p>This information is in XML, so to convert it we use XmlToRdf. This is an early version of XmlToRdf, the library
+            has since been developed further and released as an open source project: <a href="https://github.com/AcandoNorway/XmlToRdf">https://github.com/AcandoNorway/XmlToRdf</a></p>
+
+
+
 
             <h2 id="Building-and-running">Building and running</h2>
             <hr style="margin-top: 0px"/>
