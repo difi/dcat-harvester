@@ -63,7 +63,7 @@
             caters to the consumers of the data, with RSS feeds and complete RDF export functionality.
             A shared module with the datastore abstractions connects Elasticsearch and Fuseki to the other modules.
                 Finally the main module, the actual harvester, downloads DCAT data and validates it before
-                storing it in Stardog and indexing it to Elasticsearch.
+                storing it in Fuseki and indexing it to Elasticsearch.
 
             </p>
 
@@ -246,7 +246,7 @@
             into a single database</p>
 
             <p>A CrawlerJob is the main process of the harvester. It downloads DCAT data from a specified source, does validation and any
-            transformations required before sending it to be Stardog and Elasticsearch.</p>
+            transformations required before sending it to be Fuseki and Elasticsearch.</p>
 
             <p>The validation is a set of SPARQL queries that return any invalid data. The queires are available in the resources folder
             under validation-rules/from-eu. The rules are a copied from <a href="https://github.com/EmidioStani/dcat-ap_validator">https://github.com/EmidioStani/dcat-ap_validator</a></p>
