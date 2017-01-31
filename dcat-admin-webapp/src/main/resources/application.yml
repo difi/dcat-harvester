@@ -7,7 +7,7 @@ fuseki:
 application:
   harvesterUrl: http://localhost:8080/dcat-harvester-app
   kibanaPort: "5601"
-  kibanaLinkFirstHalf: "/dashboard/dashboard_template?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-12h,mode:quick,to:now))&_a=(filters:!(),options:(darkTheme:!f),panels:!((col:4,id:Crawler-Operations,panelIndex:1,row:3,size_x:9,size_y:3,type:visualization),(col:1,id:Crawler-Results,panelIndex:2,row:3,size_x:3,size_y:3,type:visualization),(col:1,columns:!(severity,event,cause),id:crawler_operations,panelIndex:3,row:6,size_x:6,size_y:4,sort:!(timestamp,desc),type:search),(col:1,id:Crawler-Metadata,panelIndex:4,row:1,size_x:12,size_y:2,type:visualization),(col:7,id:Validation-Rule-ID,panelIndex:5,row:6,size_x:6,size_y:4,type:visualization)),query:(query_string:(analyze_wildcard:!t,query:'%22"
+  kibanaLinkFirstHalf: "/dashboard/app/kibana#/dashboard/dashboard_template?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-12h,mode:quick,to:now))&_a=(filters:!(),options:(darkTheme:!f),panels:!((col:4,id:Crawler-Operations,panelIndex:1,row:3,size_x:9,size_y:3,type:visualization),(col:1,id:Crawler-Results,panelIndex:2,row:3,size_x:3,size_y:3,type:visualization),(col:1,columns:!(severity,event,cause),id:crawler_operations,panelIndex:3,row:6,size_x:6,size_y:4,sort:!(timestamp,desc),type:search),(col:1,id:Crawler-Metadata,panelIndex:4,row:1,size_x:12,size_y:2,type:visualization),(col:7,id:Validation-Rule-ID,panelIndex:5,row:6,size_x:6,size_y:4,type:visualization)),query:(query_string:(analyze_wildcard:!t,query:'%22"
   kibanaLinkSecondHalf: "%22')),title:dashboard_template,uiState:())"
   elasticSearchHost: localhost
   
@@ -24,7 +24,7 @@ fuseki:
   adminServiceUri: http://fuseki:8080/fuseki/admin
 application:
   kibanaPort: "5601"
-  kibanaLinkFirstHalf: "/dashboard/dashboard_template?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-12h,mode:quick,to:now))&_a=(filters:!(),options:(darkTheme:!f),panels:!((col:4,id:Crawler-Operations,panelIndex:1,row:3,size_x:9,size_y:3,type:visualization),(col:1,id:Crawler-Results,panelIndex:2,row:3,size_x:3,size_y:3,type:visualization),(col:1,columns:!(severity,event,cause),id:crawler_operations,panelIndex:3,row:6,size_x:6,size_y:4,sort:!(timestamp,desc),type:search),(col:1,id:Crawler-Metadata,panelIndex:4,row:1,size_x:12,size_y:2,type:visualization),(col:7,id:Validation-Rule-ID,panelIndex:5,row:6,size_x:6,size_y:4,type:visualization)),query:(query_string:(analyze_wildcard:!t,query:'%22"
+  kibanaLinkFirstHalf: "/dashboard/app/kibana#/dashboard/dashboard_template?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-12h,mode:quick,to:now))&_a=(filters:!(),options:(darkTheme:!f),panels:!((col:4,id:Crawler-Operations,panelIndex:1,row:3,size_x:9,size_y:3,type:visualization),(col:1,id:Crawler-Results,panelIndex:2,row:3,size_x:3,size_y:3,type:visualization),(col:1,columns:!(severity,event,cause),id:crawler_operations,panelIndex:3,row:6,size_x:6,size_y:4,sort:!(timestamp,desc),type:search),(col:1,id:Crawler-Metadata,panelIndex:4,row:1,size_x:12,size_y:2,type:visualization),(col:7,id:Validation-Rule-ID,panelIndex:5,row:6,size_x:6,size_y:4,type:visualization)),query:(query_string:(analyze_wildcard:!t,query:'%22"
   kibanaLinkSecondHalf: "%22')),title:dashboard_template,uiState:())"
   elasticSearchHost: elasticsearch
   
@@ -37,7 +37,7 @@ fuseki:
 application:
   harvesterUrl: http://localhost:8090
   kibanaPort: "5601"
-  kibanaLinkFirstHalf: "/dashboard/dashboard_template?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-12h,mode:quick,to:now))&_a=(filters:!(),options:(darkTheme:!f),panels:!((col:4,id:Crawler-Operations,panelIndex:1,row:3,size_x:9,size_y:3,type:visualization),(col:1,id:Crawler-Results,panelIndex:2,row:3,size_x:3,size_y:3,type:visualization),(col:1,columns:!(severity,event,cause),id:crawler_operations,panelIndex:3,row:6,size_x:6,size_y:4,sort:!(timestamp,desc),type:search),(col:1,id:Crawler-Metadata,panelIndex:4,row:1,size_x:12,size_y:2,type:visualization),(col:7,id:Validation-Rule-ID,panelIndex:5,row:6,size_x:6,size_y:4,type:visualization)),query:(query_string:(analyze_wildcard:!t,query:'%22"
+  kibanaLinkFirstHalf: "/dashboard/app/kibana#/dashboard/dashboard_template?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-12h,mode:quick,to:now))&_a=(filters:!(),options:(darkTheme:!f),panels:!((col:4,id:Crawler-Operations,panelIndex:1,row:3,size_x:9,size_y:3,type:visualization),(col:1,id:Crawler-Results,panelIndex:2,row:3,size_x:3,size_y:3,type:visualization),(col:1,columns:!(severity,event,cause),id:crawler_operations,panelIndex:3,row:6,size_x:6,size_y:4,sort:!(timestamp,desc),type:search),(col:1,id:Crawler-Metadata,panelIndex:4,row:1,size_x:12,size_y:2,type:visualization),(col:7,id:Validation-Rule-ID,panelIndex:5,row:6,size_x:6,size_y:4,type:visualization)),query:(query_string:(analyze_wildcard:!t,query:'%22"
   kibanaLinkSecondHalf: "%22')),title:dashboard_template,uiState:())"
   elasticSearchHost: localhost
   
